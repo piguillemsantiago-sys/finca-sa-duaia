@@ -106,6 +106,7 @@ const CONTENT = {
       title: "Países, generaciones,\nuna misma sensación.",
       lede: "Reseñas reales de huéspedes que pasaron por aquí. Sin filtros.",
       countLabel: "+600 reseñas",
+      guestsLabel: "+5000 huéspedes",
       sourceLabel: "Google · Booking · directo",
       ratingValue: 4.3,
       mapsLabel: "Ver perfil en Google Maps",
@@ -246,6 +247,7 @@ const CONTENT = {
       title: "Different countries,\nthe same feeling.",
       lede: "Real reviews from guests who stayed here. Unfiltered.",
       countLabel: "+600 reviews",
+      guestsLabel: "+5000 guests",
       sourceLabel: "Google · Booking · direct",
       ratingValue: 4.3,
       mapsLabel: "See profile on Google Maps",
@@ -2414,6 +2416,52 @@ function FloatingBookButton({ t, scrolled }) {
   );
 }
 
+/* ────────────────  MOBILE TRUST BAR  (specs + reviews, below hero)  ──────────────── */
+
+/* The minimal mobile hero drops the specs + reviews badge — this compact dark
+   band right under it carries that info back. Mobile only; desktop keeps it in the hero. */
+function MobileTrustBar({ t }) {
+  const rv = t.reviews || {};
+  const specs = [
+    { n: "11",  l: t.hero.specHabs || "Habitaciones" },
+    { n: "I",   l: t.hero.specMesa || "Restaurante" },
+    { n: "I",   l: t.hero.specPool || "Piscina" },
+    { n: "30'", l: t.hero.specSea  || "del mar" },
+  ];
+  return (
+    <section className="md:hidden bg-ink text-cream">
+      <div className="px-6 py-10">
+        {/* Specs — 2×2 */}
+        <div className="grid grid-cols-2 gap-x-6 gap-y-6">
+          {specs.map((s, i) => (
+            <div key={i} className="flex items-baseline gap-3">
+              <span className="font-display italic text-gold text-[30px] leading-none number w-11 shrink-0">
+                {s.n}
+              </span>
+              <span className="uppercase tracking-wider2 text-[10px] font-medium text-cream/70">
+                {s.l}
+              </span>
+            </div>
+          ))}
+        </div>
+
+        <div className="my-8 h-px bg-cream/15" />
+
+        {/* Reviews proof — tap to jump to the reviews section */}
+        <a href="#reviews" className="flex flex-col items-center gap-3 text-center">
+          <Stars value={rv.ratingValue || 4.3} starClass="w-[15px] h-[15px]" />
+          <div className="font-display italic text-cream text-[20px] leading-tight">
+            {(rv.countLabel || "+600 reseñas") + " · " + (rv.guestsLabel || "+5000 huéspedes")}
+          </div>
+          <div className="uppercase tracking-wider2 text-[9px] font-medium text-cream/55">
+            {rv.sourceLabel || "Google · Booking · directo"}
+          </div>
+        </a>
+      </div>
+    </section>
+  );
+}
+
 /* ───────────────────────────  APP  ────────────────────────── */
 
 function App() {
@@ -2440,6 +2488,7 @@ function App() {
       <ScrollNav t={t} lang={lang} />
       <Nav lang={lang} setLang={setLang} t={t} scrolled={scrolled} />
       <Hero t={t} />
+      <MobileTrustBar t={t} />
       <Welcome t={t} />
       <Marquee
         items={[
