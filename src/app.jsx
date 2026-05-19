@@ -526,11 +526,11 @@ function Hero({ t }) {
       <div className="absolute inset-0 hero-vignette" />
       <div className="absolute top-0 inset-x-0 h-px bg-cream/15" />
 
-      {/* Wordmark — right side */}
-      <div className="absolute inset-0 flex items-center">
-        <div className="mx-auto max-w-[1320px] w-full px-6 md:px-10 flex justify-center md:justify-end">
-          <div className="text-cream text-center md:text-right">
-            <div className="mb-6 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85">
+      {/* Wordmark — right on desktop, bottom-anchored block on mobile */}
+      <div className="absolute inset-0 flex items-end md:items-center">
+        <div className="mx-auto max-w-[1320px] w-full px-6 md:px-10 flex justify-center md:justify-end pb-28 md:pb-0">
+          <div className="text-cream text-center md:text-right max-w-md md:max-w-none [text-shadow:0_1px_12px_rgba(26,20,16,0.55)] md:[text-shadow:none]">
+            <div className="mb-5 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85">
               <span className="hidden md:inline-block w-12 h-px bg-cream/55" />
               <span className="font-display italic text-gold text-[15px] md:text-[17px] tracking-normal leading-none number">
                 MCDXXV
@@ -547,12 +547,12 @@ function Hero({ t }) {
               <span className="block">{t.hero.wordmark3}</span>
             </h1>
 
-            <p className="mt-7 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md md:ml-auto">
+            <p className="mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto">
               {t.hero.tagline}
             </p>
 
-            {/* Spec sheet — 4 micro-stats with italic gold numerals */}
-            <div className="mt-8 md:mt-10 flex items-stretch justify-center md:justify-end gap-0 text-cream/85">
+            {/* Spec sheet — 2×2 grid on mobile, single editorial row on desktop */}
+            <div className="mt-7 md:mt-10 grid grid-cols-2 gap-x-10 gap-y-5 md:flex md:items-stretch md:gap-0 justify-center md:justify-end text-cream/85">
               {[
                 { n: "XI",  l: t.hero.specHabs    || "Habitaciones" },
                 { n: "I",   l: t.hero.specMesa    || "Restaurante" },
@@ -562,8 +562,8 @@ function Hero({ t }) {
                 <div
                   key={i}
                   className={[
-                    "flex flex-col items-start md:items-end gap-1.5 px-3 md:px-5",
-                    i > 0 ? "border-l border-cream/15" : "",
+                    "flex flex-col items-center md:items-end gap-1.5 md:px-5",
+                    i > 0 ? "md:border-l md:border-cream/15" : "",
                   ].join(" ")}
                 >
                   <span className="font-display italic text-gold text-[22px] md:text-[28px] leading-none number">
