@@ -650,7 +650,7 @@ function Welcome({ t }) {
   ];
 
   return (
-    <section id="welcome" className="bg-cream py-24 md:py-36 relative overflow-hidden">
+    <section id="welcome" className="bg-cream py-16 md:py-36 relative overflow-hidden">
       <SectionOpener />
 
       {/* GIANT decorative numeral — echoes the MCDXXV pattern from Finca */}
@@ -666,10 +666,10 @@ function Welcome({ t }) {
         </span>
       </div>
 
-      <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-16 md:mt-24 z-10">
+      <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-10 md:mt-24 z-10">
 
         {/* Header */}
-        <div className="grid md:grid-cols-12 gap-10 items-end mb-16 md:mb-24">
+        <div className="grid md:grid-cols-12 gap-10 items-end mb-10 md:mb-24">
           <div className="md:col-span-9">
             <Eyebrow>{w.eyebrow}</Eyebrow>
             <h2 className="rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px] lg:text-[96px] whitespace-pre-line">
@@ -713,7 +713,7 @@ function Welcome({ t }) {
           </div>
 
           {/* Row 2 — pool offset, shifted up & right; with vertical italic year accent */}
-          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-16 md:mt-8">
+          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-10 md:mt-8">
             <div className="hidden md:flex md:col-span-2 flex-col items-start gap-3 md:pt-32 rise delay-1">
               <span className="font-display italic text-garnet/80 number" style={{ fontSize: "clamp(60px, 6.5vw, 96px)", lineHeight: 0.9 }}>
                 MCDXXV
@@ -752,7 +752,7 @@ function Welcome({ t }) {
           </div>
 
           {/* Row 3 — towels photo, shifted; with two stats flanking */}
-          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-16 md:mt-12">
+          <div className="grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-10 md:mt-12">
             <figure className="md:col-span-5 md:col-start-2 rise delay-2 md:-mt-12">
               <div className="relative aspect-[3/4] overflow-hidden ph">
                 <img
@@ -768,7 +768,7 @@ function Welcome({ t }) {
               </div>
             </figure>
 
-            <div className="md:col-span-5 md:col-start-8 md:pt-20 flex flex-col gap-12 rise delay-3">
+            <div className="md:col-span-5 md:col-start-8 md:pt-20 flex flex-col gap-8 md:gap-12 rise delay-3">
               {stats.map((s, i) => (
                 <div key={i} className="pl-6 border-l border-garnet/40 relative">
                   <span className="absolute left-0 top-0 w-px h-8 bg-garnet" />
@@ -826,7 +826,7 @@ function Intermezzo({ t }) {
 
   return (
     <section aria-label="Interludio" className="relative bg-linen">
-      <div ref={wrapRef} style={{ height: "180vh" }} className="relative">
+      <div ref={wrapRef} className="relative h-[110vh] md:h-[180vh]">
         <div className="sticky top-0 h-screen flex items-center justify-center overflow-hidden">
 
           {/* Background hairlines — soft top and bottom borders */}
@@ -885,7 +885,7 @@ function Finca({ t }) {
   const f = t.finca;
   const stats = f.stats || [];
   return (
-    <section id="finca" className="relative bg-linen py-24 md:py-36 overflow-hidden">
+    <section id="finca" className="relative bg-linen py-16 md:py-36 overflow-hidden">
       <SectionOpener />
 
       {/* GIANT decorative watermark behind the headline — sets a distinct mood */}
@@ -901,7 +901,7 @@ function Finca({ t }) {
         </span>
       </div>
 
-      <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-16 md:mt-24 z-10">
+      <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-10 md:mt-24 z-10">
 
         {/* Header */}
         <div className="grid md:grid-cols-12 gap-10 mb-14 md:mb-20 items-end">
@@ -1054,7 +1054,7 @@ function Promises({ t }) {
       ref={sectionRef}
       onMouseMove={onMouseMove}
       onMouseLeave={() => setHoverIdx(-1)}
-      className="bg-cream py-24 md:py-36 relative overflow-hidden"
+      className="bg-cream py-16 md:py-36 relative overflow-hidden"
     >
       <SectionOpener />
 
@@ -1098,7 +1098,7 @@ function Promises({ t }) {
 
       <div className="relative mx-auto max-w-[1280px] px-6 md:px-10 mt-14 md:mt-20">
         {/* Header */}
-        <div className="mb-16 md:mb-24 max-w-2xl">
+        <div className="mb-10 md:mb-24 max-w-2xl">
           <Eyebrow>{p.eyebrow}</Eyebrow>
           <h2 className="rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px]">
             {p.title}
@@ -1106,7 +1106,7 @@ function Promises({ t }) {
         </div>
 
         {/* Stack */}
-        <div className="promises-stack space-y-16 md:space-y-24" data-has-active={hasActive ? "true" : "false"}>
+        <div className="promises-stack space-y-12 md:space-y-24" data-has-active={hasActive ? "true" : "false"}>
           {p.items.map((it, i) => {
             const reverse = i === 1;
             const isActive = i === focusIdx;
@@ -1117,7 +1117,7 @@ function Promises({ t }) {
                 onMouseEnter={() => setHoverIdx(i)}
                 className={[
                   "promise-row grid md:grid-cols-12 gap-8 md:gap-12 items-start relative",
-                  "pt-10 md:pt-14",
+                  "pt-8 md:pt-14",
                   i === 0 ? "pt-0" : "",
                   isActive ? "is-active" : "",
                 ].join(" ")}
@@ -1142,7 +1142,7 @@ function Promises({ t }) {
                         isActive ? "text-garnet" : "text-garnet/85",
                       ].join(" ")}
                       style={{
-                        fontSize: "clamp(96px, 13vw, 200px)",
+                        fontSize: "clamp(64px, 13vw, 200px)",
                         textShadow: isActive ? "0 6px 24px rgba(124,22,33,0.18)" : "none",
                       }}
                     >
@@ -1197,7 +1197,7 @@ function Stays({ t }) {
   const s = t.stays;
   const imgs = ["assets/room-tradicional.jpg", "assets/room-estudio.jpg", "assets/room-familiar.jpg", "assets/room-deluxe.jpg"];
   return (
-    <section id="stays" className="bg-linen py-24 md:py-36 relative overflow-hidden">
+    <section id="stays" className="bg-linen py-16 md:py-36 relative overflow-hidden">
       <SectionOpener />
 
       {/* Big italic watermark */}
@@ -1214,7 +1214,7 @@ function Stays({ t }) {
       </div>
 
       <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20">
-        <div className="grid md:grid-cols-12 gap-10 items-end mb-16 md:mb-24">
+        <div className="grid md:grid-cols-12 gap-10 items-end mb-10 md:mb-24">
           <div className="md:col-span-7">
             <Eyebrow>{s.eyebrow}</Eyebrow>
             <h2 className="rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px] lg:text-[92px] whitespace-pre-line">
@@ -1327,7 +1327,7 @@ function Restaurant({ t }) {
     { n: "IV", name: "Greixonera", note: "ensaimada, leche, canela" },
   ];
   return (
-    <section id="restaurant" className="bg-cream py-24 md:py-36 relative overflow-hidden">
+    <section id="restaurant" className="bg-cream py-16 md:py-36 relative overflow-hidden">
       <SectionOpener />
 
       {/* Decorative vertical italic side mark */}
@@ -1403,13 +1403,17 @@ function Restaurant({ t }) {
                 {dishes.map((d, i) => (
                   <li
                     key={i}
-                    className="slide-r flex items-baseline gap-5"
+                    className="slide-r"
                     style={{ transitionDelay: 120 + i * 80 + "ms" }}
                   >
-                    <span className="font-display italic text-garnet/70 text-[14px] number w-8 shrink-0">{d.n}</span>
-                    <span className="font-display text-ink text-[19px] md:text-[21px] leading-tight">{d.name}</span>
-                    <span className="flex-1 border-b border-dotted border-earth/40 translate-y-[-3px]" />
-                    <span className="text-ink/65 text-[13px] md:text-[14px] font-light italic">{d.note}</span>
+                    {/* Mobile: ingrediente debajo del plato. Desktop: fila con guía punteada. */}
+                    <div className="flex items-baseline gap-3 md:gap-5">
+                      <span className="font-display italic text-garnet/70 text-[14px] number w-8 shrink-0">{d.n}</span>
+                      <span className="font-display text-ink text-[19px] md:text-[21px] leading-tight">{d.name}</span>
+                      <span className="hidden md:block flex-1 border-b border-dotted border-earth/40 translate-y-[-3px]" />
+                      <span className="hidden md:block text-ink/65 text-[14px] font-light italic">{d.note}</span>
+                    </div>
+                    <span className="md:hidden block pl-11 mt-0.5 text-ink/65 text-[13px] font-light italic">{d.note}</span>
                   </li>
                 ))}
               </ul>
@@ -1418,7 +1422,7 @@ function Restaurant({ t }) {
         </div>
 
         {/* Secondary photo full-width below */}
-        <figure className="mt-16 md:mt-24 rise delay-1">
+        <figure className="mt-10 md:mt-24 rise delay-1">
           <div className="relative aspect-[21/9] overflow-hidden ph">
             <img
               src="assets/detail-towels.jpg"
@@ -1448,7 +1452,7 @@ function Restaurant({ t }) {
 function Surroundings({ t }) {
   const s = t.surroundings;
   return (
-    <section id="surroundings" className="bg-linen py-24 md:py-36 relative overflow-hidden">
+    <section id="surroundings" className="bg-linen py-16 md:py-36 relative overflow-hidden">
       <SectionOpener />
 
       {/* Decorative coordinates side label */}
@@ -1465,7 +1469,7 @@ function Surroundings({ t }) {
       <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20">
 
         {/* Header */}
-        <div className="grid md:grid-cols-12 gap-10 mb-16 md:mb-24 items-end">
+        <div className="grid md:grid-cols-12 gap-10 mb-10 md:mb-24 items-end">
           <div className="md:col-span-9">
             <Eyebrow>{s.eyebrow}</Eyebrow>
             <h2 className="rise delay-1 mt-7 font-display italic text-ink leading-[0.95] tracking-tight text-[48px] md:text-[96px] lg:text-[120px]">
@@ -1475,7 +1479,7 @@ function Surroundings({ t }) {
         </div>
 
         {/* Body + map-style stops */}
-        <div className="grid md:grid-cols-12 gap-12 md:gap-16 mb-16 md:mb-24">
+        <div className="grid md:grid-cols-12 gap-12 md:gap-16 mb-10 md:mb-24">
           <p className="md:col-span-6 rise delay-2 text-ink/80 text-[17px] md:text-[19px] leading-[1.85] font-light max-w-xl">
             {s.body}
           </p>
@@ -1629,7 +1633,7 @@ function Details({ t }) {
     { tag: "IV",  label: "Rincón en piedra" },
   ];
   return (
-    <section className="bg-cream py-24 md:py-36 relative overflow-hidden">
+    <section className="bg-cream py-16 md:py-36 relative overflow-hidden">
       <SectionOpener />
 
       <div className="relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20">
@@ -1784,7 +1788,7 @@ function Reviews({ t }) {
   const rotMap = [-1.0, 0.6, -0.8];
 
   return (
-    <section id="reviews" className="bg-linen py-24 md:py-36 relative overflow-hidden">
+    <section id="reviews" className="bg-linen py-16 md:py-36 relative overflow-hidden">
       <SectionOpener />
 
       {/* Decorative giant quote watermark */}
@@ -1929,7 +1933,7 @@ function Booking({ t }) {
   return (
     <section id="book" className="bg-cream pt-20 md:pt-32 pb-20 md:pb-28">
       <SectionOpener />
-      <div className="mx-auto max-w-[1280px] px-6 md:px-10 mt-16 md:mt-24">
+      <div className="mx-auto max-w-[1280px] px-6 md:px-10 mt-10 md:mt-24">
         <div className="grid md:grid-cols-12 gap-10 md:gap-16 items-end mb-12 md:mb-16">
           <div className="md:col-span-7">
             <Eyebrow>{b.eyebrow}</Eyebrow>

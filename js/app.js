@@ -746,7 +746,7 @@ function Welcome({
   }];
   return /*#__PURE__*/React.createElement("section", {
     id: "welcome",
-    className: "bg-cream py-24 md:py-36 relative overflow-hidden"
+    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute right-[-5%] top-[8%] pointer-events-none select-none"
@@ -756,9 +756,9 @@ function Welcome({
       fontSize: "clamp(260px, 38vw, 540px)"
     }
   }, "XI")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-16 md:mt-24 z-10"
+    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-10 md:mt-24 z-10"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 items-end mb-16 md:mb-24"
+    className: "grid md:grid-cols-12 gap-10 items-end mb-10 md:mb-24"
   }, /*#__PURE__*/React.createElement("div", {
     className: "md:col-span-9"
   }, /*#__PURE__*/React.createElement(Eyebrow, null, w.eyebrow), /*#__PURE__*/React.createElement("h2", {
@@ -790,7 +790,7 @@ function Welcome({
   }, /*#__PURE__*/React.createElement("span", {
     className: "font-display italic text-garnet text-[26px] md:text-[30px] leading-[1.2] block"
   }, "\u201CAqu\xED el tiempo se mide en estaciones, no en horas.\u201D")))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-16 md:mt-8"
+    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-10 md:mt-8"
   }, /*#__PURE__*/React.createElement("div", {
     className: "hidden md:flex md:col-span-2 flex-col items-start gap-3 md:pt-32 rise delay-1"
   }, /*#__PURE__*/React.createElement("span", {
@@ -826,7 +826,7 @@ function Welcome({
   }, "que recibe.")), /*#__PURE__*/React.createElement("span", {
     className: "block w-10 h-px bg-earth/40 mt-5"
   }))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-16 md:mt-12"
+    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-10 md:mt-12"
   }, /*#__PURE__*/React.createElement("figure", {
     className: "md:col-span-5 md:col-start-2 rise delay-2 md:-mt-12"
   }, /*#__PURE__*/React.createElement("div", {
@@ -840,7 +840,7 @@ function Welcome({
   }), /*#__PURE__*/React.createElement("span", {
     className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/85 bg-ink/30 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
   }, "III \u2014 El cuarto"))), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-5 md:col-start-8 md:pt-20 flex flex-col gap-12 rise delay-3"
+    className: "md:col-span-5 md:col-start-8 md:pt-20 flex flex-col gap-8 md:gap-12 rise delay-3"
   }, stats.map((s, i) => /*#__PURE__*/React.createElement("div", {
     key: i,
     className: "pl-6 border-l border-garnet/40 relative"
@@ -897,10 +897,7 @@ function Intermezzo({
     className: "relative bg-linen"
   }, /*#__PURE__*/React.createElement("div", {
     ref: wrapRef,
-    style: {
-      height: "180vh"
-    },
-    className: "relative"
+    className: "relative h-[110vh] md:h-[180vh]"
   }, /*#__PURE__*/React.createElement("div", {
     className: "sticky top-0 h-screen flex items-center justify-center overflow-hidden"
   }, /*#__PURE__*/React.createElement("div", {
@@ -957,7 +954,7 @@ function Finca({
   const stats = f.stats || [];
   return /*#__PURE__*/React.createElement("section", {
     id: "finca",
-    className: "relative bg-linen py-24 md:py-36 overflow-hidden"
+    className: "relative bg-linen py-16 md:py-36 overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute inset-x-0 top-[18%] md:top-[14%] pointer-events-none select-none flex justify-center"
@@ -967,7 +964,7 @@ function Finca({
       fontSize: "clamp(220px, 36vw, 520px)"
     }
   }, "MCDXXV")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-16 md:mt-24 z-10"
+    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-10 md:mt-24 z-10"
   }, /*#__PURE__*/React.createElement("div", {
     className: "grid md:grid-cols-12 gap-10 mb-14 md:mb-20 items-end"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1104,7 +1101,7 @@ function Promises({
     ref: sectionRef,
     onMouseMove: onMouseMove,
     onMouseLeave: () => setHoverIdx(-1),
-    className: "bg-cream py-24 md:py-36 relative overflow-hidden"
+    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute left-3 md:left-6 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none",
@@ -1131,11 +1128,11 @@ function Promises({
   }))), /*#__PURE__*/React.createElement("div", {
     className: "relative mx-auto max-w-[1280px] px-6 md:px-10 mt-14 md:mt-20"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "mb-16 md:mb-24 max-w-2xl"
+    className: "mb-10 md:mb-24 max-w-2xl"
   }, /*#__PURE__*/React.createElement(Eyebrow, null, p.eyebrow), /*#__PURE__*/React.createElement("h2", {
     className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px]"
   }, p.title)), /*#__PURE__*/React.createElement("div", {
-    className: "promises-stack space-y-16 md:space-y-24",
+    className: "promises-stack space-y-12 md:space-y-24",
     "data-has-active": hasActive ? "true" : "false"
   }, p.items.map((it, i) => {
     const reverse = i === 1;
@@ -1144,7 +1141,7 @@ function Promises({
       key: i,
       ref: el => rowRefs.current[i] = el,
       onMouseEnter: () => setHoverIdx(i),
-      className: ["promise-row grid md:grid-cols-12 gap-8 md:gap-12 items-start relative", "pt-10 md:pt-14", i === 0 ? "pt-0" : "", isActive ? "is-active" : ""].join(" ")
+      className: ["promise-row grid md:grid-cols-12 gap-8 md:gap-12 items-start relative", "pt-8 md:pt-14", i === 0 ? "pt-0" : "", isActive ? "is-active" : ""].join(" ")
     }, i > 0 && /*#__PURE__*/React.createElement("span", {
       className: ["promise-rule absolute top-0 left-0 h-px", isActive ? "bg-garnet" : "bg-garnet/15"].join(" "),
       style: {
@@ -1157,7 +1154,7 @@ function Promises({
     }, /*#__PURE__*/React.createElement("span", {
       className: ["promise-num promise-num-parallax font-display italic leading-none number", isActive ? "text-garnet" : "text-garnet/85"].join(" "),
       style: {
-        fontSize: "clamp(96px, 13vw, 200px)",
+        fontSize: "clamp(64px, 13vw, 200px)",
         textShadow: isActive ? "0 6px 24px rgba(124,22,33,0.18)" : "none"
       }
     }, it.n), /*#__PURE__*/React.createElement("span", {
@@ -1193,7 +1190,7 @@ function Stays({
   const imgs = ["assets/room-tradicional.jpg", "assets/room-estudio.jpg", "assets/room-familiar.jpg", "assets/room-deluxe.jpg"];
   return /*#__PURE__*/React.createElement("section", {
     id: "stays",
-    className: "bg-linen py-24 md:py-36 relative overflow-hidden"
+    className: "bg-linen py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute left-[-3%] bottom-[6%] pointer-events-none select-none"
@@ -1205,7 +1202,7 @@ function Stays({
   }, "XI")), /*#__PURE__*/React.createElement("div", {
     className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 items-end mb-16 md:mb-24"
+    className: "grid md:grid-cols-12 gap-10 items-end mb-10 md:mb-24"
   }, /*#__PURE__*/React.createElement("div", {
     className: "md:col-span-7"
   }, /*#__PURE__*/React.createElement(Eyebrow, null, s.eyebrow), /*#__PURE__*/React.createElement("h2", {
@@ -1300,7 +1297,7 @@ function Restaurant({
   }];
   return /*#__PURE__*/React.createElement("section", {
     id: "restaurant",
-    className: "bg-cream py-24 md:py-36 relative overflow-hidden"
+    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute right-3 lg:right-8 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none",
@@ -1359,20 +1356,24 @@ function Restaurant({
     className: "space-y-3.5"
   }, dishes.map((d, i) => /*#__PURE__*/React.createElement("li", {
     key: i,
-    className: "slide-r flex items-baseline gap-5",
+    className: "slide-r",
     style: {
       transitionDelay: 120 + i * 80 + "ms"
     }
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "flex items-baseline gap-3 md:gap-5"
   }, /*#__PURE__*/React.createElement("span", {
     className: "font-display italic text-garnet/70 text-[14px] number w-8 shrink-0"
   }, d.n), /*#__PURE__*/React.createElement("span", {
     className: "font-display text-ink text-[19px] md:text-[21px] leading-tight"
   }, d.name), /*#__PURE__*/React.createElement("span", {
-    className: "flex-1 border-b border-dotted border-earth/40 translate-y-[-3px]"
+    className: "hidden md:block flex-1 border-b border-dotted border-earth/40 translate-y-[-3px]"
   }), /*#__PURE__*/React.createElement("span", {
-    className: "text-ink/65 text-[13px] md:text-[14px] font-light italic"
+    className: "hidden md:block text-ink/65 text-[14px] font-light italic"
+  }, d.note)), /*#__PURE__*/React.createElement("span", {
+    className: "md:hidden block pl-11 mt-0.5 text-ink/65 text-[13px] font-light italic"
   }, d.note))))))), /*#__PURE__*/React.createElement("figure", {
-    className: "mt-16 md:mt-24 rise delay-1"
+    className: "mt-10 md:mt-24 rise delay-1"
   }, /*#__PURE__*/React.createElement("div", {
     className: "relative aspect-[21/9] overflow-hidden ph"
   }, /*#__PURE__*/React.createElement("img", {
@@ -1400,7 +1401,7 @@ function Surroundings({
   const s = t.surroundings;
   return /*#__PURE__*/React.createElement("section", {
     id: "surroundings",
-    className: "bg-linen py-24 md:py-36 relative overflow-hidden"
+    className: "bg-linen py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute left-3 md:left-6 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none",
@@ -1413,13 +1414,13 @@ function Surroundings({
   }, "39\xB0 41\u2032 N \xB7 3\xB0 21\u2032 E \xB7 Mallorca")), /*#__PURE__*/React.createElement("div", {
     className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 mb-16 md:mb-24 items-end"
+    className: "grid md:grid-cols-12 gap-10 mb-10 md:mb-24 items-end"
   }, /*#__PURE__*/React.createElement("div", {
     className: "md:col-span-9"
   }, /*#__PURE__*/React.createElement(Eyebrow, null, s.eyebrow), /*#__PURE__*/React.createElement("h2", {
     className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.95] tracking-tight text-[48px] md:text-[96px] lg:text-[120px]"
   }, s.title))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-12 md:gap-16 mb-16 md:mb-24"
+    className: "grid md:grid-cols-12 gap-12 md:gap-16 mb-10 md:mb-24"
   }, /*#__PURE__*/React.createElement("p", {
     className: "md:col-span-6 rise delay-2 text-ink/80 text-[17px] md:text-[19px] leading-[1.85] font-light max-w-xl"
   }, s.body), /*#__PURE__*/React.createElement("ol", {
@@ -1584,7 +1585,7 @@ function Details({
     label: "Rincón en piedra"
   }];
   return /*#__PURE__*/React.createElement("section", {
-    className: "bg-cream py-24 md:py-36 relative overflow-hidden"
+    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
   }, /*#__PURE__*/React.createElement("div", {
@@ -1766,7 +1767,7 @@ function Reviews({
   const rotMap = [-1.0, 0.6, -0.8];
   return /*#__PURE__*/React.createElement("section", {
     id: "reviews",
-    className: "bg-linen py-24 md:py-36 relative overflow-hidden"
+    className: "bg-linen py-16 md:py-36 relative overflow-hidden"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
     "aria-hidden": "true",
     className: "absolute left-[-2%] top-[10%] pointer-events-none select-none review-quote-mark",
@@ -1900,7 +1901,7 @@ function Booking({
     id: "book",
     className: "bg-cream pt-20 md:pt-32 pb-20 md:pb-28"
   }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    className: "mx-auto max-w-[1280px] px-6 md:px-10 mt-16 md:mt-24"
+    className: "mx-auto max-w-[1280px] px-6 md:px-10 mt-10 md:mt-24"
   }, /*#__PURE__*/React.createElement("div", {
     className: "grid md:grid-cols-12 gap-10 md:gap-16 items-end mb-12 md:mb-16"
   }, /*#__PURE__*/React.createElement("div", {

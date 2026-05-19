@@ -189,12 +189,15 @@ body {
 .promise-row .promise-aside {
   transition: opacity 700ms ease, transform 900ms cubic-bezier(.22,1,.36,1), color 500ms ease;
 }
-/* Dim non-active rows when one is active */
-.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-num,
-.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-title,
-.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-body,
-.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-aside {
-  opacity: 0.42;
+/* Dim non-active rows when one is active — desktop only.
+   On mobile every row stays full-opacity so the text is always legible. */
+@media (min-width: 768px) {
+  .promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-num,
+  .promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-title,
+  .promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-body,
+  .promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-aside {
+    opacity: 0.42;
+  }
 }
 .promise-row.is-active .promise-aside {
   transform: translateX(0);
