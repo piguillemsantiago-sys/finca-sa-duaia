@@ -333,24 +333,13 @@ body {
 ::selection { background: #7C1621; color: #F9F0E3; }
 .number { font-variant-numeric: lining-nums; }
 
-/* Hero mobile entrance — wordmark letters rise in, the rest fades up in cascade.
-   Desktop: no animation, everything renders static (hero de escritorio intacto). */
-.hero-letter { display: inline; }
+/* Hero mobile entrance — content fades up in a calm cascade.
+   Desktop: no animation (hero de escritorio intacto). */
 @media (max-width: 768px) {
-  .hero-letter {
-    display: inline-block;
-    opacity: 0;
-    transform: translateY(0.55em);
-    filter: blur(7px);
-    animation: heroLetterIn 850ms cubic-bezier(.22,1,.36,1) both;
-  }
   .hero-rise-m {
     opacity: 0;
     animation: heroRiseM 800ms cubic-bezier(.22,1,.36,1) both;
   }
-}
-@keyframes heroLetterIn {
-  to { opacity: 1; transform: translateY(0); filter: blur(0); }
 }
 @keyframes heroRiseM {
   from { opacity: 0; transform: translateY(22px); }

@@ -381,7 +381,31 @@ function Nav({ lang, setLang, t, scrolled }) {
   "text-ink/75 hover:text-garnet" :
   "text-cream/90 hover:text-cream";
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Lock background scroll while the mobile menu is open.
+  useEffect(() => {
+    const lenis = window.__lenis;
+    if (menuOpen) {
+      document.documentElement.style.overflow = "hidden";
+      if (lenis && lenis.stop) lenis.stop();
+    } else {
+      document.documentElement.style.overflow = "";
+      if (lenis && lenis.start) lenis.start();
+    }
+    return () => { document.documentElement.style.overflow = ""; };
+  }, [menuOpen]);
+
+  const menuLinks = [
+    ["#welcome", t.nav.welcome, "I"],
+    ["#finca", t.nav.finca, "II"],
+    ["#stays", t.nav.stays, "III"],
+    ["#restaurant", t.nav.restaurant, "IV"],
+    ["#surroundings", t.nav.surroundings, "V"],
+  ];
+
   return (
+    <>
     <header
       className={[
       "fixed top-0 left-0 right-0 z-50 transition-all duration-700",
@@ -441,7 +465,7 @@ function Nav({ lang, setLang, t, scrolled }) {
         <div className="flex items-center gap-5 md:gap-7 shrink-0">
           <div
             className={[
-            "hidden sm:flex items-center text-[11px] md:text-[12px] font-medium uppercase",
+            "hidden md:flex items-center text-[11px] md:text-[12px] font-medium uppercase",
             scrolled ? "text-ink/65" : "text-cream/85"].
             join(" ")}
             style={{ letterSpacing: "0.28em" }}>
@@ -476,7 +500,7 @@ function Nav({ lang, setLang, t, scrolled }) {
             target="_blank"
             rel="noopener noreferrer"
             className={[
-            "inline-flex items-center justify-center border transition-all duration-500",
+            "hidden md:inline-flex items-center justify-center border transition-all duration-500",
             "px-5 md:px-7 py-3 md:py-3.5",
             "text-[11px] md:text-[12px] font-medium uppercase",
             scrolled ?
@@ -487,30 +511,100 @@ function Nav({ lang, setLang, t, scrolled }) {
             
             {t.nav.book}
           </a>
+
+          {/* Hamburger — mobile only */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen(true)}
+            aria-label="Abrir menú"
+            className="md:hidden inline-flex flex-col items-center justify-center gap-[5px] w-10 h-10 -mr-2"
+          >
+            <span className={["block w-6 h-px transition-colors duration-500", scrolled ? "bg-ink" : "bg-cream"].join(" ")} />
+            <span className={["block w-6 h-px transition-colors duration-500", scrolled ? "bg-ink" : "bg-cream"].join(" ")} />
+            <span className={["block w-6 h-px transition-colors duration-500", scrolled ? "bg-ink" : "bg-cream"].join(" ")} />
+          </button>
         </div>
       </div>
-    </header>);
+    </header>
+
+    {/* Mobile menu — full-screen overlay */}
+    <div
+      className={[
+        "fixed inset-0 z-[60] md:hidden bg-cream transition-opacity duration-500",
+        menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none",
+      ].join(" ")}
+    >
+      <div className="flex flex-col h-full px-7 py-5">
+        {/* Top — logo + close */}
+        <div className="flex items-center justify-between">
+          <img
+            src="assets/logo.png"
+            alt="Finca Sa Duaia de Dalt"
+            className="h-12 w-auto select-none"
+            draggable="false"
+          />
+          <button
+            type="button"
+            onClick={() => setMenuOpen(false)}
+            aria-label="Cerrar menú"
+            className="relative w-10 h-10"
+          >
+            <span className="absolute left-1/2 top-1/2 w-6 h-px bg-ink -translate-x-1/2 -translate-y-1/2 rotate-45" />
+            <span className="absolute left-1/2 top-1/2 w-6 h-px bg-ink -translate-x-1/2 -translate-y-1/2 -rotate-45" />
+          </button>
+        </div>
+
+        {/* Section links */}
+        <nav className="flex-1 flex flex-col justify-center">
+          {menuLinks.map(([href, label, n]) => (
+            <a
+              key={href}
+              href={href}
+              onClick={() => setMenuOpen(false)}
+              className="flex items-baseline gap-4 py-3 border-b border-earth/15"
+            >
+              <span className="font-display italic text-garnet text-[13px] w-7 number">{n}</span>
+              <span className="font-display text-ink text-[30px] leading-none tracking-tight">{label}</span>
+            </a>
+          ))}
+        </nav>
+
+        {/* Bottom — language + book */}
+        <div className="pt-6">
+          <div className="flex items-center text-[12px] font-medium uppercase tracking-wider2 text-ink/70 mb-5">
+            <button
+              type="button"
+              onClick={() => setLang("es")}
+              className={["px-1.5", lang === "es" ? "text-garnet underline underline-offset-[6px]" : ""].join(" ")}
+            >
+              ES
+            </button>
+            <span className="text-ink/30">/</span>
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={["px-1.5", lang === "en" ? "text-garnet underline underline-offset-[6px]" : ""].join(" ")}
+            >
+              EN
+            </button>
+          </div>
+          <a
+            href="https://www.saduaia.com/es/bookcore/"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setMenuOpen(false)}
+            className="flex items-center justify-center bg-ink text-cream py-4 uppercase tracking-wider2 text-[12px] font-medium"
+          >
+            {t.nav.book}
+          </a>
+        </div>
+      </div>
+    </div>
+    </>);
 
 }
 
 /* ───────────────────────────  HERO  (video, wordmark right)  ───────────────────────── */
-
-/* One wordmark line, split into letters that rise in (mobile only — see .hero-letter). */
-function HeroWord({ text, base }) {
-  return (
-    <span className="block">
-      {text.split("").map((ch, i) => (
-        <span
-          key={i}
-          className="hero-letter"
-          style={{ animationDelay: base + i * 55 + "ms" }}
-        >
-          {ch === " " ? " " : ch}
-        </span>
-      ))}
-    </span>
-  );
-}
 
 function Hero({ t }) {
   const videoRef = useRef(null);
@@ -561,21 +655,35 @@ function Hero({ t }) {
               </span>
             </div>
 
-            <h1 className="font-display font-bold leading-[0.92] tracking-tight text-[42px] sm:text-[60px] md:text-[80px] lg:text-[100px]">
-              <HeroWord text={t.hero.wordmark1} base={240} />
-              <HeroWord text={t.hero.wordmark2} base={515} />
-              <HeroWord text={t.hero.wordmark3} base={955} />
+            <h1
+              className="hero-rise-m font-display font-bold leading-[0.92] tracking-tight text-[42px] sm:text-[60px] md:text-[80px] lg:text-[100px]"
+              style={{ animationDelay: "200ms" }}
+            >
+              <span className="block">{t.hero.wordmark1}</span>
+              <span className="block">{t.hero.wordmark2}</span>
+              <span className="block">{t.hero.wordmark3}</span>
             </h1>
 
             <p
               className="hero-rise-m mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto"
-              style={{ animationDelay: "1150ms" }}
+              style={{ animationDelay: "360ms" }}
             >
               {t.hero.tagline}
             </p>
 
-            {/* Spec sheet — 2×2 grid on mobile, single editorial row on desktop */}
-            <div className="mt-7 md:mt-10 grid grid-cols-2 gap-x-10 gap-y-5 md:flex md:items-stretch md:gap-0 justify-center md:justify-end text-cream/85">
+            {/* Mobile-only CTA — minimal hero leans on a single clear action */}
+            <a
+              href="https://www.saduaia.com/es/bookcore/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hero-rise-m md:hidden mt-8 inline-flex items-center justify-center border border-cream/70 text-cream px-9 py-3.5 uppercase tracking-wider2 text-[11px] font-medium"
+              style={{ animationDelay: "520ms" }}
+            >
+              {t.nav.book}
+            </a>
+
+            {/* Spec sheet — desktop only (the mobile hero stays minimal) */}
+            <div className="hidden md:flex md:mt-10 md:items-stretch md:gap-0 md:justify-end text-cream/85">
               {[
                 { n: "XI",  l: t.hero.specHabs    || "Habitaciones" },
                 { n: "I",   l: t.hero.specMesa    || "Restaurante" },
@@ -585,26 +693,24 @@ function Hero({ t }) {
                 <div
                   key={i}
                   className={[
-                    "hero-rise-m flex flex-col items-center md:items-end gap-1.5 md:px-5",
-                    i > 0 ? "md:border-l md:border-cream/15" : "",
+                    "flex flex-col items-end gap-1.5 px-5",
+                    i > 0 ? "border-l border-cream/15" : "",
                   ].join(" ")}
-                  style={{ animationDelay: 1300 + i * 100 + "ms" }}
                 >
-                  <span className="font-display italic text-gold text-[22px] md:text-[28px] leading-none number">
+                  <span className="font-display italic text-gold text-[28px] leading-none number">
                     {s.n}
                   </span>
-                  <span className="uppercase tracking-wider2 text-[9px] md:text-[10px] font-medium text-cream/70 whitespace-nowrap">
+                  <span className="uppercase tracking-wider2 text-[10px] font-medium text-cream/70 whitespace-nowrap">
                     {s.l}
                   </span>
                 </div>
               ))}
             </div>
 
-            {/* Google Reviews social proof — small badge below spec sheet */}
+            {/* Google Reviews social proof — desktop only */}
             <a
               href="#reviews"
-              className="hero-rise-m mt-7 md:mt-9 inline-flex items-center justify-end gap-4 group/g w-auto md:ml-auto"
-              style={{ animationDelay: "1750ms" }}
+              className="hidden md:inline-flex mt-9 items-center justify-end gap-4 group/g w-auto md:ml-auto"
             >
               <span className="inline-flex items-center gap-2.5 px-4 py-2.5 bg-cream/10 backdrop-blur-sm border border-cream/25 hover:bg-cream/20 transition-colors duration-500">
                 <span className="inline-flex items-center gap-1.5" style={{ color: "#C89211" }}>
