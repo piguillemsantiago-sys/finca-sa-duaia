@@ -587,6 +587,21 @@ function Nav({
 
 /* ───────────────────────────  HERO  (video, wordmark right)  ───────────────────────── */
 
+/* One wordmark line, split into letters that rise in (mobile only — see .hero-letter). */
+function HeroWord({
+  text,
+  base
+}) {
+  return /*#__PURE__*/React.createElement("span", {
+    className: "block"
+  }, text.split("").map((ch, i) => /*#__PURE__*/React.createElement("span", {
+    key: i,
+    className: "hero-letter",
+    style: {
+      animationDelay: base + i * 55 + "ms"
+    }
+  }, ch === " " ? " " : ch)));
+}
 function Hero({
   t
 }) {
@@ -628,7 +643,10 @@ function Hero({
   }, /*#__PURE__*/React.createElement("div", {
     className: "text-cream text-center md:text-right max-w-md md:max-w-none [text-shadow:0_1px_12px_rgba(26,20,16,0.55)] md:[text-shadow:none]"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "mb-5 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85"
+    className: "hero-rise-m mb-5 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85",
+    style: {
+      animationDelay: "80ms"
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "hidden md:inline-block w-12 h-px bg-cream/55"
   }), /*#__PURE__*/React.createElement("span", {
@@ -639,14 +657,20 @@ function Hero({
     className: "uppercase tracking-wider2 text-[10px] md:text-[11px] font-medium"
   }, t.hero.eyebrow)), /*#__PURE__*/React.createElement("h1", {
     className: "font-display font-bold leading-[0.92] tracking-tight text-[42px] sm:text-[60px] md:text-[80px] lg:text-[100px]"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block"
-  }, t.hero.wordmark1), /*#__PURE__*/React.createElement("span", {
-    className: "block"
-  }, t.hero.wordmark2), /*#__PURE__*/React.createElement("span", {
-    className: "block"
-  }, t.hero.wordmark3)), /*#__PURE__*/React.createElement("p", {
-    className: "mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto"
+  }, /*#__PURE__*/React.createElement(HeroWord, {
+    text: t.hero.wordmark1,
+    base: 240
+  }), /*#__PURE__*/React.createElement(HeroWord, {
+    text: t.hero.wordmark2,
+    base: 515
+  }), /*#__PURE__*/React.createElement(HeroWord, {
+    text: t.hero.wordmark3,
+    base: 955
+  })), /*#__PURE__*/React.createElement("p", {
+    className: "hero-rise-m mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto",
+    style: {
+      animationDelay: "1150ms"
+    }
   }, t.hero.tagline), /*#__PURE__*/React.createElement("div", {
     className: "mt-7 md:mt-10 grid grid-cols-2 gap-x-10 gap-y-5 md:flex md:items-stretch md:gap-0 justify-center md:justify-end text-cream/85"
   }, [{
@@ -663,14 +687,20 @@ function Hero({
     l: t.hero.specSea || "del mar"
   }].map((s, i, arr) => /*#__PURE__*/React.createElement("div", {
     key: i,
-    className: ["flex flex-col items-center md:items-end gap-1.5 md:px-5", i > 0 ? "md:border-l md:border-cream/15" : ""].join(" ")
+    className: ["hero-rise-m flex flex-col items-center md:items-end gap-1.5 md:px-5", i > 0 ? "md:border-l md:border-cream/15" : ""].join(" "),
+    style: {
+      animationDelay: 1300 + i * 100 + "ms"
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "font-display italic text-gold text-[22px] md:text-[28px] leading-none number"
   }, s.n), /*#__PURE__*/React.createElement("span", {
     className: "uppercase tracking-wider2 text-[9px] md:text-[10px] font-medium text-cream/70 whitespace-nowrap"
   }, s.l)))), /*#__PURE__*/React.createElement("a", {
     href: "#reviews",
-    className: "mt-7 md:mt-9 inline-flex items-center justify-end gap-4 group/g w-auto md:ml-auto"
+    className: "hero-rise-m mt-7 md:mt-9 inline-flex items-center justify-end gap-4 group/g w-auto md:ml-auto",
+    style: {
+      animationDelay: "1750ms"
+    }
   }, /*#__PURE__*/React.createElement("span", {
     className: "inline-flex items-center gap-2.5 px-4 py-2.5 bg-cream/10 backdrop-blur-sm border border-cream/25 hover:bg-cream/20 transition-colors duration-500"
   }, /*#__PURE__*/React.createElement("span", {

@@ -495,6 +495,23 @@ function Nav({ lang, setLang, t, scrolled }) {
 
 /* ───────────────────────────  HERO  (video, wordmark right)  ───────────────────────── */
 
+/* One wordmark line, split into letters that rise in (mobile only — see .hero-letter). */
+function HeroWord({ text, base }) {
+  return (
+    <span className="block">
+      {text.split("").map((ch, i) => (
+        <span
+          key={i}
+          className="hero-letter"
+          style={{ animationDelay: base + i * 55 + "ms" }}
+        >
+          {ch === " " ? " " : ch}
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function Hero({ t }) {
   const videoRef = useRef(null);
   useEffect(() => {
@@ -530,7 +547,10 @@ function Hero({ t }) {
       <div className="absolute inset-0 flex items-end md:items-center">
         <div className="mx-auto max-w-[1320px] w-full px-6 md:px-10 flex justify-center md:justify-end pb-28 md:pb-0">
           <div className="text-cream text-center md:text-right max-w-md md:max-w-none [text-shadow:0_1px_12px_rgba(26,20,16,0.55)] md:[text-shadow:none]">
-            <div className="mb-5 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85">
+            <div
+              className="hero-rise-m mb-5 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85"
+              style={{ animationDelay: "80ms" }}
+            >
               <span className="hidden md:inline-block w-12 h-px bg-cream/55" />
               <span className="font-display italic text-gold text-[15px] md:text-[17px] tracking-normal leading-none number">
                 MCDXXV
@@ -542,12 +562,15 @@ function Hero({ t }) {
             </div>
 
             <h1 className="font-display font-bold leading-[0.92] tracking-tight text-[42px] sm:text-[60px] md:text-[80px] lg:text-[100px]">
-              <span className="block">{t.hero.wordmark1}</span>
-              <span className="block">{t.hero.wordmark2}</span>
-              <span className="block">{t.hero.wordmark3}</span>
+              <HeroWord text={t.hero.wordmark1} base={240} />
+              <HeroWord text={t.hero.wordmark2} base={515} />
+              <HeroWord text={t.hero.wordmark3} base={955} />
             </h1>
 
-            <p className="mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto">
+            <p
+              className="hero-rise-m mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto"
+              style={{ animationDelay: "1150ms" }}
+            >
               {t.hero.tagline}
             </p>
 
@@ -562,9 +585,10 @@ function Hero({ t }) {
                 <div
                   key={i}
                   className={[
-                    "flex flex-col items-center md:items-end gap-1.5 md:px-5",
+                    "hero-rise-m flex flex-col items-center md:items-end gap-1.5 md:px-5",
                     i > 0 ? "md:border-l md:border-cream/15" : "",
                   ].join(" ")}
+                  style={{ animationDelay: 1300 + i * 100 + "ms" }}
                 >
                   <span className="font-display italic text-gold text-[22px] md:text-[28px] leading-none number">
                     {s.n}
@@ -579,7 +603,8 @@ function Hero({ t }) {
             {/* Google Reviews social proof — small badge below spec sheet */}
             <a
               href="#reviews"
-              className="mt-7 md:mt-9 inline-flex items-center justify-end gap-4 group/g w-auto md:ml-auto"
+              className="hero-rise-m mt-7 md:mt-9 inline-flex items-center justify-end gap-4 group/g w-auto md:ml-auto"
+              style={{ animationDelay: "1750ms" }}
             >
               <span className="inline-flex items-center gap-2.5 px-4 py-2.5 bg-cream/10 backdrop-blur-sm border border-cream/25 hover:bg-cream/20 transition-colors duration-500">
                 <span className="inline-flex items-center gap-1.5" style={{ color: "#C89211" }}>
