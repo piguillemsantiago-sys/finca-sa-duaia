@@ -1756,20 +1756,21 @@ function Reviews({ t }) {
   if (!r) return null;
 
   const items = r.items;
-  // 3 visible slots — each shows one review from items at a time. We cycle them
+  // 4 visible slots — 2×2 on mobile, first 3 in a row on desktop. We cycle them
   // ONE AT A TIME (round-robin) so adjacent cards never swap together.
-  const [idxs, setIdxs] = useState([0, 1, 2]);
+  const SLOTS = 4;
+  const [idxs, setIdxs] = useState([0, 1, 2, 3]);
 
   useEffect(() => {
-    if (!items || items.length <= 3) return;
+    if (!items || items.length <= SLOTS) return;
     let tick = 0;
     const id = setInterval(() => {
       setIdxs(prev => {
         const next = [...prev];
-        const col = tick % 3;
-        // Find a review not currently shown in any column
+        const col = tick % SLOTS;
+        // Find a review not currently shown in any slot
         const visible = new Set(next);
-        let candidate = (next[col] + 3) % items.length;
+        let candidate = (next[col] + SLOTS) % items.length;
         // Walk forward until we land on one not currently visible
         let safety = 0;
         while (visible.has(candidate) && safety < items.length) {
@@ -1780,12 +1781,12 @@ function Reviews({ t }) {
         return next;
       });
       tick++;
-    }, 3200); // one column swaps every 3.2s — gentle, attention-grabbing without being noisy
+    }, 3200); // one slot swaps every 3.2s — gentle, attention-grabbing without being noisy
     return () => clearInterval(id);
   }, [items]);
 
   // Subtle deterministic rotations
-  const rotMap = [-1.0, 0.6, -0.8];
+  const rotMap = [-1.0, 0.6, -0.8, 0.9];
 
   return (
     <section id="reviews" className="bg-linen py-16 md:py-36 relative overflow-hidden">
@@ -1835,15 +1836,18 @@ function Reviews({ t }) {
           </div>
         </div>
 
-        {/* 3-column carousel — each card cycles independently, one at a time */}
-        <div className="grid grid-cols-3 gap-2 md:gap-7 perspective-1000">
+        {/* Reviews — 2×2 on mobile (4 visible), first 3 in a row on desktop. Each slot cycles. */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-7 perspective-1000">
           {idxs.map((idx, col) => {
             const it = items[idx];
             return (
-              <div key={col} className="relative md:min-h-[320px]">
+              <div
+                key={col}
+                className={["relative md:min-h-[320px]", col === 3 ? "md:hidden" : ""].join(" ")}
+              >
                 <article
                   key={`${col}-${idx}`}
-                  className="review-card review-card-cycle relative md:absolute inset-0 h-full bg-cream border border-earth/20 p-2.5 md:p-8 flex flex-col"
+                  className="review-card review-card-cycle relative md:absolute inset-0 h-full bg-cream border border-earth/20 p-4 md:p-8 flex flex-col"
                   style={{
                     "--rot": rotMap[col] + "deg",
                     "--d": "0ms",
@@ -1852,36 +1856,35 @@ function Reviews({ t }) {
                   {/* Subtle quote glyph in the corner */}
                   <span
                     aria-hidden="true"
-                    className="absolute top-1 right-1.5 md:top-3 md:right-4 font-display italic text-garnet/15 text-[26px] md:text-[64px] leading-none select-none"
+                    className="absolute top-1.5 right-2.5 md:top-3 md:right-4 font-display italic text-garnet/15 text-[34px] md:text-[64px] leading-none select-none"
                   >
                     ”
                   </span>
 
-                  <div className="flex items-center justify-between mb-2.5 md:mb-5">
+                  <div className="flex items-center justify-between mb-3 md:mb-5">
                     <Stars
                       value={5}
-                      starClass="w-[9px] h-[9px] md:w-[14px] md:h-[14px]"
-                      gapClass="gap-0.5 md:gap-1"
+                      starClass="w-[11px] h-[11px] md:w-[14px] md:h-[14px]"
                     />
-                    <span className="hidden md:inline text-earth uppercase tracking-wider2 text-[9px] font-medium">
+                    <span className="text-earth uppercase tracking-wider2 text-[8px] md:text-[9px] font-medium">
                       {String(idx + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
                     </span>
                   </div>
 
-                  <p className="font-display text-ink text-[10.5px] md:text-[18px] leading-[1.45] md:leading-[1.55] tracking-tight flex-1">
-                    <span className="text-garnet font-display italic text-[13px] md:text-[22px] leading-none align-text-top mr-0.5">“</span>
+                  <p className="font-display text-ink text-[12.5px] md:text-[18px] leading-[1.5] md:leading-[1.55] tracking-tight flex-1">
+                    <span className="text-garnet font-display italic text-[16px] md:text-[22px] leading-none align-text-top mr-0.5">“</span>
                     {it.text}
-                    <span className="text-garnet font-display italic text-[13px] md:text-[22px] leading-none align-text-bottom ml-0.5">”</span>
+                    <span className="text-garnet font-display italic text-[16px] md:text-[22px] leading-none align-text-bottom ml-0.5">”</span>
                   </p>
 
-                  <div className="mt-3 pt-2.5 md:mt-6 md:pt-5 border-t border-earth/20 flex flex-col items-start gap-0.5 md:flex-row md:items-end md:justify-between md:gap-3">
+                  <div className="mt-4 pt-3 md:mt-6 md:pt-5 border-t border-earth/20 flex flex-col items-start gap-0.5 md:flex-row md:items-end md:justify-between md:gap-3">
                     <div>
-                      <div className="font-display italic text-ink text-[11px] md:text-[16px] leading-tight">{it.name}</div>
-                      <div className="text-earth uppercase tracking-wider2 text-[7.5px] md:text-[9px] font-medium mt-1 md:mt-1.5">
+                      <div className="font-display italic text-ink text-[13px] md:text-[16px] leading-tight">{it.name}</div>
+                      <div className="text-earth uppercase tracking-wider2 text-[8.5px] md:text-[9px] font-medium mt-1 md:mt-1.5">
                         {it.city}
                       </div>
                     </div>
-                    <div className="text-earth text-[8px] md:text-[11px] font-light italic shrink-0 text-left md:text-right">
+                    <div className="text-earth text-[9.5px] md:text-[11px] font-light italic shrink-0 text-left md:text-right">
                       {it.when}
                     </div>
                   </div>
