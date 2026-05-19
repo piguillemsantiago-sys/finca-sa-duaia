@@ -472,7 +472,9 @@ function Nav({ lang, setLang, t, scrolled }) {
           </div>
 
           <a
-            href="#book"
+            href="https://www.saduaia.com/es/bookcore/"
+            target="_blank"
+            rel="noopener noreferrer"
             className={[
             "inline-flex items-center justify-center border transition-all duration-500",
             "px-5 md:px-7 py-3 md:py-3.5",
@@ -1968,16 +1970,16 @@ function Booking({ t }) {
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5">
               <a
-                href="https://www.saduaia.com"
+                href="https://www.saduaia.com/es/bookcore/"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={(e) => {
                   if (window.top !== window.self) {
                     e.preventDefault();
                     try {
-                      const w = window.open("https://www.saduaia.com", "_blank", "noopener,noreferrer");
-                      if (!w) window.top.location.href = "https://www.saduaia.com";
-                    } catch { window.location.href = "https://www.saduaia.com"; }
+                      const w = window.open("https://www.saduaia.com/es/bookcore/", "_blank", "noopener,noreferrer");
+                      if (!w) window.top.location.href = "https://www.saduaia.com/es/bookcore/";
+                    } catch { window.location.href = "https://www.saduaia.com/es/bookcore/"; }
                   }
                 }}
                 className="inline-flex items-center gap-3 bg-ink text-cream px-7 py-4 uppercase tracking-wider2 text-[11px] font-medium hover:bg-garnet transition-colors duration-500 group/r"
@@ -2248,7 +2250,9 @@ function ScrollNav({ t, lang }) {
 function FloatingBookButton({ t, scrolled }) {
   return (
     <a
-      href="#book"
+      href="https://www.saduaia.com/es/bookcore/"
+      target="_blank"
+      rel="noopener noreferrer"
       className={[
         "fixed bottom-5 right-5 md:hidden z-40 inline-flex items-center gap-2",
         "bg-ink text-cream px-5 py-3 text-[11px] uppercase tracking-wider2 font-medium",

@@ -575,7 +575,9 @@ function Nav({
     onClick: () => setLang("en"),
     className: ["px-1.5 transition-colors duration-300", lang === "en" ? "underline underline-offset-[6px] decoration-1 " + (scrolled ? "text-garnet" : "text-cream") : "hover:" + (scrolled ? "text-ink" : "text-cream")].join(" ")
   }, "EN")), /*#__PURE__*/React.createElement("a", {
-    href: "#book",
+    href: "https://www.saduaia.com/es/bookcore/",
+    target: "_blank",
+    rel: "noopener noreferrer",
     className: ["inline-flex items-center justify-center border transition-all duration-500", "px-5 md:px-7 py-3 md:py-3.5", "text-[11px] md:text-[12px] font-medium uppercase", scrolled ? "border-ink text-ink hover:bg-ink hover:text-cream" : "border-cream/70 text-cream hover:bg-cream hover:text-ink"].join(" "),
     style: {
       letterSpacing: "0.28em"
@@ -1938,17 +1940,17 @@ function Booking({
   }, "Mejor precio garantizado en la web oficial. Calendario, tarifas y confirmaci\xF3n instant\xE1nea."), /*#__PURE__*/React.createElement("div", {
     className: "mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5"
   }, /*#__PURE__*/React.createElement("a", {
-    href: "https://www.saduaia.com",
+    href: "https://www.saduaia.com/es/bookcore/",
     target: "_blank",
     rel: "noopener noreferrer",
     onClick: e => {
       if (window.top !== window.self) {
         e.preventDefault();
         try {
-          const w = window.open("https://www.saduaia.com", "_blank", "noopener,noreferrer");
-          if (!w) window.top.location.href = "https://www.saduaia.com";
+          const w = window.open("https://www.saduaia.com/es/bookcore/", "_blank", "noopener,noreferrer");
+          if (!w) window.top.location.href = "https://www.saduaia.com/es/bookcore/";
         } catch {
-          window.location.href = "https://www.saduaia.com";
+          window.location.href = "https://www.saduaia.com/es/bookcore/";
         }
       }
     },
@@ -2216,7 +2218,9 @@ function FloatingBookButton({
   scrolled
 }) {
   return /*#__PURE__*/React.createElement("a", {
-    href: "#book",
+    href: "https://www.saduaia.com/es/bookcore/",
+    target: "_blank",
+    rel: "noopener noreferrer",
     className: ["fixed bottom-5 right-5 md:hidden z-40 inline-flex items-center gap-2", "bg-ink text-cream px-5 py-3 text-[11px] uppercase tracking-wider2 font-medium", "border border-ink shadow-[0_8px_24px_-8px_rgba(26,20,16,0.55)]", "transition-all duration-500 ease-out", scrolled ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"].join(" "),
     "aria-label": t.nav.book
   }, t.nav.book, /*#__PURE__*/React.createElement("svg", {
