@@ -1,0 +1,324 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Custom CSS for Finca Sa Duaia — moved here from the prototype's inline
+   <style> block so the whole site ships one compiled stylesheet (css/site.css).
+   ───────────────────────────────────────────────────────────────────────── */
+
+html { scroll-behavior: auto; }
+html.lenis { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto; }
+.lenis.lenis-smooth [data-lenis-prevent] { overscroll-behavior: contain; }
+.lenis.lenis-stopped { overflow: clip; }
+
+/* Hide native scrollbars — using a custom side indicator instead */
+html { scrollbar-width: none; -ms-overflow-style: none; }
+html::-webkit-scrollbar { width: 0; height: 0; display: none; }
+body { scrollbar-width: none; -ms-overflow-style: none; }
+body::-webkit-scrollbar { width: 0; height: 0; display: none; }
+body {
+  background: #F9F0E3;
+  color: #1A1410;
+  font-family: 'Montserrat', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* Reveal on scroll */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 800ms cubic-bezier(.2,.6,.2,1), transform 800ms cubic-bezier(.2,.6,.2,1);
+  will-change: opacity, transform;
+}
+.reveal.is-visible { opacity: 1; transform: translateY(0); }
+.reveal.delay-1 { transition-delay: 100ms; }
+.reveal.delay-2 { transition-delay: 200ms; }
+.reveal.delay-3 { transition-delay: 300ms; }
+
+/* Iris reveal — opens from the center outward */
+.reveal-iris {
+  opacity: 0;
+  clip-path: inset(0 50% 0 50%);
+  transition:
+    opacity   1000ms cubic-bezier(.2,.6,.2,1),
+    clip-path 1000ms cubic-bezier(.2,.6,.2,1);
+  will-change: clip-path, opacity;
+}
+.reveal-iris.is-visible { opacity: 1; clip-path: inset(0 0 0 0); }
+.reveal-iris.delay-1 { transition-delay: 120ms; }
+.reveal-iris.delay-2 { transition-delay: 240ms; }
+
+/* Section opener — thin garnet line growing from center */
+.section-opener {
+  height: 1px;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  background: linear-gradient(to right,
+    transparent 0%, rgba(124, 22, 33, 0) 30%,
+    rgba(124, 22, 33, 0.5) 50%,
+    rgba(124, 22, 33, 0) 70%, transparent 100%);
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 1100ms cubic-bezier(.22,.61,.36,1);
+}
+.section-opener.is-visible { transform: scaleX(1); }
+.section-opener.on-dark {
+  background: linear-gradient(to right,
+    transparent 0%, rgba(249, 240, 227, 0) 30%,
+    rgba(200, 146, 17, 0.65) 50%,
+    rgba(249, 240, 227, 0) 70%, transparent 100%);
+}
+.section-mark {
+  position: relative; display: block; width: 6px; height: 6px;
+  margin: -3.5px auto 0;
+  transform: rotate(45deg) scale(0);
+  background: #7C1621;
+  transition: transform 600ms cubic-bezier(.2,.6,.2,1) 500ms,
+              opacity   600ms ease 500ms;
+  opacity: 0;
+}
+.section-mark.on-dark { background: #C89211; }
+.section-opener.is-visible + .section-mark {
+  transform: rotate(45deg) scale(1);
+  opacity: 1;
+}
+
+/* Image iris zoom-out */
+.img-iris > img {
+  transform: scale(1.05);
+  transition: transform 1300ms cubic-bezier(.2,.6,.2,1);
+}
+.img-iris.is-visible > img { transform: scale(1); }
+
+/* Rise — bigger translateY than .reveal, for dramatic up-from-below entrance */
+.rise {
+  opacity: 0;
+  transform: translateY(72px);
+  transition:
+    opacity   1100ms cubic-bezier(.22,1,.36,1),
+    transform 1100ms cubic-bezier(.22,1,.36,1);
+  will-change: opacity, transform;
+}
+.rise.is-visible { opacity: 1; transform: translateY(0); }
+.rise.delay-1 { transition-delay: 120ms; }
+.rise.delay-2 { transition-delay: 240ms; }
+.rise.delay-3 { transition-delay: 380ms; }
+.rise.delay-4 { transition-delay: 520ms; }
+
+/* Slide from left — for inline editorial accents */
+.slide-r {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition:
+    opacity   900ms cubic-bezier(.22,1,.36,1),
+    transform 900ms cubic-bezier(.22,1,.36,1);
+}
+.slide-r.is-visible { opacity: 1; transform: translateX(0); }
+.slide-r.delay-1 { transition-delay: 120ms; }
+.slide-r.delay-2 { transition-delay: 240ms; }
+.slide-r.delay-3 { transition-delay: 380ms; }
+
+/* Slide from right */
+.slide-l {
+  opacity: 0;
+  transform: translateX(40px);
+  transition:
+    opacity   900ms cubic-bezier(.22,1,.36,1),
+    transform 900ms cubic-bezier(.22,1,.36,1);
+}
+.slide-l.is-visible { opacity: 1; transform: translateX(0); }
+
+/* Animated underline (for headings that grow a hairline) */
+.underline-draw {
+  background-image: linear-gradient(to right, currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 0% 1px;
+  transition: background-size 1200ms cubic-bezier(.22,1,.36,1);
+}
+.underline-draw.is-visible { background-size: 100% 1px; }
+
+/* Marquee — slow horizontal text scroll for transition strips */
+@keyframes marquee-scroll {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: inline-flex;
+  animation: marquee-scroll 48s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover { animation-play-state: paused; }
+
+/* Card hover — gentle lift + image zoom */
+.stay-card .stay-img { transition: transform 1400ms cubic-bezier(.22,1,.36,1); }
+.stay-card:hover .stay-img { transform: scale(1.05); }
+.stay-card .stay-overlay { transition: opacity 600ms ease; }
+.stay-card:hover .stay-overlay { opacity: 1; }
+
+/* Magnetic hover for stat numerals */
+.stat-num { transition: transform 600ms cubic-bezier(.22,1,.36,1), color 400ms; }
+.stat-block:hover .stat-num { transform: translateY(-4px); }
+.stat-block .stat-rule { transition: height 600ms cubic-bezier(.22,1,.36,1); }
+.stat-block:hover .stat-rule { height: 56px !important; }
+
+/* Promise numeral — slow idle float when not interacted with */
+@keyframes promiseDrift {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50%      { transform: translateY(-6px) rotate(-0.4deg); }
+}
+.promise-num {
+  display: inline-block;
+  animation: promiseDrift 7s ease-in-out infinite;
+  will-change: transform;
+  transition: color 500ms cubic-bezier(.22,1,.36,1), text-shadow 500ms;
+}
+.promise-row:hover .promise-num,
+.promise-row.is-active .promise-num {
+  animation-play-state: paused;
+}
+.promise-row {
+  transition: background 700ms ease;
+}
+.promise-row .promise-title,
+.promise-row .promise-body,
+.promise-row .promise-aside {
+  transition: opacity 700ms ease, transform 900ms cubic-bezier(.22,1,.36,1), color 500ms ease;
+}
+/* Dim non-active rows when one is active */
+.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-num,
+.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-title,
+.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-body,
+.promises-stack[data-has-active="true"] .promise-row:not(.is-active) .promise-aside {
+  opacity: 0.42;
+}
+.promise-row.is-active .promise-aside {
+  transform: translateX(0);
+}
+.promise-row .promise-aside {
+  transform: translateX(-12px);
+}
+/* Active rule that grows */
+.promise-rule {
+  transition: width 900ms cubic-bezier(.22,1,.36,1), background-color 500ms;
+}
+
+/* Sticky promise index — vertical I / II / III markers */
+.promise-tick {
+  transition: color 500ms ease, transform 700ms cubic-bezier(.22,1,.36,1);
+}
+.promise-tick-line {
+  transition: width 700ms cubic-bezier(.22,1,.36,1), background 500ms ease;
+}
+
+/* Review card — float in with rotate, lift on hover */
+@keyframes reviewFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+.review-card {
+  opacity: 0;
+  transform: translateY(36px) rotate(var(--rot, 0deg));
+  transition:
+    opacity   1000ms cubic-bezier(.22,1,.36,1) var(--d, 0ms),
+    transform 1000ms cubic-bezier(.22,1,.36,1) var(--d, 0ms),
+    box-shadow 500ms ease,
+    border-color 500ms ease;
+  will-change: opacity, transform;
+}
+.review-card.is-visible {
+  opacity: 1;
+  transform: translateY(0) rotate(var(--rot, 0deg));
+}
+.review-card:hover {
+  transform: translateY(-6px) rotate(0) !important;
+  box-shadow: 0 18px 48px -18px rgba(124, 22, 33, 0.18), 0 1px 0 rgba(124,22,33,0.05);
+  border-color: rgba(124, 22, 33, 0.35);
+  z-index: 2;
+}
+
+/* Stars — twinkle on hover */
+.star {
+  display: inline-block;
+  transition: transform 300ms cubic-bezier(.22,1,.36,1), color 300ms;
+}
+.review-card:hover .star {
+  animation: starTwinkle 600ms ease-out forwards;
+}
+@keyframes starTwinkle {
+  0%   { transform: scale(1) rotate(0); }
+  50%  { transform: scale(1.18) rotate(-6deg); }
+  100% { transform: scale(1) rotate(0); }
+}
+.review-card:hover .star:nth-child(2) { animation-delay: 60ms; }
+.review-card:hover .star:nth-child(3) { animation-delay: 120ms; }
+.review-card:hover .star:nth-child(4) { animation-delay: 180ms; }
+.review-card:hover .star:nth-child(5) { animation-delay: 240ms; }
+
+/* Big quote mark idle pulse */
+@keyframes quoteBreath {
+  0%, 100% { opacity: 0.10; transform: scale(1); }
+  50%      { opacity: 0.16; transform: scale(1.05); }
+}
+.review-quote-mark {
+  animation: quoteBreath 5s ease-in-out infinite;
+}
+
+/* Cycling review card — dramatic crossfade with scale + slide so the swap is clearly visible */
+@keyframes reviewCycleIn {
+  0%   { opacity: 0; transform: translateY(70px) scale(0.92) rotate(var(--rot, 0deg)); filter: blur(6px); }
+  35%  { opacity: 0.4; transform: translateY(36px) scale(0.96) rotate(calc(var(--rot, 0deg) / 2)); filter: blur(3px); }
+  70%  { opacity: 1; transform: translateY(-4px) scale(1.01) rotate(0deg); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0)   scale(1)    rotate(var(--rot, 0deg)); filter: blur(0); }
+}
+.review-card-cycle {
+  opacity: 0;
+  animation: reviewCycleIn 1150ms cubic-bezier(.22,1,.36,1) forwards;
+  box-shadow: 0 0 0 rgba(124,22,33,0);
+}
+/* Brief border glow as the card lands */
+@keyframes reviewBorderFlash {
+  0%   { border-color: rgba(124, 22, 33, 0.55); }
+  100% { border-color: rgba(168, 137, 108, 0.20); }
+}
+.review-card-cycle {
+  animation:
+    reviewCycleIn 1150ms cubic-bezier(.22,1,.36,1) forwards,
+    reviewBorderFlash 1400ms ease-out forwards;
+}
+
+/* Long, slow vertical scroll cue line */
+@keyframes drip {
+  0%   { transform: scaleY(0); transform-origin: top; }
+  45%  { transform: scaleY(1); transform-origin: top; }
+  55%  { transform: scaleY(1); transform-origin: bottom; }
+  100% { transform: scaleY(0); transform-origin: bottom; }
+}
+.scroll-line { animation: drip 3.4s ease-in-out infinite; }
+
+.hairline { height: 1px; background: currentColor; opacity: 0.25; }
+.ph { background: linear-gradient(135deg, #efe4d2, #e6d8be); }
+
+.booking-shell {
+  box-shadow: 0 1px 0 rgba(124,22,33,0.08), 0 30px 80px -30px rgba(26,20,16,0.25);
+}
+
+/* Hero vignette — soft right + bottom for legibility of right-side wordmark */
+.hero-vignette {
+  background:
+    linear-gradient(to right, rgba(26,20,16,0) 30%, rgba(26,20,16,0.55) 78%, rgba(26,20,16,0.78) 100%),
+    linear-gradient(to bottom, rgba(26,20,16,0.25) 0%, rgba(26,20,16,0) 30%, rgba(26,20,16,0) 70%, rgba(26,20,16,0.45) 100%);
+}
+@media (max-width: 768px) {
+  .hero-vignette {
+    background:
+      linear-gradient(to bottom, rgba(26,20,16,0.25) 0%, rgba(26,20,16,0.15) 40%, rgba(26,20,16,0.7) 100%);
+  }
+}
+
+::selection { background: #7C1621; color: #F9F0E3; }
+.number { font-variant-numeric: lining-nums; }

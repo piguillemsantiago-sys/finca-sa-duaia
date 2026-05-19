@@ -1,0 +1,26 @@
+{
+  "name": "finca-sa-duaia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Landing page de Finca Sa Duaia de Dalt — agroturismo en Artà, Mallorca.",
+  "scripts": {
+    "build:js": "babel src/app.jsx --out-file js/app.js --presets @babel/preset-react",
+    "build:css": "tailwindcss -i src/tailwind.css -o css/site.css --minify",
+    "build:vendor": "node scripts/copy-vendor.js",
+    "build": "npm run build:vendor && npm run build:js && npm run build:css",
+    "watch:css": "tailwindcss -i src/tailwind.css -o css/site.css --watch",
+    "watch:js": "babel src/app.jsx --out-file js/app.js --presets @babel/preset-react --watch",
+    "start": "node server.js"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.25.0",
+    "@babel/core": "^7.25.0",
+    "@babel/preset-react": "^7.24.0",
+    "tailwindcss": "^3.4.0"
+  },
+  "dependencies": {
+    "express": "^4.22.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
+}

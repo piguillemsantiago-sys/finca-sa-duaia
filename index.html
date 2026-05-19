@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Finca Sa Duaia de Dalt · Agroturismo en Artà, Mallorca</title>
+<meta name="description" content="Una finca del siglo XV en la Serra de Llevant. 11 estancias, restaurante mallorquín, a 30 minutos del mar." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet" />
+
+<!-- Compiled Tailwind + custom styles (built from src/tailwind.css → npm run build:css) -->
+<link rel="stylesheet" href="css/site.css" />
+</head>
+<body>
+
+<div id="root"></div>
+
+<!-- Smooth global scroll — Lenis with calm easing for editorial feel. -->
+<script src="https://unpkg.com/lenis@1.1.20/dist/lenis.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    if (typeof Lenis === 'undefined') return;
+    const lenis = new Lenis({
+      duration: 1.4,                                  // long, cinematic
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // exponential ease-out
+      smoothWheel: true,
+      smoothTouch: false,                             // mobile: native scroll, more natural
+      wheelMultiplier: 0.9,
+      touchMultiplier: 1.5,
+    });
+    function raf(time) {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    }
+    requestAnimationFrame(raf);
+    // Sync anchor clicks to Lenis so #welcome etc. animate smoothly
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+      const id = a.getAttribute('href').slice(1);
+      if (!id) return;
+      const target = document.getElementById(id);
+      if (!target) return;
+      e.preventDefault();
+      lenis.scrollTo(target, { offset: 0, duration: 1.6 });
+    });
+    window.__lenis = lenis;
+  });
+</script>
+
+<!-- React (production UMD, vendored locally — see scripts/copy-vendor.js) -->
+<script src="js/vendor/react.production.min.js"></script>
+<script src="js/vendor/react-dom.production.min.js"></script>
+
+<!-- App — pre-transpiled from src/app.jsx (npm run build:js) -->
+<script src="js/app.js"></script>
+</body>
+</html>
