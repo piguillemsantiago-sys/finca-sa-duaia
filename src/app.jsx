@@ -1836,14 +1836,14 @@ function Reviews({ t }) {
         </div>
 
         {/* 3-column carousel — each card cycles independently, one at a time */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-7 perspective-1000">
+        <div className="reviews-rail flex md:grid md:grid-cols-3 gap-4 md:gap-7 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 perspective-1000">
           {idxs.map((idx, col) => {
             const it = items[idx];
             return (
-              <div key={col} className="relative" style={{ minHeight: "320px" }}>
+              <div key={col} className="relative shrink-0 w-[78vw] sm:w-[44vw] md:w-auto snap-center min-h-[280px] md:min-h-[320px]">
                 <article
                   key={`${col}-${idx}`}
-                  className="review-card review-card-cycle absolute inset-0 bg-cream border border-earth/20 p-7 md:p-8 flex flex-col"
+                  className="review-card review-card-cycle absolute inset-0 bg-cream border border-earth/20 p-6 md:p-8 flex flex-col"
                   style={{
                     "--rot": rotMap[col] + "deg",
                     "--d": "0ms",

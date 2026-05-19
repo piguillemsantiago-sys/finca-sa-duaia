@@ -306,6 +306,10 @@ body {
 .hairline { height: 1px; background: currentColor; opacity: 0.25; }
 .ph { background: linear-gradient(135deg, #efe4d2, #e6d8be); }
 
+/* Reviews horizontal rail (mobile) — hide the scrollbar, keep the swipe */
+.reviews-rail { scrollbar-width: none; -ms-overflow-style: none; }
+.reviews-rail::-webkit-scrollbar { width: 0; height: 0; display: none; }
+
 .booking-shell {
   box-shadow: 0 1px 0 rgba(124,22,33,0.08), 0 30px 80px -30px rgba(26,20,16,0.25);
 }

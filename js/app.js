@@ -1808,18 +1808,15 @@ function Reviews({
   }, /*#__PURE__*/React.createElement(GoogleMark, {
     label: r.sourceLabel
   }))))), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-1 md:grid-cols-3 gap-5 md:gap-7 perspective-1000"
+    className: "reviews-rail flex md:grid md:grid-cols-3 gap-4 md:gap-7 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 perspective-1000"
   }, idxs.map((idx, col) => {
     const it = items[idx];
     return /*#__PURE__*/React.createElement("div", {
       key: col,
-      className: "relative",
-      style: {
-        minHeight: "320px"
-      }
+      className: "relative shrink-0 w-[78vw] sm:w-[44vw] md:w-auto snap-center min-h-[280px] md:min-h-[320px]"
     }, /*#__PURE__*/React.createElement("article", {
       key: `${col}-${idx}`,
-      className: "review-card review-card-cycle absolute inset-0 bg-cream border border-earth/20 p-7 md:p-8 flex flex-col",
+      className: "review-card review-card-cycle absolute inset-0 bg-cream border border-earth/20 p-6 md:p-8 flex flex-col",
       style: {
         "--rot": rotMap[col] + "deg",
         "--d": "0ms"
