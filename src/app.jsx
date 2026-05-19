@@ -1707,17 +1707,17 @@ function Details({ t }) {
 
 /* ───────────────────────────  REVIEWS  ───────────────────────── */
 
-function Stars({ value = 5 }) {
+function Stars({ value = 5, starClass = "w-[14px] h-[14px]", gapClass = "gap-1" }) {
   const full = Math.floor(value);
   const frac = value - full;
   const v = full + (frac >= 0.25 && frac <= 0.75 ? 0.5 : frac > 0.75 ? 1 : 0);
   return (
-    <span className="inline-flex items-center gap-1" style={{ color: "#C89211" }} aria-label={`${value} de 5 estrellas`}>
+    <span className={"inline-flex items-center " + gapClass} style={{ color: "#C89211" }} aria-label={`${value} de 5 estrellas`}>
       {Array.from({ length: 5 }).map((_, i) => {
         const isFull = i + 1 <= v;
         const isHalf = !isFull && v - i > 0 && v - i < 1;
         return (
-          <svg key={i} className="star w-[14px] h-[14px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
+          <svg key={i} className={"star " + starClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2">
             <defs>
               {isHalf && (
                 <linearGradient id={`half-${i}`}>
@@ -1836,14 +1836,14 @@ function Reviews({ t }) {
         </div>
 
         {/* 3-column carousel — each card cycles independently, one at a time */}
-        <div className="reviews-rail flex md:grid md:grid-cols-3 gap-4 md:gap-7 overflow-x-auto md:overflow-visible snap-x snap-mandatory -mx-6 px-6 md:mx-0 md:px-0 perspective-1000">
+        <div className="grid grid-cols-3 gap-2 md:gap-7 perspective-1000">
           {idxs.map((idx, col) => {
             const it = items[idx];
             return (
-              <div key={col} className="relative shrink-0 w-[78vw] sm:w-[44vw] md:w-auto snap-center min-h-[280px] md:min-h-[320px]">
+              <div key={col} className="relative md:min-h-[320px]">
                 <article
                   key={`${col}-${idx}`}
-                  className="review-card review-card-cycle absolute inset-0 bg-cream border border-earth/20 p-6 md:p-8 flex flex-col"
+                  className="review-card review-card-cycle relative md:absolute inset-0 h-full bg-cream border border-earth/20 p-2.5 md:p-8 flex flex-col"
                   style={{
                     "--rot": rotMap[col] + "deg",
                     "--d": "0ms",
@@ -1852,32 +1852,36 @@ function Reviews({ t }) {
                   {/* Subtle quote glyph in the corner */}
                   <span
                     aria-hidden="true"
-                    className="absolute top-3 right-4 font-display italic text-garnet/15 text-[64px] leading-none select-none"
+                    className="absolute top-1 right-1.5 md:top-3 md:right-4 font-display italic text-garnet/15 text-[26px] md:text-[64px] leading-none select-none"
                   >
                     ”
                   </span>
 
-                  <div className="flex items-center justify-between mb-5">
-                    <Stars value={5} />
-                    <span className="text-earth uppercase tracking-wider2 text-[9px] font-medium">
+                  <div className="flex items-center justify-between mb-2.5 md:mb-5">
+                    <Stars
+                      value={5}
+                      starClass="w-[9px] h-[9px] md:w-[14px] md:h-[14px]"
+                      gapClass="gap-0.5 md:gap-1"
+                    />
+                    <span className="hidden md:inline text-earth uppercase tracking-wider2 text-[9px] font-medium">
                       {String(idx + 1).padStart(2, "0")} / {String(items.length).padStart(2, "0")}
                     </span>
                   </div>
 
-                  <p className="font-display text-ink text-[16.5px] md:text-[18px] leading-[1.55] tracking-tight flex-1">
-                    <span className="text-garnet font-display italic text-[22px] leading-none align-text-top mr-0.5">“</span>
+                  <p className="font-display text-ink text-[10.5px] md:text-[18px] leading-[1.45] md:leading-[1.55] tracking-tight flex-1">
+                    <span className="text-garnet font-display italic text-[13px] md:text-[22px] leading-none align-text-top mr-0.5">“</span>
                     {it.text}
-                    <span className="text-garnet font-display italic text-[22px] leading-none align-text-bottom ml-0.5">”</span>
+                    <span className="text-garnet font-display italic text-[13px] md:text-[22px] leading-none align-text-bottom ml-0.5">”</span>
                   </p>
 
-                  <div className="mt-6 pt-5 border-t border-earth/20 flex items-end justify-between gap-3">
+                  <div className="mt-3 pt-2.5 md:mt-6 md:pt-5 border-t border-earth/20 flex flex-col items-start gap-0.5 md:flex-row md:items-end md:justify-between md:gap-3">
                     <div>
-                      <div className="font-display italic text-ink text-[16px] leading-tight">{it.name}</div>
-                      <div className="text-earth uppercase tracking-wider2 text-[9px] font-medium mt-1.5">
+                      <div className="font-display italic text-ink text-[11px] md:text-[16px] leading-tight">{it.name}</div>
+                      <div className="text-earth uppercase tracking-wider2 text-[7.5px] md:text-[9px] font-medium mt-1 md:mt-1.5">
                         {it.city}
                       </div>
                     </div>
-                    <div className="text-earth text-[11px] font-light italic shrink-0 text-right">
+                    <div className="text-earth text-[8px] md:text-[11px] font-light italic shrink-0 text-left md:text-right">
                       {it.when}
                     </div>
                   </div>
