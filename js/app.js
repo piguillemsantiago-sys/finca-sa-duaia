@@ -24,7 +24,7 @@ const CONTENT = {
       wordmark2: "SA DUAIA",
       wordmark3: "DE DALT",
       tagline: "Mallorca como era. Como debe ser.",
-      services: "11 habitaciones · Restaurante · Piscina · 30 min del mar",
+      services: "11 habitaciones · Restaurante · Piscina · 6 min del mar",
       specHabs: "Habitaciones",
       specMesa: "Restaurante",
       specPool: "Piscina",
@@ -34,7 +34,7 @@ const CONTENT = {
     welcome: {
       eyebrow: "I · Bienvenida",
       heading: "Bienvenido \na Sa Duaia.",
-      body: ["Una finca del siglo XV escondida en la Serra de Llevant.", "A 30 minutos del mar, a un mundo de distancia de todo lo demás.", "Aquí el tiempo se mide en estaciones, no en horas."],
+      body: ["Una finca del siglo XV escondida en la Serra de Llevant.", "A 6 minutos del mar, a un mundo de distancia de todo lo demás.", "Aquí el tiempo se mide en estaciones, no en horas."],
       caption: "Campana de la entrada. 1920.",
       captions: ["Campana de la entrada. 1920.", "Bienvenida en cada habitación.", "La piscina mirando al monte."]
     },
@@ -122,7 +122,7 @@ const CONTENT = {
     surroundings: {
       eyebrow: "VI · Entorno",
       title: "El lugar.",
-      body: "Estás en el corazón de la Serra de Llevant, a 8 minutos de Artà, a 20 minutos de Cala Torta, a 30 del mar abierto. Senderos de piedra que llevan a calas vírgenes. Olivos que vieron pasar imperios. Y un cielo nocturno que en pocos lugares de España se conserva así.",
+      body: "Estás en el corazón de la Serra de Llevant, a 8 minutos de Artà, a 20 minutos de Cala Torta, a 6 del mar abierto. Senderos de piedra que llevan a calas vírgenes. Olivos que vieron pasar imperios. Y un cielo nocturno que en pocos lugares de España se conserva así.",
       stops: [{
         d: "8 min",
         p: "Artà"
@@ -130,7 +130,7 @@ const CONTENT = {
         d: "20 min",
         p: "Cala Torta"
       }, {
-        d: "30 min",
+        d: "6 min",
         p: "Mar abierto"
       }]
     },
@@ -235,7 +235,7 @@ const CONTENT = {
       wordmark2: "SA DUAIA",
       wordmark3: "DE DALT",
       tagline: "Mallorca as it was. As it should be.",
-      services: "11 rooms · Restaurant · Pool · 30 min from the sea",
+      services: "11 rooms · Restaurant · Pool · 6 min from the sea",
       specHabs: "Rooms",
       specMesa: "Restaurant",
       specPool: "Pool",
@@ -245,7 +245,7 @@ const CONTENT = {
     welcome: {
       eyebrow: "I · Welcome",
       heading: "Welcome to Sa Duaia.",
-      body: ["A 15th-century estate hidden in the Serra de Llevant.", "30 minutes from the sea, a world away from everything else.", "Here, time is measured in seasons, not hours."],
+      body: ["A 15th-century estate hidden in the Serra de Llevant.", "6 minutes from the sea, a world away from everything else.", "Here, time is measured in seasons, not hours."],
       caption: "Entrance bell. 1920.",
       captions: ["Entrance bell. 1920.", "A welcome in every room.", "The pool, looking at the mountain."]
     },
@@ -341,7 +341,7 @@ const CONTENT = {
         d: "20 min",
         p: "Cala Torta"
       }, {
-        d: "30 min",
+        d: "6 min",
         p: "Open sea"
       }]
     },
@@ -757,7 +757,7 @@ function Hero({
     n: "I",
     l: t.hero.specPool || "Piscina"
   }, {
-    n: "30'",
+    n: "6'",
     l: t.hero.specSea || "del mar"
   }].map((s, i, arr) => /*#__PURE__*/React.createElement("div", {
     key: i,
@@ -838,9 +838,9 @@ function Welcome({
     label: w.s2Label || "Siglo",
     body: w.s2Body || "Desde mil cuatrocientos veinticinco — seis siglos de tierra trabajada."
   }, {
-    num: "30'",
+    num: "6'",
     label: w.s3Label || "Al mar",
-    body: w.s3Body || "A treinta minutos del Mediterráneo y de las calas vírgenes de Llevant."
+    body: w.s3Body || "A seis minutos del Mediterráneo y de las calas vírgenes de Llevant."
   }];
   return /*#__PURE__*/React.createElement("section", {
     id: "welcome",
@@ -2353,7 +2353,7 @@ function MobileTrustBar({
     n: "I",
     l: t.hero.specPool || "Piscina"
   }, {
-    n: "30'",
+    n: "6'",
     l: t.hero.specSea || "del mar"
   }];
   return /*#__PURE__*/React.createElement("section", {
@@ -2426,7 +2426,7 @@ function App() {
       num: "11",
       text: "Habitaciones"
     }, {
-      num: "30'",
+      num: "6'",
       text: "del mar abierto"
     }, {
       num: "VI",
@@ -2471,7 +2471,7 @@ function App() {
       num: "20'",
       text: "Cala Torta"
     }, {
-      num: "30'",
+      num: "6'",
       text: "Mar abierto"
     }, {
       num: "39°",

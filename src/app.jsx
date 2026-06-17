@@ -18,7 +18,7 @@ const CONTENT = {
       wordmark2: "SA DUAIA",
       wordmark3: "DE DALT",
       tagline: "Mallorca como era. Como debe ser.",
-      services: "11 habitaciones · Restaurante · Piscina · 30 min del mar",
+      services: "11 habitaciones · Restaurante · Piscina · 6 min del mar",
       specHabs: "Habitaciones",
       specMesa: "Restaurante",
       specPool: "Piscina",
@@ -30,7 +30,7 @@ const CONTENT = {
       heading: "Bienvenido \na Sa Duaia.",
       body: [
       "Una finca del siglo XV escondida en la Serra de Llevant.",
-      "A 30 minutos del mar, a un mundo de distancia de todo lo demás.",
+      "A 6 minutos del mar, a un mundo de distancia de todo lo demás.",
       "Aquí el tiempo se mide en estaciones, no en horas."],
 
       caption: "Campana de la entrada. 1920.",
@@ -93,11 +93,11 @@ const CONTENT = {
     surroundings: {
       eyebrow: "VI · Entorno",
       title: "El lugar.",
-      body: "Estás en el corazón de la Serra de Llevant, a 8 minutos de Artà, a 20 minutos de Cala Torta, a 30 del mar abierto. Senderos de piedra que llevan a calas vírgenes. Olivos que vieron pasar imperios. Y un cielo nocturno que en pocos lugares de España se conserva así.",
+      body: "Estás en el corazón de la Serra de Llevant, a 8 minutos de Artà, a 20 minutos de Cala Torta, a 6 del mar abierto. Senderos de piedra que llevan a calas vírgenes. Olivos que vieron pasar imperios. Y un cielo nocturno que en pocos lugares de España se conserva así.",
       stops: [
       { d: "8 min", p: "Artà" },
       { d: "20 min", p: "Cala Torta" },
-      { d: "30 min", p: "Mar abierto" }]
+      { d: "6 min", p: "Mar abierto" }]
 
     },
     details: { eyebrow: "VII · Detalles", title: "Las pequeñas cosas." },
@@ -159,7 +159,7 @@ const CONTENT = {
       wordmark2: "SA DUAIA",
       wordmark3: "DE DALT",
       tagline: "Mallorca as it was. As it should be.",
-      services: "11 rooms · Restaurant · Pool · 30 min from the sea",
+      services: "11 rooms · Restaurant · Pool · 6 min from the sea",
       specHabs: "Rooms",
       specMesa: "Restaurant",
       specPool: "Pool",
@@ -171,7 +171,7 @@ const CONTENT = {
       heading: "Welcome to Sa Duaia.",
       body: [
       "A 15th-century estate hidden in the Serra de Llevant.",
-      "30 minutes from the sea, a world away from everything else.",
+      "6 minutes from the sea, a world away from everything else.",
       "Here, time is measured in seasons, not hours."],
 
       caption: "Entrance bell. 1920.",
@@ -238,7 +238,7 @@ const CONTENT = {
       stops: [
       { d: "8 min", p: "Artà" },
       { d: "20 min", p: "Cala Torta" },
-      { d: "30 min", p: "Open sea" }]
+      { d: "6 min", p: "Open sea" }]
 
     },
     details: { eyebrow: "VII · Details", title: "The small things." },
@@ -690,7 +690,7 @@ function Hero({ t }) {
                 { n: "XI",  l: t.hero.specHabs    || "Habitaciones" },
                 { n: "I",   l: t.hero.specMesa    || "Restaurante" },
                 { n: "I",   l: t.hero.specPool    || "Piscina" },
-                { n: "30'", l: t.hero.specSea     || "del mar" },
+                { n: "6'", l: t.hero.specSea     || "del mar" },
               ].map((s, i, arr) => (
                 <div
                   key={i}
@@ -779,7 +779,7 @@ function Welcome({ t }) {
   const stats = [
     { num: "11",   label: w.s1Label   || "Estancias",   body: w.s1Body || "Once habitaciones únicas en piedra original mallorquina." },
     { num: "XV",   label: w.s2Label   || "Siglo",       body: w.s2Body || "Desde mil cuatrocientos veinticinco — seis siglos de tierra trabajada." },
-    { num: "30'",  label: w.s3Label   || "Al mar",      body: w.s3Body || "A treinta minutos del Mediterráneo y de las calas vírgenes de Llevant." },
+    { num: "6'",  label: w.s3Label   || "Al mar",      body: w.s3Body || "A seis minutos del Mediterráneo y de las calas vírgenes de Llevant." },
   ];
 
   return (
@@ -2426,7 +2426,7 @@ function MobileTrustBar({ t }) {
     { n: "11",  l: t.hero.specHabs || "Habitaciones" },
     { n: "I",   l: t.hero.specMesa || "Restaurante" },
     { n: "I",   l: t.hero.specPool || "Piscina" },
-    { n: "30'", l: t.hero.specSea  || "del mar" },
+    { n: "6'", l: t.hero.specSea  || "del mar" },
   ];
   return (
     <section className="md:hidden bg-ink text-cream">
@@ -2494,7 +2494,7 @@ function App() {
         items={[
           { num: "1425", text: "Siglo XV" },
           { num: "11",   text: "Habitaciones" },
-          { num: "30'",  text: "del mar abierto" },
+          { num: "6'",  text: "del mar abierto" },
           { num: "VI",   text: "siglos de oficio" },
           { num: "—",    text: "Mallorca · Artà" },
         ]}
@@ -2519,7 +2519,7 @@ function App() {
         items={[
           { num: "8'",   text: "Artà" },
           { num: "20'",  text: "Cala Torta" },
-          { num: "30'",  text: "Mar abierto" },
+          { num: "6'",  text: "Mar abierto" },
           { num: "39°",  text: "41′ N · 3° 21′ E" },
         ]}
       />
