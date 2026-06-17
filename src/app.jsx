@@ -27,7 +27,7 @@ const CONTENT = {
     },
     welcome: {
       eyebrow: "I · Bienvenida",
-      heading: "Bienvenido \na Sa Duaia.",
+      heading: "Bienvenido a Finca \nSa Duaia de Dalt",
       body: [
       "Una finca del siglo XV escondida en la Serra de Llevant.",
       "A 6 minutos del mar, a un mundo de distancia de todo lo demás.",
@@ -168,7 +168,7 @@ const CONTENT = {
     },
     welcome: {
       eyebrow: "I · Welcome",
-      heading: "Welcome to Sa Duaia.",
+      heading: "Welcome to Finca \nSa Duaia de Dalt",
       body: [
       "A 15th-century estate hidden in the Serra de Llevant.",
       "6 minutes from the sea, a world away from everything else.",
