@@ -39,7 +39,7 @@ const CONTENT = {
       captions: ["Campana de la entrada. 1920.", "Bienvenida en cada habitación.", "La piscina mirando al monte."]
     },
     finca: {
-      eyebrow: "II · La Finca",
+      eyebrow: "III · La Finca",
       heading: "Seis siglos\nde historia.",
       body: "La torre de Sa Duaia vigila estos olivos desde 1425. Generaciones de payeses mallorquines, una restauración respetuosa y una idea simple: que cada huésped sienta que viene de visita a la casa de la familia.",
       since: "Desde 1425",
@@ -64,7 +64,7 @@ const CONTENT = {
       mark: "Sa Duaia · MCDXXV"
     },
     promises: {
-      eyebrow: "III · Tres promesas",
+      eyebrow: "IV · Tres promesas",
       title: "Lo que nos define.",
       items: [{
         n: "I.",
@@ -84,7 +84,7 @@ const CONTENT = {
       }]
     },
     stays: {
-      eyebrow: "IV · Estancias",
+      eyebrow: "V · Estancias",
       title: "Once habitaciones,\nninguna igual.",
       lede: "Cada estancia conserva la geometría original de la casa. Piedra vista, suelos de barro, ventanas hacia la sierra.",
       more: "Ver más",
@@ -112,7 +112,7 @@ const CONTENT = {
       }]
     },
     restaurant: {
-      eyebrow: "V · Restaurante",
+      eyebrow: "VI · Restaurante",
       title: "Cocina de finca,\nmesa abierta.",
       body: ["Cocina mallorquina hecha en casa. Producto local, recetas de generaciones, mesa abierta también a quienes no se alojan con nosotros.", "Cena bajo el carrobo, sobremesa que se alarga, vino de la isla."],
       meta1: "Abierto",
@@ -120,7 +120,7 @@ const CONTENT = {
       caption: "Romero del jardín · cocina mallorquina"
     },
     surroundings: {
-      eyebrow: "VI · Entorno",
+      eyebrow: "VII · Entorno",
       title: "El lugar.",
       body: "Estás en el corazón de la Serra de Llevant, a 8 minutos de Artà, a 20 minutos de Cala Torta, a 6 del mar abierto. Senderos de piedra que llevan a calas vírgenes. Olivos que vieron pasar imperios. Y un cielo nocturno que en pocos lugares de España se conserva así.",
       stops: [{
@@ -135,11 +135,11 @@ const CONTENT = {
       }]
     },
     details: {
-      eyebrow: "VII · Detalles",
+      eyebrow: "VIII · Detalles",
       title: "Las pequeñas cosas."
     },
     reviews: {
-      eyebrow: "VIII · Lo que dicen",
+      eyebrow: "II · Lo que dicen",
       title: "Países, generaciones,\nuna misma sensación.",
       lede: "Reseñas reales de huéspedes que pasaron por aquí. Sin filtros.",
       countLabel: "+600 reseñas",
@@ -196,7 +196,7 @@ const CONTENT = {
       }]
     },
     booking: {
-      eyebrow: "VIII · Reservas",
+      eyebrow: "IX · Reservas",
       title: "Reserva tu estancia.",
       lede: "Disponibilidad en tiempo real. Sin intermediarios.",
       note: "También por teléfono o WhatsApp."
@@ -250,7 +250,7 @@ const CONTENT = {
       captions: ["Entrance bell. 1920.", "A welcome in every room.", "The pool, looking at the mountain."]
     },
     finca: {
-      eyebrow: "II · The Estate",
+      eyebrow: "III · The Estate",
       heading: "Six centuries\nof history.",
       body: "The Sa Duaia tower has watched over these olive groves since 1425. Generations of Mallorcan farmers, a respectful restoration, and a simple idea: that every guest feels like visiting family.",
       since: "Since 1425",
@@ -275,7 +275,7 @@ const CONTENT = {
       mark: "Sa Duaia · MCDXXV"
     },
     promises: {
-      eyebrow: "III · Three Promises",
+      eyebrow: "IV · Three Promises",
       title: "What defines us.",
       items: [{
         n: "I.",
@@ -295,7 +295,7 @@ const CONTENT = {
       }]
     },
     stays: {
-      eyebrow: "IV · Rooms",
+      eyebrow: "V · Rooms",
       title: "Eleven rooms,\nnone alike.",
       lede: "Every room keeps the original geometry of the house. Exposed stone, clay floors, windows that frame the mountains.",
       more: "See more",
@@ -323,7 +323,7 @@ const CONTENT = {
       }]
     },
     restaurant: {
-      eyebrow: "V · Restaurant",
+      eyebrow: "VI · Restaurant",
       title: "Farm kitchen,\nopen table.",
       body: ["Home-cooked Mallorcan cuisine. Local produce, generational recipes, our table is also open to non-resident guests.", "Dinner under the carob tree, long conversations, island wine."],
       meta1: "Open",
@@ -331,9 +331,9 @@ const CONTENT = {
       caption: "Rosemary from the garden · Mallorcan kitchen"
     },
     surroundings: {
-      eyebrow: "VI · Surroundings",
+      eyebrow: "VII · Surroundings",
       title: "The place.",
-      body: "You are in the heart of the Serra de Llevant, 8 minutes from Artà, 20 from Cala Torta, 30 from the open sea. Stone paths leading to untouched coves. Olive trees that have witnessed empires. A night sky preserved in few places in Spain.",
+      body: "You are in the heart of the Serra de Llevant, 8 minutes from Artà, 20 from Cala Torta, 6 from the open sea. Stone paths leading to untouched coves. Olive trees that have witnessed empires. A night sky preserved in few places in Spain.",
       stops: [{
         d: "8 min",
         p: "Artà"
@@ -346,11 +346,11 @@ const CONTENT = {
       }]
     },
     details: {
-      eyebrow: "VII · Details",
+      eyebrow: "VIII · Details",
       title: "The small things."
     },
     reviews: {
-      eyebrow: "VIII · What they say",
+      eyebrow: "II · What they say",
       title: "Different countries,\nthe same feeling.",
       lede: "Real reviews from guests who stayed here. Unfiltered.",
       countLabel: "+600 reviews",
@@ -407,7 +407,7 @@ const CONTENT = {
       }]
     },
     booking: {
-      eyebrow: "VIII · Booking",
+      eyebrow: "IX · Booking",
       title: "Book your stay.",
       lede: "Real-time availability. No middlemen.",
       note: "Also by phone or WhatsApp."
