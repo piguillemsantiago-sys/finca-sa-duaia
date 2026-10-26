@@ -23,7 +23,10 @@
     - npm run build: vendor + JS transpilado + Tailwind compilado ✓
   - Deploy ✓
     - Producción en Railway (URL verificada, HTTP 200) ✓
-    - Limpiar vercel.json (el deploy real es Railway, no Vercel) ⚠
+    - vercel.json eliminado (el deploy es Railway) ✓
+    - Servidor publica solo el sitio (no fuentes ni notas internas) ✓
+  - Cliente
+    - Ronda de feedback de la clienta sobre el link de producción ⚙
 
 ## Flujos
 

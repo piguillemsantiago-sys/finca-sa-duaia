@@ -41,9 +41,12 @@ Durante el desarrollo: `npm run watch:js` y `npm run watch:css` en paralelo.
 
 ## Deploy
 
-El sitio es estático. Subir a Vercel/Railway sirviendo la raíz del proyecto.
-Ejecutar `npm run build` y commitear los archivos generados, o dejar que la
-plataforma corra `npm run build` en el deploy.
+Producción en Railway: `git push` a `main` y Railway redeploya solo
+(`npm start` → `server.js`). Ejecutar `npm run build` y commitear los
+archivos generados antes del push.
+
+`server.js` publica solo el sitio (`index.html`, `Legal.html`, `assets/`,
+`css/`, `js/`). Fuentes, notas y config del repo no quedan accesibles.
 
 ## Notas heredadas del diseño
 
