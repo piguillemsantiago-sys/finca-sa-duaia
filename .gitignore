@@ -2,3 +2,4 @@ node_modules/
 .finca-design/
 .DS_Store
 *.log
+.env
