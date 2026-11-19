@@ -81,6 +81,14 @@ const CONTENT = {
       lede: "Todos con baño privado, TV y vistas al jardín o a la montaña.",
       labels: { bed: "Camas", bath: "Baño", guests: "Huéspedes", views: "Vistas", plus: "Además" },
       cta: "Consultar disponibilidad",
+      photos: [
+        "Dormitorio con cama de matrimonio y mosquitera",
+        "Salón con chimenea y sofás de mimbre",
+        "Dormitorio con dos camas y pared de piedra",
+        "Dormitorio con cama de matrimonio y pared de piedra",
+        "Puerta abierta al jardín y la piscina",
+        "Comedor de un bungalow con salida al jardín",
+      ],
       // Datos de la ficha de Booking de Finca Sa Duaia de Dalt (el-castillo-de-sa-duaia-de-dalt).
       items: [
         { kind: "2 unidades", name: "Bungalows de 2 dormitorios", size: "60–75", bed: "1 doble y 2 individuales", bath: "Privado, con ducha", guests: "Hasta 4", views: "Jardín y montaña", plus: "Salón, cocina, chimenea y terraza" },
@@ -225,6 +233,14 @@ const CONTENT = {
       lede: "All with private bathroom, TV and views of the garden or the mountains.",
       labels: { bed: "Beds", bath: "Bathroom", guests: "Guests", views: "Views", plus: "Also" },
       cta: "Check availability",
+      photos: [
+        "Bedroom with a double bed and mosquito net",
+        "Living room with fireplace and wicker sofas",
+        "Bedroom with two single beds and a stone wall",
+        "Bedroom with a double bed and a stone wall",
+        "Door open to the garden and the pool",
+        "Bungalow dining area opening onto the garden",
+      ],
       items: [
         { kind: "2 units", name: "Two-bedroom bungalows", size: "60–75", bed: "1 double and 2 single", bath: "Private, with shower", guests: "Up to 4", views: "Garden and mountains", plus: "Living room, kitchen, fireplace and terrace" },
         { kind: "2 units", name: "One-bedroom bungalows", size: "50–60", bed: "1 double and sofa bed", bath: "Private, with shower", guests: "2", views: "Garden and mountains", plus: "Living room, kitchen and terrace" },
@@ -615,6 +631,15 @@ function Finca({ t }) {
 
 /* ───────────────────────────  ALOJAMIENTOS  ────────────────────────── */
 
+const STAY_PHOTOS = [
+  "assets/aloj-dormitorio-mosquitera.jpg",
+  "assets/aloj-salon-sofas.jpg",
+  "assets/aloj-dos-camas.jpg",
+  "assets/aloj-dormitorio-piedra.jpg",
+  "assets/aloj-puerta-jardin.jpg",
+  "assets/aloj-comedor-bungalow.jpg",
+];
+
 function Stays({ t }) {
   const s = t.stays;
   const rows = (r) => [
@@ -626,7 +651,7 @@ function Stays({ t }) {
   ];
   return (
     <section id="alojamientos" className="bg-linen">
-      <Panel img="assets/room-familiar.jpg" alt="" label={s.panel} />
+      <Panel img="assets/aloj-salon-chimenea.jpg" alt="" label={s.panel} />
       <div className="mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-32">
         <div className="max-w-[640px]">
           <Eyebrow className="reveal">{s.eyebrow}</Eyebrow>
@@ -654,6 +679,15 @@ function Stays({ t }) {
                 ))}
               </dl>
             </article>
+          ))}
+        </div>
+
+        {/* Interiores: sin etiqueta de tipo hasta confirmar qué unidad es cada foto */}
+        <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+          {STAY_PHOTOS.map((src, k) => (
+            <figure key={src} className="reveal relative aspect-[4/5] overflow-hidden bg-cream">
+              <img src={src} alt={s.photos[k]} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+            </figure>
           ))}
         </div>
 

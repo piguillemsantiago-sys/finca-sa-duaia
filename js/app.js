@@ -89,6 +89,7 @@ const CONTENT = {
         plus: "Además"
       },
       cta: "Consultar disponibilidad",
+      photos: ["Dormitorio con cama de matrimonio y mosquitera", "Salón con chimenea y sofás de mimbre", "Dormitorio con dos camas y pared de piedra", "Dormitorio con cama de matrimonio y pared de piedra", "Puerta abierta al jardín y la piscina", "Comedor de un bungalow con salida al jardín"],
       // Datos de la ficha de Booking de Finca Sa Duaia de Dalt (el-castillo-de-sa-duaia-de-dalt).
       items: [{
         kind: "2 unidades",
@@ -308,6 +309,7 @@ const CONTENT = {
         plus: "Also"
       },
       cta: "Check availability",
+      photos: ["Bedroom with a double bed and mosquito net", "Living room with fireplace and wicker sofas", "Bedroom with two single beds and a stone wall", "Bedroom with a double bed and a stone wall", "Door open to the garden and the pool", "Bungalow dining area opening onto the garden"],
       items: [{
         kind: "2 units",
         name: "Two-bedroom bungalows",
@@ -815,6 +817,7 @@ function Finca({
 
 /* ───────────────────────────  ALOJAMIENTOS  ────────────────────────── */
 
+const STAY_PHOTOS = ["assets/aloj-dormitorio-mosquitera.jpg", "assets/aloj-salon-sofas.jpg", "assets/aloj-dos-camas.jpg", "assets/aloj-dormitorio-piedra.jpg", "assets/aloj-puerta-jardin.jpg", "assets/aloj-comedor-bungalow.jpg"];
 function Stays({
   t
 }) {
@@ -824,7 +827,7 @@ function Stays({
     id: "alojamientos",
     className: "bg-linen"
   }, /*#__PURE__*/React.createElement(Panel, {
-    img: "assets/room-familiar.jpg",
+    img: "assets/aloj-salon-chimenea.jpg",
     alt: "",
     label: s.panel
   }), /*#__PURE__*/React.createElement("div", {
@@ -861,6 +864,16 @@ function Stays({
   }, k), /*#__PURE__*/React.createElement("dd", {
     className: "text-ink/85"
   }, v))))))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3"
+  }, STAY_PHOTOS.map((src, k) => /*#__PURE__*/React.createElement("figure", {
+    key: src,
+    className: "reveal relative aspect-[4/5] overflow-hidden bg-cream"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: src,
+    alt: s.photos[k],
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover"
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "reveal mt-16 md:mt-20 text-center"
   }, /*#__PURE__*/React.createElement("a", {
     href: "#reservar",
