@@ -78,69 +78,63 @@ const CONTENT = {
     gallery: ["Terraza junto a la torre, con la sierra al fondo", "Buganvilla sobre un muro de piedra", "Casa de piedra de la finca", "Piscina con vistas a la montaña", "Terraza con mesas y vistas a la sierra", "Entrada y escalera de azulejos", "Naranjo en el jardín de la finca"],
     stays: {
       panel: "Alojamientos",
-      eyebrow: "Habitaciones, bungalows y apartamento",
-      title: "Seis maneras de quedarse.",
-      lede: "Todos para dos personas, con baño privado, calefacción, TV y caja fuerte.",
+      eyebrow: "Bungalows, apartamentos, estudios y habitación",
+      title: "Once alojamientos.",
+      lede: "Todos con baño privado, TV y vistas al jardín o a la montaña.",
       labels: {
-        bed: "Cama",
+        bed: "Camas",
         bath: "Baño",
         guests: "Huéspedes",
         views: "Vistas",
         plus: "Además"
       },
       cta: "Consultar disponibilidad",
+      // Datos de la ficha de Booking de Finca Sa Duaia de Dalt (el-castillo-de-sa-duaia-de-dalt).
       items: [{
-        kind: "Habitación",
-        name: "Habitación Doble",
-        size: 14,
-        bed: "1 cama doble",
+        kind: "2 unidades",
+        name: "Bungalows de 2 dormitorios",
+        size: "60–75",
+        bed: "1 doble y 2 individuales",
+        bath: "Privado, con ducha",
+        guests: "Hasta 4",
+        views: "Jardín y montaña",
+        plus: "Salón, cocina, chimenea y terraza"
+      }, {
+        kind: "2 unidades",
+        name: "Bungalows de 1 dormitorio",
+        size: "50–60",
+        bed: "1 doble y sofá cama",
         bath: "Privado, con ducha",
         guests: "2",
-        views: "Mar y montaña"
+        views: "Jardín y montaña",
+        plus: "Salón, cocina y terraza"
       }, {
-        kind: "Habitación",
-        name: "Habitación Doble Superior",
-        size: 22,
-        bed: "1 cama doble grande",
+        kind: "3 unidades",
+        name: "Apartamentos de 1 dormitorio",
+        size: "29–53",
+        bed: "1 doble o 2 individuales",
         bath: "Privado, con ducha",
         guests: "2",
-        views: "Jardín y montaña"
+        views: "Jardín y montaña",
+        plus: "Cocina; uno con chimenea"
       }, {
-        kind: "Habitación",
-        name: "Habitación Doble con zona de estar",
-        size: 22,
-        bed: "1 cama doble",
+        kind: "3 unidades",
+        name: "Estudios",
+        size: "18–30",
+        bed: "1 doble o 2 individuales",
         bath: "Privado",
         guests: "2",
-        views: "Mar, jardín y piscina",
-        plus: "Zona de estar y cocina compartida"
+        views: "Jardín y montaña",
+        plus: "Cocina; uno con terraza"
       }, {
-        kind: "Bungalow",
-        name: "Bungalow Barraca",
-        size: 34,
-        bed: "1 cama doble",
-        bath: "Privado, con bañera",
-        guests: "2",
-        views: "Mar, jardín y montaña",
-        plus: "Salón, cocina, chimenea y terraza"
-      }, {
-        kind: "Apartamento",
-        name: "Apartamento Sa Païssa",
-        size: 45,
-        bed: "1 cama doble",
-        bath: "Privado, con bañera",
-        guests: "2",
-        views: "Mar, jardín y piscina",
-        plus: "Salón, cocina, chimenea, barbacoa y terraza"
-      }, {
-        kind: "Bungalow",
-        name: "Bungalow Deluxe con vistas al jardín",
-        size: 50,
-        bed: "1 cama doble",
-        bath: "Privado, con bañera",
+        kind: "1 unidad",
+        name: "Habitación doble",
+        size: "18",
+        bed: "1 doble",
+        bath: "Privado, con ducha",
         guests: "2",
         views: "Jardín, piscina y montaña",
-        plus: "Salón, cocina, chimenea y terraza"
+        plus: "Chimenea y ventilador"
       }]
     },
     villas: {
@@ -303,11 +297,11 @@ const CONTENT = {
     gallery: ["Terrace by the tower, with the mountains behind", "Bougainvillea over a stone wall", "Stone house on the estate", "Pool with mountain views", "Terrace with tables and mountain views", "Entrance and tiled staircase", "Orange tree in the estate garden"],
     stays: {
       panel: "Accommodation",
-      eyebrow: "Rooms, bungalows and apartment",
-      title: "Six ways to stay.",
-      lede: "All for two guests, with private bathroom, heating, TV and safe.",
+      eyebrow: "Bungalows, apartments, studios and a room",
+      title: "Eleven places to stay.",
+      lede: "All with private bathroom, TV and views of the garden or the mountains.",
       labels: {
-        bed: "Bed",
+        bed: "Beds",
         bath: "Bathroom",
         guests: "Guests",
         views: "Views",
@@ -315,57 +309,50 @@ const CONTENT = {
       },
       cta: "Check availability",
       items: [{
-        kind: "Room",
-        name: "Double Room",
-        size: 14,
-        bed: "1 double bed",
+        kind: "2 units",
+        name: "Two-bedroom bungalows",
+        size: "60–75",
+        bed: "1 double and 2 single",
+        bath: "Private, with shower",
+        guests: "Up to 4",
+        views: "Garden and mountains",
+        plus: "Living room, kitchen, fireplace and terrace"
+      }, {
+        kind: "2 units",
+        name: "One-bedroom bungalows",
+        size: "50–60",
+        bed: "1 double and sofa bed",
         bath: "Private, with shower",
         guests: "2",
-        views: "Sea and mountains"
+        views: "Garden and mountains",
+        plus: "Living room, kitchen and terrace"
       }, {
-        kind: "Room",
-        name: "Superior Double Room",
-        size: 22,
-        bed: "1 large double bed",
+        kind: "3 units",
+        name: "One-bedroom apartments",
+        size: "29–53",
+        bed: "1 double or 2 single",
         bath: "Private, with shower",
         guests: "2",
-        views: "Garden and mountains"
+        views: "Garden and mountains",
+        plus: "Kitchen; one with fireplace"
       }, {
-        kind: "Room",
-        name: "Double Room with Seating Area",
-        size: 22,
-        bed: "1 double bed",
+        kind: "3 units",
+        name: "Studios",
+        size: "18–30",
+        bed: "1 double or 2 single",
         bath: "Private",
         guests: "2",
-        views: "Sea, garden and pool",
-        plus: "Seating area and shared kitchen"
+        views: "Garden and mountains",
+        plus: "Kitchen; one with terrace"
       }, {
-        kind: "Bungalow",
-        name: "Barraca Bungalow",
-        size: 34,
-        bed: "1 double bed",
-        bath: "Private, with bath",
-        guests: "2",
-        views: "Sea, garden and mountains",
-        plus: "Living room, kitchen, fireplace and terrace"
-      }, {
-        kind: "Apartment",
-        name: "Sa Païssa Apartment",
-        size: 45,
-        bed: "1 double bed",
-        bath: "Private, with bath",
-        guests: "2",
-        views: "Sea, garden and pool",
-        plus: "Living room, kitchen, fireplace, barbecue and terrace"
-      }, {
-        kind: "Bungalow",
-        name: "Deluxe Bungalow with Garden View",
-        size: 50,
-        bed: "1 double bed",
-        bath: "Private, with bath",
+        kind: "1 unit",
+        name: "Double room",
+        size: "18",
+        bed: "1 double",
+        bath: "Private, with shower",
         guests: "2",
         views: "Garden, pool and mountains",
-        plus: "Living room, kitchen, fireplace and terrace"
+        plus: "Fireplace and fan"
       }]
     },
     villas: {
