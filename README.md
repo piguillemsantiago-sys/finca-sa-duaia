@@ -5,7 +5,7 @@ Implementada a partir del diseño exportado desde Claude Design.
 
 ## Qué es
 
-- `index.html` — landing principal (11 secciones, toggle ES/EN, animaciones de scroll).
+- `index.html` — landing principal minimalista (portada en video, finca, alojamientos, villas, restaurante, entorno, reseñas y reserva; ES/EN).
 - `Legal.html` — aviso legal, privacidad y cookies.
 - `assets/` — imágenes y vídeo del hero.
 - `css/site.css` — Tailwind compilado + estilos propios (generado).
@@ -50,6 +50,8 @@ archivos generados antes del push.
 
 ## Notas heredadas del diseño
 
-- El motor de reservas de saduaia.com bloquea el embed por iframe, así que la
-  sección de reservas usa botones a la web oficial + WhatsApp (decisión del chat).
+- El motor de reservas de saduaia.com (Roiback) bloquea el iframe y solo acepta POST:
+  la sección Reservar es un formulario propio que envía `entrada`, `salida`,
+  `occupancies` y `codpromo` a `/es|en/bookcore/v4/search-dispo.htm`.
+- Pop-up de descuento: objeto `PROMO` al principio de `src/app.jsx` (apagado por defecto).
 - Teléfono, email y redes del footer son provisionales — reemplazar por los reales.

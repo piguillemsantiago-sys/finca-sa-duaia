@@ -9,13 +9,24 @@
 
 - Finca Sa Duaia
   - Sitio web (landing) ✓
-    - Landing principal index.html (11 secciones, toggle ES/EN, animaciones) ✓
-    - Versión mobile (hero animado, menú hamburguesa, reseñas en grilla) ✓
+    - Rediseño minimalista (rama rediseno-minimalista, sin publicar) ⚙
+      - Portada: video + título + Reservar ✓
+      - La finca: texto de la clienta + galería de fotos propias ✓
+      - Alojamientos: 6 tipos con datos de Booking (m², cama, baño, vistas) ✓
+      - Villas destacadas: Ca na Moli y Ca na Lluny ✓
+      - Restaurante Sa Duaia (a 1,5 km) ✓
+      - Entorno: distancias + hoja de ruta ✓
+      - Reseñas (3 citas + nota de Google) ✓
+      - Reservar: formulario propio que abre el motor oficial (Roiback) ✓
+      - Pop-up de descuento configurable (apagado hasta tener código) ✓
+      - ES/EN completo ✓
     - Página Legal.html (aviso legal, privacidad, cookies) ✓
-    - Reservas: botones a saduaia.com + WhatsApp (el iframe está bloqueado) ✓
     - Datos reales del footer (teléfono, email y redes son provisionales) ⚠
+    - WhatsApp de reservas sin confirmar ⚠
   - Contenido y assets ✓
-    - Fotos: habitaciones, exteriores, restaurante ✓
+    - Material de la clienta 2026-11-19 (fotos + docx) ✓
+    - Fotos por tipo de habitación ⚠
+    - Tomas de dron sin texto para la portada ⚠
     - Video del hero + imagen de portada ✓
     - Logos (crema, tinta, color) ✓
   - Build ✓
@@ -26,9 +37,14 @@
     - vercel.json eliminado (el deploy es Railway) ✓
     - Servidor publica solo el sitio (no fuentes ni notas internas) ✓
   - Cliente
-    - Ronda de feedback de la clienta sobre el link de producción ⚙
+    - Ronda de feedback de la clienta ✓
+    - Aprobación del rediseño antes de publicar ⚙
 
 ## Flujos
 
 - Publicar un cambio en la web
 - Editar src/app.jsx ✓ -> npm run build ✓ -> Commit fuente + generados ✓ -> git push (Railway redeploya solo) ✓
+- Reserva de un huésped
+- Botón Reservar ✓ -> Formulario (fechas, adultos, código) ✓ -> Motor oficial saduaia.com ✓
+- Activar un descuento
+- Código cargado en el motor de saduaia.com -> PROMO en src/app.jsx (active, code, until, textos) -> npm run build -> push

@@ -1,211 +1,265 @@
 function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 const {
   useState,
-  useEffect,
-  useRef,
-  useMemo
+  useEffect
 } = React;
 
-/* ───────────────────────────  CONTENT (ES / EN)  ────────────────────────── */
+/* ───────────────────────────  RESERVAS  ────────────────────────── */
+
+// Motor oficial de saduaia.com (Roiback). Solo acepta POST con estos campos:
+// entrada / salida (dd/mm/aaaa), occupancies (JSON) y codpromo.
+const BOOKING = {
+  action: {
+    es: "https://www.saduaia.com/es/bookcore/v4/search-dispo.htm",
+    en: "https://www.saduaia.com/en/bookcore/v4/search-dispo.htm"
+  }
+};
+
+// Pendiente de confirmar con la clienta (ver handoff.md).
+const WHATSAPP = {
+  href: "https://wa.me/34971589164",
+  label: "+34 971 589 164"
+};
+
+/* ───────────────────────  POP-UP DE DESCUENTO  ─────────────────────
+   Para activarlo: active: true, el código (el mismo que esté cargado en el
+   motor de saduaia.com), la fecha hasta la que se muestra y los textos.
+   Aparece a los 5 s y no vuelve a salirle a quien lo cerró. El código queda
+   precargado en el formulario de reserva. */
+const PROMO = {
+  active: false,
+  code: "",
+  until: "",
+  // "2027-02-28" (incluido). Vacío = sin fecha de fin.
+  es: {
+    title: "",
+    text: ""
+  },
+  en: {
+    title: "",
+    text: ""
+  }
+};
+function promoIsLive() {
+  if (!PROMO.active || !PROMO.code) return false;
+  if (PROMO.until && new Date() > new Date(PROMO.until + "T23:59:59")) return false;
+  return true;
+}
+
+/* ───────────────────────────  CONTENIDO (ES / EN)  ────────────────────────── */
 
 const CONTENT = {
   es: {
     nav: {
-      welcome: "Bienvenida",
-      finca: "La Finca",
-      stays: "Habitaciones",
+      finca: "La finca",
+      stays: "Alojamientos",
+      villas: "Villas",
       restaurant: "Restaurante",
-      surroundings: "Entorno",
-      book: "Reservar"
+      area: "Entorno",
+      book: "Reservar",
+      menu: "Menú",
+      open: "Abrir menú",
+      close: "Cerrar menú"
+    },
+    menuAside: {
+      title: "¿Planea su escapada?",
+      text: "Reserva directa en la web oficial, con disponibilidad y precios en tiempo real."
     },
     hero: {
-      eyebrow: "Agroturismo mallorquí · Artà",
-      wordmark1: "FINCA",
-      wordmark2: "SA DUAIA",
-      wordmark3: "DE DALT",
-      tagline: "Mallorca como era. Como debe ser.",
-      services: "11 habitaciones · Restaurante · Piscina · 6 min del mar",
-      specHabs: "Habitaciones",
-      specMesa: "Restaurante",
-      specPool: "Piscina",
-      specSea: "del mar",
-      scroll: "Descubre"
+      eyebrow: "Agroturismo · Artà, Mallorca",
+      more: "Ver alojamientos"
     },
-    welcome: {
-      eyebrow: "I · Bienvenida",
-      heading: "Bienvenido a Finca \nSa Duaia de Dalt",
-      body: ["Una finca del siglo XV escondida en la Serra de Llevant.", "A 6 minutos del mar, a un mundo de distancia de todo lo demás.", "Aquí el tiempo se mide en estaciones, no en horas."],
-      caption: "Campana de la entrada. 1920.",
-      captions: ["Campana de la entrada. 1920.", "Bienvenida en cada habitación.", "La piscina mirando al monte."]
+    intro: {
+      eyebrow: "Cala Torta · Parque Natural de Llevant",
+      title: "Una escapada rural\nen plena naturaleza.",
+      body: ["Un caserío del siglo XIII en el extremo noreste de Mallorca, dentro del Parque Natural de Llevant. Inspirado en la cultura mallorquina, lejos del ruido y con unas vistas de ensueño.", "Pasee por la montaña, relájese en la piscina y desconecte del estrés del día a día."],
+      amenities: ["Piscina al aire libre", "WiFi gratis", "Terrazas", "Zona de barbacoa", "Jardín", "Salón compartido"]
     },
-    finca: {
-      eyebrow: "III · La Finca",
-      heading: "Seis siglos\nde historia.",
-      body: "La torre de Sa Duaia vigila estos olivos desde 1425. Generaciones de payeses mallorquines, una restauración respetuosa y una idea simple: que cada huésped sienta que viene de visita a la casa de la familia.",
-      since: "Desde 1425",
-      caption: "Vista aérea — Sa Duaia y la Serra de Llevant",
-      stats: [{
-        num: "1425",
-        label: "Año de fundación",
-        body: "La torre de defensa que aún hoy custodia los olivos."
-      }, {
-        num: "VI",
-        label: "Siglos de piedra",
-        body: "Seis siglos de generaciones de payeses mallorquines."
-      }, {
-        num: "11",
-        label: "Estancias hoy",
-        body: "Restauradas con respeto. Piedra original, alma intacta."
-      }]
-    },
-    intermezzo: {
-      eyebrow: "Interludio",
-      quote: "El tiempo no pasa aquí.\nSe queda.",
-      mark: "Sa Duaia · MCDXXV"
-    },
-    promises: {
-      eyebrow: "IV · Tres promesas",
-      title: "Lo que nos define.",
-      items: [{
-        n: "I.",
-        title: "Historia viva.",
-        body: "Una finca del siglo XV restaurada con respeto. Piedra original, vigas de madera, alma intacta.",
-        aside: "Cada piedra cuenta seis siglos de oficio."
-      }, {
-        n: "II.",
-        title: "Naturaleza alrededor.",
-        body: "Olivos centenarios, montañas de la Serra de Llevant, senderos hacia el mar. El silencio que ya nadie tiene.",
-        aside: "Los olivos vieron pasar imperios."
-      }, {
-        n: "III.",
-        title: "Mesa mallorquina.",
-        body: "Cocina de finca con producto local. Sobremesa larga, pan recién hecho, vino de la isla.",
-        aside: "La mesa abierta también a quien no se aloja."
-      }]
-    },
+    gallery: ["Terraza junto a la torre, con la sierra al fondo", "Buganvilla sobre un muro de piedra", "Casa de piedra de la finca", "Piscina con vistas a la montaña", "Terraza con mesas y vistas a la sierra", "Entrada y escalera de azulejos", "Naranjo en el jardín de la finca"],
     stays: {
-      eyebrow: "V · Estancias",
-      title: "Once habitaciones,\nninguna igual.",
-      lede: "Cada estancia conserva la geometría original de la casa. Piedra vista, suelos de barro, ventanas hacia la sierra.",
-      more: "Ver más",
+      panel: "Alojamientos",
+      eyebrow: "Habitaciones, bungalows y apartamento",
+      title: "Seis maneras de quedarse.",
+      lede: "Todos para dos personas, con baño privado, calefacción, TV y caja fuerte.",
+      labels: {
+        bed: "Cama",
+        bath: "Baño",
+        guests: "Huéspedes",
+        views: "Vistas",
+        plus: "Además"
+      },
       cta: "Consultar disponibilidad",
-      cards: [{
-        tag: "Suite Rústica",
-        name: "Bungalow Tradicional",
-        size: "60 m²",
-        line: "Piedra original a la vista. Dos camas individuales o una matrimonial."
+      items: [{
+        kind: "Habitación",
+        name: "Habitación Doble",
+        size: 14,
+        bed: "1 cama doble",
+        bath: "Privado, con ducha",
+        guests: "2",
+        views: "Mar y montaña"
       }, {
-        tag: "Studio",
-        name: "Estudio Vista Montaña",
-        size: "30 m²",
-        line: "Vistas a la Serra de Llevant. Suelo de barro mallorquín."
+        kind: "Habitación",
+        name: "Habitación Doble Superior",
+        size: 22,
+        bed: "1 cama doble grande",
+        bath: "Privado, con ducha",
+        guests: "2",
+        views: "Jardín y montaña"
       }, {
-        tag: "Familiar",
-        name: "Apartamento Familiar",
-        size: "36 m²",
-        line: "Una habitación con detalles botánicos. Para parejas o pequeñas familias."
+        kind: "Habitación",
+        name: "Habitación Doble con zona de estar",
+        size: 22,
+        bed: "1 cama doble",
+        bath: "Privado",
+        guests: "2",
+        views: "Mar, jardín y piscina",
+        plus: "Zona de estar y cocina compartida"
       }, {
-        tag: "Deluxe",
-        name: "Bungalow Deluxe Jardín",
-        size: "75 m²",
-        line: "La más amplia. Cama king-size, salón propio, terraza al jardín."
+        kind: "Bungalow",
+        name: "Bungalow Barraca",
+        size: 34,
+        bed: "1 cama doble",
+        bath: "Privado, con bañera",
+        guests: "2",
+        views: "Mar, jardín y montaña",
+        plus: "Salón, cocina, chimenea y terraza"
+      }, {
+        kind: "Apartamento",
+        name: "Apartamento Sa Païssa",
+        size: 45,
+        bed: "1 cama doble",
+        bath: "Privado, con bañera",
+        guests: "2",
+        views: "Mar, jardín y piscina",
+        plus: "Salón, cocina, chimenea, barbacoa y terraza"
+      }, {
+        kind: "Bungalow",
+        name: "Bungalow Deluxe con vistas al jardín",
+        size: 50,
+        bed: "1 cama doble",
+        bath: "Privado, con bañera",
+        guests: "2",
+        views: "Jardín, piscina y montaña",
+        plus: "Salón, cocina, chimenea y terraza"
+      }]
+    },
+    villas: {
+      eyebrow: "Destacado",
+      title: "Dos villas con piscina.",
+      lede: "Rodeadas por el Parque Natural de Llevant, con vistas a la naturaleza y al mar. Casas ecológicas que generan su propia electricidad con placas solares.",
+      labels: {
+        guests: "personas",
+        rooms: "habitaciones dobles",
+        baths: "baños completos"
+      },
+      cta: "Consultar disponibilidad",
+      items: [{
+        name: "Ca na Moli",
+        img: "assets/villa-ca-na-moli.jpg",
+        alt: "Piscina de Ca na Moli con vistas al mar",
+        guests: 6,
+        rooms: 3,
+        baths: 2,
+        text: "Piscina, varias terrazas, cocina, salón comedor, chimenea y barbacoa. Uno de los baños es en suite. Sin aire acondicionado."
+      }, {
+        name: "Ca na Lluny",
+        img: "assets/villa-ca-na-lluny.jpg",
+        alt: "Ca na Lluny y su piscina",
+        guests: 12,
+        rooms: 5,
+        baths: 3,
+        text: "Piscina, varias terrazas, dos cocinas, dos salones comedores y un estudio en la planta superior. Chimenea en cada planta y barbacoa junto a la piscina."
       }]
     },
     restaurant: {
-      eyebrow: "VI · Restaurante",
-      title: "Cocina de finca,\nmesa abierta.",
-      body: ["Cocina mallorquina hecha en casa. Producto local, recetas de generaciones, mesa abierta también a quienes no se alojan con nosotros.", "Cena bajo el carrobo, sobremesa que se alarga, vino de la isla."],
-      meta1: "Abierto",
-      meta2: "Reservas recomendadas",
-      caption: "Romero del jardín · cocina mallorquina"
+      eyebrow: "A 1,5 km de la finca",
+      title: "Restaurante Sa Duaia",
+      body: "Un restaurante de estilo mallorquín para degustar platos caseros hechos con mucho cariño, con una terraza de vistas maravillosas.",
+      alt: "Edificio del Restaurante Sa Duaia"
     },
-    surroundings: {
-      eyebrow: "VII · Entorno",
-      title: "El lugar.",
-      body: "Estás en el corazón de la Serra de Llevant, a 8 minutos de Artà, a 20 minutos de Cala Torta, a 6 del mar abierto. Senderos de piedra que llevan a calas vírgenes. Olivos que vieron pasar imperios. Y un cielo nocturno que en pocos lugares de España se conserva así.",
-      stops: [{
-        d: "8 min",
-        p: "Artà"
+    area: {
+      panel: "Entorno",
+      eyebrow: "Artà · Mallorca",
+      title: "El noreste de la isla,\na su alcance.",
+      distances: [{
+        v: "6 min",
+        l: "Al mar"
       }, {
-        d: "20 min",
-        p: "Cala Torta"
+        v: "10 min",
+        l: "Centro de Artà"
       }, {
-        d: "6 min",
-        p: "Mar abierto"
+        v: "15 km",
+        l: "Cala Rajada"
+      }, {
+        v: "21 km",
+        l: "Cala Millor"
+      }, {
+        v: "40 km",
+        l: "Alcúdia"
+      }, {
+        v: "75 km",
+        l: "Aeropuerto de Palma"
+      }],
+      routeTitle: "Hoja de ruta",
+      route: [{
+        name: "Santuario de Sant Salvador",
+        text: "A 5 minutos del centro de Artà. Un recinto amurallado y una iglesia renacentista: el conjunto más emblemático del pueblo."
+      }, {
+        name: "Iglesia de la Transfiguración del Señor",
+        text: "En la falda del monte de Sant Salvador, dominando Artà. Campanario del siglo XVII y catorce capillas en su interior."
+      }, {
+        name: "Cuevas de Artà",
+        text: "Un recorrido de 35 a 40 minutos. Dentro espera la Reina del Paraíso, una estalagmita de 22 metros.",
+        link: {
+          href: "https://cuevasdearta.com/",
+          label: "cuevasdearta.com"
+        }
+      }, {
+        name: "Mercado de Artà",
+        text: "Cada martes por la mañana: producto local y artesanal, artículos ecológicos de la comarca, fruta y verdura."
       }]
-    },
-    details: {
-      eyebrow: "VIII · Detalles",
-      title: "Las pequeñas cosas."
     },
     reviews: {
-      eyebrow: "II · Lo que dicen",
-      title: "Países, generaciones,\nuna misma sensación.",
-      lede: "Reseñas reales de huéspedes que pasaron por aquí. Sin filtros.",
-      countLabel: "+600 reseñas",
-      guestsLabel: "+5000 huéspedes",
-      sourceLabel: "Google · Booking · directo",
-      ratingValue: 4.3,
-      mapsLabel: "Ver perfil en Google Maps",
+      eyebrow: "Lo que dicen",
+      rating: "4,3",
+      source: "en Google · más de 600 reseñas",
+      link: "Ver en Google Maps",
       mapsUrl: "https://maps.app.goo.gl/AvtphY6pBBH14PN78?g_st=ic",
       items: [{
-        name: "Huésped verificado",
-        city: "Reino Unido",
-        when: "Booking",
+        from: "Reino Unido",
         text: "Una de las vistas más extraordinarias del mundo. Comimos de maravilla y no tuvimos un solo problema con el servicio."
       }, {
-        name: "Huésped verificado",
-        city: "Alemania",
-        when: "Booking",
-        text: "Hermoso, panorámico y tranquilo. Un edificio histórico único, con vistas increíbles desde las ventanas hacia la montaña y el mar."
+        from: "Países Bajos",
+        text: "Adoramos la filosofía ambiental, la ubicación inmejorable, el personal atento, las habitaciones y la piscina."
       }, {
-        name: "Huésped verificado",
-        city: "Estados Unidos",
-        when: "Booking",
-        text: "Hotel con sensación rústica y una terraza fantástica para los atardeceres, con vistas panorámicas de montaña y costa."
-      }, {
-        name: "Huésped verificado",
-        city: "Francia",
-        when: "Booking",
-        text: "Personal amable, la oportunidad de tener una torre medieval para nosotros solos y unas vistas increíbles a toda hora del día y de la noche."
-      }, {
-        name: "Huésped verificado",
-        city: "Países Bajos",
-        when: "Booking",
-        text: "Adoramos la filosofía ambiental, la ubicación inmejorable, el personal atento, las habitaciones hermosas y la piscina."
-      }, {
-        name: "Huésped verificado",
-        city: "Italia",
-        when: "Sitio oficial",
-        text: "Lugar tranquilo y precioso, con una vista magnífica. La comida fue muy buena, igual que el servicio."
-      }, {
-        name: "Huésped verificado",
-        city: "España",
-        when: "Booking",
+        from: "España",
         text: "Hermosa ubicación, vistas inmejorables, calma, piscina, personal amable. No podíamos haber pedido más."
-      }, {
-        name: "Huésped verificado",
-        city: "Suiza",
-        when: "Hotelmix",
-        text: "El entorno natural es sorprendente. Ubicado en el Parque del Levante, ofrece vistas alucinantes y una tranquilidad inigualable."
-      }, {
-        name: "Huésped verificado",
-        city: "Bélgica",
-        when: "Booking",
-        text: "Un rincón apartado, junto a la naturaleza y las playas. Vistas fantásticas desde las ventanas, montes y mar a ambos lados."
       }]
     },
-    booking: {
-      eyebrow: "IX · Reservas",
-      title: "Reserva tu estancia.",
-      lede: "Disponibilidad en tiempo real. Sin intermediarios.",
-      note: "También por teléfono o WhatsApp."
+    book: {
+      eyebrow: "Reserva directa",
+      title: "Reserve su estancia.",
+      lede: "Disponibilidad y precios en tiempo real en la web oficial de Sa Duaia.",
+      checkin: "Llegada",
+      checkout: "Salida",
+      adults: "Adultos",
+      promo: "Código promo",
+      promoPh: "Opcional",
+      submit: "Ver disponibilidad",
+      errDates: "La salida tiene que ser posterior a la llegada.",
+      write: "¿Prefiere escribirnos?"
+    },
+    promo: {
+      eyebrow: "Oferta",
+      code: "Código",
+      cta: "Usar el código",
+      close: "Cerrar"
     },
     footer: {
       address: ["Camí Sa Duaia", "07570 Artà · Illes Balears", "España"],
       contact: "Contacto",
-      hours: "Recepción",
-      hoursVal: "08:00 – 22:00",
+      social: "Redes",
+      lang: "Idioma",
       legal: [{
         label: "Política de privacidad",
         href: "Legal.html#privacidad"
@@ -216,207 +270,221 @@ const CONTENT = {
         label: "Cookies",
         href: "Legal.html#cookies"
       }],
-      copy: "© 2026 Finca Sa Duaia de Dalt · Todos los derechos reservados",
-      sign: "Hecho con tiempo en Mallorca."
+      copy: "© 2026 Finca Sa Duaia de Dalt",
+      credits: "Diseño y desarrollo"
     }
   },
   en: {
     nav: {
-      welcome: "Welcome",
-      finca: "The Estate",
-      stays: "Rooms",
+      finca: "The estate",
+      stays: "Accommodation",
+      villas: "Villas",
       restaurant: "Restaurant",
-      surroundings: "Surroundings",
-      book: "Book"
+      area: "Surroundings",
+      book: "Book",
+      menu: "Menu",
+      open: "Open menu",
+      close: "Close menu"
+    },
+    menuAside: {
+      title: "Planning a getaway?",
+      text: "Book direct on the official website, with real-time availability and prices."
     },
     hero: {
-      eyebrow: "Mallorcan farmhouse · Artà",
-      wordmark1: "FINCA",
-      wordmark2: "SA DUAIA",
-      wordmark3: "DE DALT",
-      tagline: "Mallorca as it was. As it should be.",
-      services: "11 rooms · Restaurant · Pool · 6 min from the sea",
-      specHabs: "Rooms",
-      specMesa: "Restaurant",
-      specPool: "Pool",
-      specSea: "to the sea",
-      scroll: "Discover"
+      eyebrow: "Rural farmhouse · Artà, Mallorca",
+      more: "See accommodation"
     },
-    welcome: {
-      eyebrow: "I · Welcome",
-      heading: "Welcome to Finca \nSa Duaia de Dalt",
-      body: ["A 15th-century estate hidden in the Serra de Llevant.", "6 minutes from the sea, a world away from everything else.", "Here, time is measured in seasons, not hours."],
-      caption: "Entrance bell. 1920.",
-      captions: ["Entrance bell. 1920.", "A welcome in every room.", "The pool, looking at the mountain."]
+    intro: {
+      eyebrow: "Cala Torta · Llevant Natural Park",
+      title: "A rural escape\nsurrounded by nature.",
+      body: ["A 13th-century farmstead on the north-eastern tip of Mallorca, inside the Llevant Natural Park. Inspired by Mallorcan culture, far from the noise, with dreamlike views.", "Walk the mountains, unwind by the pool and leave everyday stress behind."],
+      amenities: ["Outdoor pool", "Free WiFi", "Terraces", "Barbecue area", "Garden", "Shared lounge"]
     },
-    finca: {
-      eyebrow: "III · The Estate",
-      heading: "Six centuries\nof history.",
-      body: "The Sa Duaia tower has watched over these olive groves since 1425. Generations of Mallorcan farmers, a respectful restoration, and a simple idea: that every guest feels like visiting family.",
-      since: "Since 1425",
-      caption: "Aerial view — Sa Duaia and the Serra de Llevant",
-      stats: [{
-        num: "1425",
-        label: "Founded",
-        body: "The defense tower that still watches over the olive groves."
-      }, {
-        num: "VI",
-        label: "Centuries of stone",
-        body: "Six centuries of Mallorcan farming generations."
-      }, {
-        num: "11",
-        label: "Rooms today",
-        body: "Respectfully restored. Original stone, intact soul."
-      }]
-    },
-    intermezzo: {
-      eyebrow: "Interlude",
-      quote: "Time doesn't pass here.\nIt stays.",
-      mark: "Sa Duaia · MCDXXV"
-    },
-    promises: {
-      eyebrow: "IV · Three Promises",
-      title: "What defines us.",
-      items: [{
-        n: "I.",
-        title: "Living history.",
-        body: "A 15th-century estate, respectfully restored. Original stone, wooden beams, intact soul.",
-        aside: "Every stone holds six centuries of craft."
-      }, {
-        n: "II.",
-        title: "Nature all around.",
-        body: "Centenary olive trees, mountains of the Serra de Llevant, paths leading to the sea. A silence few places still have.",
-        aside: "Olive trees that have watched empires."
-      }, {
-        n: "III.",
-        title: "Mallorcan table.",
-        body: "Farmhouse cuisine with local produce. Long meals, fresh bread, island wine.",
-        aside: "Our table is also open to non-resident guests."
-      }]
-    },
+    gallery: ["Terrace by the tower, with the mountains behind", "Bougainvillea over a stone wall", "Stone house on the estate", "Pool with mountain views", "Terrace with tables and mountain views", "Entrance and tiled staircase", "Orange tree in the estate garden"],
     stays: {
-      eyebrow: "V · Rooms",
-      title: "Eleven rooms,\nnone alike.",
-      lede: "Every room keeps the original geometry of the house. Exposed stone, clay floors, windows that frame the mountains.",
-      more: "See more",
+      panel: "Accommodation",
+      eyebrow: "Rooms, bungalows and apartment",
+      title: "Six ways to stay.",
+      lede: "All for two guests, with private bathroom, heating, TV and safe.",
+      labels: {
+        bed: "Bed",
+        bath: "Bathroom",
+        guests: "Guests",
+        views: "Views",
+        plus: "Also"
+      },
       cta: "Check availability",
-      cards: [{
-        tag: "Rustic suite",
-        name: "Traditional Bungalow",
-        size: "60 m²",
-        line: "Exposed original stone. Twin beds or king bed."
+      items: [{
+        kind: "Room",
+        name: "Double Room",
+        size: 14,
+        bed: "1 double bed",
+        bath: "Private, with shower",
+        guests: "2",
+        views: "Sea and mountains"
       }, {
-        tag: "Studio",
-        name: "Mountain View Studio",
-        size: "30 m²",
-        line: "Serra de Llevant views. Mallorcan terracotta floor."
+        kind: "Room",
+        name: "Superior Double Room",
+        size: 22,
+        bed: "1 large double bed",
+        bath: "Private, with shower",
+        guests: "2",
+        views: "Garden and mountains"
       }, {
-        tag: "Family",
-        name: "Family Apartment",
-        size: "36 m²",
-        line: "Botanical-detailed bedroom. For couples or small families."
+        kind: "Room",
+        name: "Double Room with Seating Area",
+        size: 22,
+        bed: "1 double bed",
+        bath: "Private",
+        guests: "2",
+        views: "Sea, garden and pool",
+        plus: "Seating area and shared kitchen"
       }, {
-        tag: "Deluxe",
-        name: "Deluxe Garden Bungalow",
-        size: "75 m²",
-        line: "The most spacious. King-size bed, private living room, garden terrace."
+        kind: "Bungalow",
+        name: "Barraca Bungalow",
+        size: 34,
+        bed: "1 double bed",
+        bath: "Private, with bath",
+        guests: "2",
+        views: "Sea, garden and mountains",
+        plus: "Living room, kitchen, fireplace and terrace"
+      }, {
+        kind: "Apartment",
+        name: "Sa Païssa Apartment",
+        size: 45,
+        bed: "1 double bed",
+        bath: "Private, with bath",
+        guests: "2",
+        views: "Sea, garden and pool",
+        plus: "Living room, kitchen, fireplace, barbecue and terrace"
+      }, {
+        kind: "Bungalow",
+        name: "Deluxe Bungalow with Garden View",
+        size: 50,
+        bed: "1 double bed",
+        bath: "Private, with bath",
+        guests: "2",
+        views: "Garden, pool and mountains",
+        plus: "Living room, kitchen, fireplace and terrace"
+      }]
+    },
+    villas: {
+      eyebrow: "Featured",
+      title: "Two villas with a pool.",
+      lede: "Surrounded by the Llevant Natural Park, with views of nature and the sea. Eco-friendly houses that generate their own electricity with solar panels.",
+      labels: {
+        guests: "guests",
+        rooms: "double bedrooms",
+        baths: "full bathrooms"
+      },
+      cta: "Check availability",
+      items: [{
+        name: "Ca na Moli",
+        img: "assets/villa-ca-na-moli.jpg",
+        alt: "Ca na Moli pool with sea views",
+        guests: 6,
+        rooms: 3,
+        baths: 2,
+        text: "Pool, several terraces, kitchen, living-dining room, fireplace and barbecue. One bathroom is en suite. No air conditioning."
+      }, {
+        name: "Ca na Lluny",
+        img: "assets/villa-ca-na-lluny.jpg",
+        alt: "Ca na Lluny and its pool",
+        guests: 12,
+        rooms: 5,
+        baths: 3,
+        text: "Pool, several terraces, two kitchens, two living-dining rooms and a studio upstairs. A fireplace on each floor and a barbecue by the pool."
       }]
     },
     restaurant: {
-      eyebrow: "VI · Restaurant",
-      title: "Farm kitchen,\nopen table.",
-      body: ["Home-cooked Mallorcan cuisine. Local produce, generational recipes, our table is also open to non-resident guests.", "Dinner under the carob tree, long conversations, island wine."],
-      meta1: "Open",
-      meta2: "Reservations recommended",
-      caption: "Rosemary from the garden · Mallorcan kitchen"
+      eyebrow: "1.5 km from the estate",
+      title: "Sa Duaia Restaurant",
+      body: "A Mallorcan-style restaurant serving home-made dishes cooked with love, with a terrace and wonderful views.",
+      alt: "Sa Duaia Restaurant building"
     },
-    surroundings: {
-      eyebrow: "VII · Surroundings",
-      title: "The place.",
-      body: "You are in the heart of the Serra de Llevant, 8 minutes from Artà, 20 from Cala Torta, 6 from the open sea. Stone paths leading to untouched coves. Olive trees that have witnessed empires. A night sky preserved in few places in Spain.",
-      stops: [{
-        d: "8 min",
-        p: "Artà"
+    area: {
+      panel: "Surroundings",
+      eyebrow: "Artà · Mallorca",
+      title: "The north-east of the island,\nwithin reach.",
+      distances: [{
+        v: "6 min",
+        l: "To the sea"
       }, {
-        d: "20 min",
-        p: "Cala Torta"
+        v: "10 min",
+        l: "Artà town centre"
       }, {
-        d: "6 min",
-        p: "Open sea"
+        v: "15 km",
+        l: "Cala Rajada"
+      }, {
+        v: "21 km",
+        l: "Cala Millor"
+      }, {
+        v: "40 km",
+        l: "Alcúdia"
+      }, {
+        v: "75 km",
+        l: "Palma airport"
+      }],
+      routeTitle: "Things to see",
+      route: [{
+        name: "Sant Salvador Sanctuary",
+        text: "5 minutes from Artà town centre. A walled enclosure and a Renaissance church: the town's most emblematic landmark."
+      }, {
+        name: "Church of the Transfiguration",
+        text: "On the slope of Sant Salvador hill, overlooking Artà. A 17th-century bell tower and fourteen chapels inside."
+      }, {
+        name: "Caves of Artà",
+        text: "A 35 to 40-minute tour. Inside awaits the Queen of Paradise, a 22-metre stalagmite.",
+        link: {
+          href: "https://cuevasdearta.com/",
+          label: "cuevasdearta.com"
+        }
+      }, {
+        name: "Artà market",
+        text: "Every Tuesday morning: local and handmade products, organic goods from the area, fruit and vegetables."
       }]
-    },
-    details: {
-      eyebrow: "VIII · Details",
-      title: "The small things."
     },
     reviews: {
-      eyebrow: "II · What they say",
-      title: "Different countries,\nthe same feeling.",
-      lede: "Real reviews from guests who stayed here. Unfiltered.",
-      countLabel: "+600 reviews",
-      guestsLabel: "+5000 guests",
-      sourceLabel: "Google · Booking · direct",
-      ratingValue: 4.3,
-      mapsLabel: "See profile on Google Maps",
+      eyebrow: "What guests say",
+      rating: "4.3",
+      source: "on Google · over 600 reviews",
+      link: "See on Google Maps",
       mapsUrl: "https://maps.app.goo.gl/AvtphY6pBBH14PN78?g_st=ic",
       items: [{
-        name: "Verified guest",
-        city: "United Kingdom",
-        when: "Booking",
-        text: "One of the most outstanding views in the world. We ate beautifully and had no problem with service. Loved it."
+        from: "United Kingdom",
+        text: "One of the most outstanding views in the world. We ate beautifully and had no problem with service."
       }, {
-        name: "Verified guest",
-        city: "Germany",
-        when: "Booking",
-        text: "Beautiful, scenic, and tranquil. A unique historic building, with fantastic views from our windows on mountains and sea."
+        from: "Netherlands",
+        text: "Loved the environmental ethos, the superb location, the attentive staff, the rooms and the pool."
       }, {
-        name: "Verified guest",
-        city: "United States",
-        when: "Booking",
-        text: "Rustic feel good hotel with a fantastic terrace for sunset views, with mountain and coast panoramas."
-      }, {
-        name: "Verified guest",
-        city: "France",
-        when: "Booking",
-        text: "Friendly staff, the chance to have a medieval tower just for us, and unbelievable views at any time of day or night."
-      }, {
-        name: "Verified guest",
-        city: "Netherlands",
-        when: "Booking",
-        text: "Loved the environmental ethos, the superb location, the excellent attentive staff, the beautiful rooms and the pool."
-      }, {
-        name: "Verified guest",
-        city: "Italy",
-        when: "Official site",
-        text: "Really nice quiet place with a magnificent view. The food was really good, as was the service."
-      }, {
-        name: "Verified guest",
-        city: "Spain",
-        when: "Booking",
+        from: "Spain",
         text: "Beautiful location, great views, calm, swimming pool, friendly staff. Couldn't have asked for more."
-      }, {
-        name: "Verified guest",
-        city: "Switzerland",
-        when: "Hotelmix",
-        text: "The natural setting is astonishing. Located in the Llevant Nature Park, it offers stunning views and unmatched tranquillity."
-      }, {
-        name: "Verified guest",
-        city: "Belgium",
-        when: "Booking",
-        text: "An out of the way spot near nature and beaches. Fantastic views from our windows on mountains and sea on both sides."
       }]
     },
-    booking: {
-      eyebrow: "IX · Booking",
+    book: {
+      eyebrow: "Book direct",
       title: "Book your stay.",
-      lede: "Real-time availability. No middlemen.",
-      note: "Also by phone or WhatsApp."
+      lede: "Real-time availability and prices on Sa Duaia's official website.",
+      checkin: "Check-in",
+      checkout: "Check-out",
+      adults: "Adults",
+      promo: "Promo code",
+      promoPh: "Optional",
+      submit: "Check availability",
+      errDates: "Check-out must be after check-in.",
+      write: "Prefer to message us?"
+    },
+    promo: {
+      eyebrow: "Offer",
+      code: "Code",
+      cta: "Use the code",
+      close: "Close"
     },
     footer: {
-      address: ["Camí Sa Duaia", "07570 Artà · Illes Balears", "Spain"],
+      address: ["Camí Sa Duaia", "07570 Artà · Balearic Islands", "Spain"],
       contact: "Contact",
-      hours: "Reception",
-      hoursVal: "08:00 – 22:00",
+      social: "Social",
+      lang: "Language",
       legal: [{
         label: "Privacy policy",
         href: "Legal.html#privacidad"
@@ -427,269 +495,238 @@ const CONTENT = {
         label: "Cookies",
         href: "Legal.html#cookies"
       }],
-      copy: "© 2026 Finca Sa Duaia de Dalt · All rights reserved",
-      sign: "Made slowly in Mallorca."
+      copy: "© 2026 Finca Sa Duaia de Dalt",
+      credits: "Design & development"
     }
   }
 };
 
 /* ───────────────────────────  HELPERS  ────────────────────────── */
 
-function useReveal() {
+function useReveal(dep) {
   useEffect(() => {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add("is-visible");
-          io.unobserve(e.target);
-        }
-      });
-    }, {
+    const io = new IntersectionObserver(entries => entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add("is-visible");
+        io.unobserve(e.target);
+      }
+    }), {
       threshold: 0.12,
       rootMargin: "0px 0px -6% 0px"
     });
-    document.querySelectorAll(".reveal, .reveal-iris, .img-iris, .rise, .slide-r, .slide-l, .underline-draw, .review-card, .section-opener").forEach(el => io.observe(el));
+    document.querySelectorAll(".reveal:not(.is-visible)").forEach(el => io.observe(el));
     return () => io.disconnect();
-  });
+  }, [dep]);
 }
-
-/* Brand crest — small isotipo for navbar + booking + footer */
-const Crest = props => /*#__PURE__*/React.createElement("svg", _extends({
-  viewBox: "0 0 64 64",
-  fill: "none",
-  stroke: "currentColor",
-  strokeWidth: "1.4",
-  strokeLinecap: "square"
-}, props), /*#__PURE__*/React.createElement("path", {
-  d: "M16 14v-4h4v4h4v-4h4v4h4v-4h4v4h4v-4h4v4h4v32a16 16 0 0 1-16 16h-0a16 16 0 0 1-16-16V14z"
-}), /*#__PURE__*/React.createElement("path", {
-  d: "M24 30v6M32 26v10M40 30v6M24 44h16"
-}));
+function lockScroll(locked) {
+  const lenis = window.__lenis;
+  document.documentElement.style.overflow = locked ? "hidden" : "";
+  if (lenis) locked ? lenis.stop() : lenis.start();
+}
 const Arrow = props => /*#__PURE__*/React.createElement("svg", _extends({
   viewBox: "0 0 24 12",
   fill: "none",
   stroke: "currentColor",
   strokeWidth: "1.1",
-  strokeLinecap: "round"
+  strokeLinecap: "round",
+  "aria-hidden": "true"
 }, props), /*#__PURE__*/React.createElement("path", {
   d: "M0 6h22M16 1l5 5-5 5"
 }));
-function SectionOpener({
-  dark = false
-}) {
-  return /*#__PURE__*/React.createElement("div", {
-    className: "px-6 md:px-10 pt-2"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mx-auto max-w-[1280px] relative"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: ["section-opener", dark ? "on-dark" : ""].join(" ")
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "section-mark"
-  })));
-}
-
-/* Editorial marquee transition strip between sections */
-function Marquee({
-  items,
-  dark = false,
-  accent = "garnet"
-}) {
-  const list = Array.from({
-    length: 4
-  }, () => items).flat();
-  const accentColor = accent === "gold" ? "text-gold" : "text-garnet";
-  const lineColor = accent === "gold" ? "bg-gold/40" : "bg-garnet/30";
-  return /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: ["relative overflow-hidden py-5 md:py-7 border-y", dark ? "bg-ink text-cream/90 border-cream/10" : "bg-linen text-ink/85 border-earth/15"].join(" ")
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "marquee-track whitespace-nowrap"
-  }, list.map((item, i) => /*#__PURE__*/React.createElement("span", {
-    key: i,
-    className: "inline-flex items-center mr-12"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: ["font-display italic mr-12 text-[22px] md:text-[28px] leading-none number", accentColor].join(" ")
-  }, item.num || "·"), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[11px] md:text-[12px] font-medium mr-12"
-  }, item.text), /*#__PURE__*/React.createElement("span", {
-    className: ["inline-block w-12 h-px", lineColor].join(" ")
-  })))));
-}
 function Eyebrow({
   children,
-  dark = false
+  light = false,
+  className = ""
 }) {
   return /*#__PURE__*/React.createElement("div", {
-    className: ["uppercase tracking-wider2 text-[11px] font-medium reveal", dark ? "text-cream/70" : "text-garnet"].join(" ")
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: ["inline-block w-8 h-px", dark ? "bg-cream/40" : "bg-garnet/50"].join(" ")
-  }), children));
+    className: ["uppercase text-[11px] font-medium tracking-[0.28em]", light ? "text-cream/80" : "text-garnet", className].join(" ")
+  }, children);
 }
-
-/* ───────────────────────────  NAV  ────────────────────────── */
-
-function Nav({
+function Lines({
+  text
+}) {
+  return text.split("\n").map((l, i, a) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: i
+  }, l, i < a.length - 1 && /*#__PURE__*/React.createElement("br", null)));
+}
+function LangSwitch({
   lang,
   setLang,
-  t,
-  scrolled
+  light = false
 }) {
-  const link = "uppercase text-[11px] md:text-[12px] font-medium transition-colors duration-500";
-  const linkColor = scrolled ? "text-ink/75 hover:text-garnet" : "text-cream/90 hover:text-cream";
-  const [menuOpen, setMenuOpen] = useState(false);
+  const base = "px-1.5 transition-colors duration-300";
+  const on = light ? "text-cream underline underline-offset-[6px] decoration-1" : "text-ink underline underline-offset-[6px] decoration-1";
+  const off = light ? "text-cream/60 hover:text-cream" : "text-ink/45 hover:text-ink";
+  return /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center text-[11px] font-medium uppercase tracking-[0.28em]"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setLang("es"),
+    className: [base, lang === "es" ? on : off].join(" ")
+  }, "ES"), /*#__PURE__*/React.createElement("span", {
+    className: light ? "text-cream/35" : "text-ink/25"
+  }, "/"), /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: () => setLang("en"),
+    className: [base, lang === "en" ? on : off].join(" ")
+  }, "EN"));
+}
 
-  // Lock background scroll while the mobile menu is open.
-  useEffect(() => {
-    const lenis = window.__lenis;
-    if (menuOpen) {
-      document.documentElement.style.overflow = "hidden";
-      if (lenis && lenis.stop) lenis.stop();
-    } else {
-      document.documentElement.style.overflow = "";
-      if (lenis && lenis.start) lenis.start();
+/* Panel a pantalla completa: la foto manda, una sola palabra encima. */
+function Panel({
+  img,
+  alt,
+  label,
+  position = "center"
+}) {
+  return /*#__PURE__*/React.createElement("div", {
+    className: "relative h-[64svh] md:h-[78vh] min-h-[380px] overflow-hidden bg-ink"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: img,
+    alt: alt,
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover",
+    style: {
+      objectPosition: position
     }
-    return () => {
-      document.documentElement.style.overflow = "";
-    };
-  }, [menuOpen]);
-  const menuLinks = [["#welcome", t.nav.welcome, "I"], ["#finca", t.nav.finca, "II"], ["#stays", t.nav.stays, "III"], ["#restaurant", t.nav.restaurant, "IV"], ["#surroundings", t.nav.surroundings, "V"]];
-  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("header", {
-    className: ["fixed top-0 left-0 right-0 z-50 transition-all duration-700", scrolled ? "bg-cream/95 backdrop-blur-md border-b border-ink/10" : "bg-transparent"].join(" ")
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 panel-veil"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 flex items-center justify-center px-4"
+  }, /*#__PURE__*/React.createElement("h2", {
+    className: "panel-title text-cream uppercase font-light text-[20px] sm:text-[24px] md:text-[34px]"
+  }, label)));
+}
+
+/* ───────────────────────────  HEADER + MENÚ  ────────────────────────── */
+
+function Header({
+  t,
+  lang,
+  setLang,
+  scrolled,
+  onMenu
+}) {
+  return /*#__PURE__*/React.createElement("header", {
+    className: ["fixed top-0 inset-x-0 z-50 transition-colors duration-500", scrolled ? "bg-linen/95 backdrop-blur-md border-b border-ink/10" : "bg-transparent border-b border-transparent"].join(" ")
   }, /*#__PURE__*/React.createElement("div", {
-    className: ["mx-auto max-w-[1480px] px-4 md:px-7 flex items-center justify-between gap-6 transition-all duration-500", scrolled ? "py-3" : "py-4 md:py-5"].join(" ")
+    className: "mx-auto max-w-[1480px] px-4 md:px-8 h-[68px] md:h-[84px] flex items-center justify-between gap-4"
   }, /*#__PURE__*/React.createElement("a", {
     href: "#top",
-    className: "flex items-center shrink-0"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: ["block bg-cream transition-all duration-500", scrolled ? "p-2 md:p-2.5" : "p-3 md:p-3.5", "shadow-[0_1px_4px_rgba(26,20,16,0.08)]"].join(" ")
+    className: "shrink-0",
+    "aria-label": "Finca Sa Duaia de Dalt"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/logo.png",
+    src: scrolled ? "assets/logo-ink.png" : "assets/logo-cream.png",
     alt: "Finca Sa Duaia de Dalt",
-    className: ["w-auto select-none transition-all duration-500", scrolled ? "h-9 md:h-10" : "h-12 md:h-14"].join(" "),
+    className: "h-11 md:h-14 w-auto select-none",
     draggable: "false"
-  }))), /*#__PURE__*/React.createElement("nav", {
-    className: "hidden md:flex items-center gap-7 lg:gap-10 flex-1 justify-center"
-  }, [["#welcome", t.nav.welcome], ["#finca", t.nav.finca], ["#stays", t.nav.stays], ["#restaurant", t.nav.restaurant], ["#surroundings", t.nav.surroundings]].map(([href, label]) => /*#__PURE__*/React.createElement("a", {
-    key: href,
-    href: href,
-    className: [link, linkColor].join(" "),
-    style: {
-      letterSpacing: "0.28em"
-    }
-  }, label))), /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-5 md:gap-7 shrink-0"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "flex items-center gap-3 md:gap-7"
   }, /*#__PURE__*/React.createElement("div", {
-    className: ["hidden md:flex items-center text-[11px] md:text-[12px] font-medium uppercase", scrolled ? "text-ink/65" : "text-cream/85"].join(" "),
-    style: {
-      letterSpacing: "0.28em"
-    }
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: () => setLang("es"),
-    className: ["px-1.5 transition-colors duration-300", lang === "es" ? "underline underline-offset-[6px] decoration-1 " + (scrolled ? "text-garnet" : "text-cream") : "hover:" + (scrolled ? "text-ink" : "text-cream")].join(" ")
-  }, "ES"), /*#__PURE__*/React.createElement("span", {
-    className: scrolled ? "text-ink/30" : "text-cream/50"
-  }, "/"), /*#__PURE__*/React.createElement("button", {
-    onClick: () => setLang("en"),
-    className: ["px-1.5 transition-colors duration-300", lang === "en" ? "underline underline-offset-[6px] decoration-1 " + (scrolled ? "text-garnet" : "text-cream") : "hover:" + (scrolled ? "text-ink" : "text-cream")].join(" ")
-  }, "EN")), /*#__PURE__*/React.createElement("a", {
-    href: "https://www.saduaia.com/es/bookcore/",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    className: ["hidden md:inline-flex items-center justify-center border transition-all duration-500", "px-5 md:px-7 py-3 md:py-3.5", "text-[11px] md:text-[12px] font-medium uppercase", scrolled ? "border-ink text-ink hover:bg-ink hover:text-cream" : "border-cream/70 text-cream hover:bg-cream hover:text-ink"].join(" "),
-    style: {
-      letterSpacing: "0.28em"
-    }
+    className: "hidden md:block"
+  }, /*#__PURE__*/React.createElement(LangSwitch, {
+    lang: lang,
+    setLang: setLang,
+    light: !scrolled
+  })), /*#__PURE__*/React.createElement("a", {
+    href: "#reservar",
+    className: ["inline-flex items-center justify-center border px-4 md:px-6 h-10 md:h-11 text-[11px] font-medium uppercase tracking-[0.24em] transition-colors duration-500", scrolled ? "border-ink bg-ink text-cream hover:bg-garnet hover:border-garnet" : "border-cream/75 text-cream hover:bg-cream hover:text-ink"].join(" ")
   }, t.nav.book), /*#__PURE__*/React.createElement("button", {
     type: "button",
-    onClick: () => setMenuOpen(true),
-    "aria-label": "Abrir men\xFA",
-    className: "md:hidden inline-flex flex-col items-center justify-center gap-[5px] w-10 h-10 -mr-2"
+    onClick: onMenu,
+    "aria-label": t.nav.open,
+    className: ["inline-flex items-center gap-3 h-10 -mr-1 pl-1 pr-1", scrolled ? "text-ink" : "text-cream"].join(" ")
   }, /*#__PURE__*/React.createElement("span", {
-    className: ["block w-6 h-px transition-colors duration-500", scrolled ? "bg-ink" : "bg-cream"].join(" ")
+    className: "hidden md:inline text-[11px] font-medium uppercase tracking-[0.28em]"
+  }, t.nav.menu), /*#__PURE__*/React.createElement("span", {
+    className: "flex flex-col gap-[6px] w-6",
+    "aria-hidden": "true"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: "block h-px w-6 bg-current"
   }), /*#__PURE__*/React.createElement("span", {
-    className: ["block w-6 h-px transition-colors duration-500", scrolled ? "bg-ink" : "bg-cream"].join(" ")
+    className: "block h-px w-6 bg-current"
   }), /*#__PURE__*/React.createElement("span", {
-    className: ["block w-6 h-px transition-colors duration-500", scrolled ? "bg-ink" : "bg-cream"].join(" ")
-  }))))), /*#__PURE__*/React.createElement("div", {
-    className: ["fixed inset-0 z-[60] md:hidden bg-cream transition-opacity duration-500", menuOpen ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"].join(" ")
+    className: "block h-px w-4 bg-current self-end"
+  }))))));
+}
+function Menu({
+  t,
+  lang,
+  setLang,
+  open,
+  onClose
+}) {
+  useEffect(() => {
+    lockScroll(open);
+    if (!open) return;
+    const onKey = e => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+  const links = [["#finca", t.nav.finca], ["#alojamientos", t.nav.stays], ["#villas", t.nav.villas], ["#restaurante", t.nav.restaurant], ["#entorno", t.nav.area]];
+  return /*#__PURE__*/React.createElement("div", {
+    className: ["fixed inset-0 z-[60] bg-linen text-ink transition-opacity duration-500", open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"].join(" "),
+    "aria-hidden": !open
   }, /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-col h-full px-7 py-5"
+    className: "mx-auto max-w-[1480px] h-full px-4 md:px-8 flex flex-col"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center justify-between"
+    className: "h-[68px] md:h-[84px] flex items-center justify-between"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/logo.png",
+    src: "assets/logo-ink.png",
     alt: "Finca Sa Duaia de Dalt",
-    className: "h-12 w-auto select-none",
+    className: "h-11 md:h-14 w-auto select-none",
     draggable: "false"
   }), /*#__PURE__*/React.createElement("button", {
     type: "button",
-    onClick: () => setMenuOpen(false),
-    "aria-label": "Cerrar men\xFA",
-    className: "relative w-10 h-10"
+    onClick: onClose,
+    "aria-label": t.nav.close,
+    className: "relative w-10 h-10 -mr-2"
   }, /*#__PURE__*/React.createElement("span", {
     className: "absolute left-1/2 top-1/2 w-6 h-px bg-ink -translate-x-1/2 -translate-y-1/2 rotate-45"
   }), /*#__PURE__*/React.createElement("span", {
     className: "absolute left-1/2 top-1/2 w-6 h-px bg-ink -translate-x-1/2 -translate-y-1/2 -rotate-45"
-  }))), /*#__PURE__*/React.createElement("nav", {
-    className: "flex-1 flex flex-col justify-center"
-  }, menuLinks.map(([href, label, n]) => /*#__PURE__*/React.createElement("a", {
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "flex-1 grid md:grid-cols-12 gap-10 content-center md:items-center py-8 overflow-y-auto"
+  }, /*#__PURE__*/React.createElement("nav", {
+    className: "md:col-span-6 md:col-start-2 flex flex-col"
+  }, links.map(([href, label]) => /*#__PURE__*/React.createElement("a", {
     key: href,
     href: href,
-    onClick: () => setMenuOpen(false),
-    className: "flex items-baseline gap-4 py-3 border-b border-earth/15"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet text-[13px] w-7 number"
-  }, n), /*#__PURE__*/React.createElement("span", {
-    className: "font-display text-ink text-[30px] leading-none tracking-tight"
-  }, label)))), /*#__PURE__*/React.createElement("div", {
-    className: "pt-6"
+    onClick: onClose,
+    className: "font-display text-[34px] md:text-[52px] leading-[1.25] tracking-tight hover:text-garnet transition-colors duration-300"
+  }, label))), /*#__PURE__*/React.createElement("div", {
+    className: "md:col-span-4"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center text-[12px] font-medium uppercase tracking-wider2 text-ink/70 mb-5"
-  }, /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setLang("es"),
-    className: ["px-1.5", lang === "es" ? "text-garnet underline underline-offset-[6px]" : ""].join(" ")
-  }, "ES"), /*#__PURE__*/React.createElement("span", {
-    className: "text-ink/30"
-  }, "/"), /*#__PURE__*/React.createElement("button", {
-    type: "button",
-    onClick: () => setLang("en"),
-    className: ["px-1.5", lang === "en" ? "text-garnet underline underline-offset-[6px]" : ""].join(" ")
-  }, "EN")), /*#__PURE__*/React.createElement("a", {
-    href: "https://www.saduaia.com/es/bookcore/",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    onClick: () => setMenuOpen(false),
-    className: "flex items-center justify-center bg-ink text-cream py-4 uppercase tracking-wider2 text-[12px] font-medium"
-  }, t.nav.book)))));
+    className: "hidden md:block w-14 h-px bg-garnet/60 mb-8"
+  }), /*#__PURE__*/React.createElement("p", {
+    className: "font-display text-[24px] md:text-[30px] leading-tight"
+  }, t.menuAside.title), /*#__PURE__*/React.createElement("p", {
+    className: "mt-4 text-ink/70 text-[14px] leading-[1.75] font-light max-w-xs"
+  }, t.menuAside.text), /*#__PURE__*/React.createElement("a", {
+    href: "#reservar",
+    onClick: onClose,
+    className: "mt-7 inline-flex items-center gap-3 bg-ink text-cream px-7 h-12 text-[11px] font-medium uppercase tracking-[0.24em] hover:bg-garnet transition-colors duration-500"
+  }, t.nav.book, /*#__PURE__*/React.createElement(Arrow, {
+    className: "w-5 h-3"
+  })))), /*#__PURE__*/React.createElement("div", {
+    className: "py-6 border-t border-ink/10 flex items-center justify-between"
+  }, /*#__PURE__*/React.createElement(LangSwitch, {
+    lang: lang,
+    setLang: setLang
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "text-[11px] uppercase tracking-[0.28em] text-ink/45"
+  }, "Art\xE0 \xB7 Mallorca"))));
 }
 
-/* ───────────────────────────  HERO  (video, wordmark right)  ───────────────────────── */
+/* ───────────────────────────  HERO  ────────────────────────── */
 
 function Hero({
   t
 }) {
-  const videoRef = useRef(null);
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.muted = true;
-    v.playsInline = true;
-    const p = v.play();
-    if (p && p.catch) p.catch(() => {});
-  }, []);
   return /*#__PURE__*/React.createElement("section", {
     id: "top",
-    className: "relative h-[100svh] min-h-[640px] w-full overflow-hidden bg-ink",
-    style: {
-      backgroundImage: "url(assets/hero-poster.jpg)",
-      backgroundSize: "cover",
-      backgroundPosition: "center"
-    }
+    className: "relative h-[100svh] min-h-[600px] w-full overflow-hidden bg-ink"
   }, /*#__PURE__*/React.createElement("video", {
-    ref: videoRef,
     className: "absolute inset-0 w-full h-full object-cover",
     src: "assets/hero.mp4",
     poster: "assets/hero-poster.jpg",
@@ -699,1689 +736,614 @@ function Hero({
     playsInline: true,
     preload: "auto"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 hero-vignette"
+    className: "absolute inset-0 hero-veil"
   }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute top-0 inset-x-0 h-px bg-cream/15"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 flex items-end md:items-center"
+    className: "absolute inset-x-0 bottom-0 pb-20 md:pb-24 px-4"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "mx-auto max-w-[1320px] w-full px-6 md:px-10 flex justify-center md:justify-end pb-28 md:pb-0"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "text-cream text-center md:text-right max-w-md md:max-w-none [text-shadow:0_1px_12px_rgba(26,20,16,0.55)] md:[text-shadow:none]"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hero-rise-m mb-5 md:mb-8 flex items-center justify-center md:justify-end gap-4 text-cream/85",
-    style: {
-      animationDelay: "80ms"
-    }
+    className: "mx-auto max-w-[900px] text-center text-cream hero-in"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    light: true
+  }, t.hero.eyebrow), /*#__PURE__*/React.createElement("h1", {
+    className: "mt-5 font-display font-normal leading-[1.02] tracking-tight text-[44px] sm:text-[60px] md:text-[84px]"
+  }, "Finca Sa Duaia ", /*#__PURE__*/React.createElement("span", {
+    className: "whitespace-nowrap"
+  }, "de Dalt")), /*#__PURE__*/React.createElement("div", {
+    className: "mt-9 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-8"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#reservar",
+    className: "inline-flex items-center justify-center gap-3 bg-cream text-ink px-8 h-12 text-[11px] font-medium uppercase tracking-[0.24em] hover:bg-linen transition-colors duration-500"
+  }, t.nav.book, /*#__PURE__*/React.createElement(Arrow, {
+    className: "w-5 h-3"
+  })), /*#__PURE__*/React.createElement("a", {
+    href: "#alojamientos",
+    className: "text-[11px] font-medium uppercase tracking-[0.24em] text-cream/85 hover:text-cream underline underline-offset-[8px] decoration-cream/40"
+  }, t.hero.more)))), /*#__PURE__*/React.createElement("div", {
+    className: "absolute bottom-0 left-1/2 -translate-x-1/2 h-12 w-px bg-cream/25 overflow-hidden",
+    "aria-hidden": "true"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "hidden md:inline-block w-12 h-px bg-cream/55"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-gold text-[15px] md:text-[17px] tracking-normal leading-none number"
-  }, "MCDXXV"), /*#__PURE__*/React.createElement("span", {
-    className: "w-6 h-px bg-cream/30"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] md:text-[11px] font-medium"
-  }, t.hero.eyebrow)), /*#__PURE__*/React.createElement("h1", {
-    className: "hero-rise-m font-display font-bold leading-[0.92] tracking-tight text-[42px] sm:text-[60px] md:text-[80px] lg:text-[100px]",
-    style: {
-      animationDelay: "200ms"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block"
-  }, t.hero.wordmark1), /*#__PURE__*/React.createElement("span", {
-    className: "block"
-  }, t.hero.wordmark2), /*#__PURE__*/React.createElement("span", {
-    className: "block"
-  }, t.hero.wordmark3)), /*#__PURE__*/React.createElement("p", {
-    className: "hero-rise-m mt-6 md:mt-9 font-display italic text-cream/90 text-[17px] md:text-[22px] max-w-md mx-auto md:mx-0 md:ml-auto",
-    style: {
-      animationDelay: "360ms"
-    }
-  }, t.hero.tagline), /*#__PURE__*/React.createElement("a", {
-    href: "https://www.saduaia.com/es/bookcore/",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    className: "hero-rise-m md:hidden mt-8 inline-flex items-center justify-center border border-cream/70 text-cream px-9 py-3.5 uppercase tracking-wider2 text-[11px] font-medium",
-    style: {
-      animationDelay: "520ms"
-    }
-  }, t.nav.book), /*#__PURE__*/React.createElement("div", {
-    className: "hidden md:flex md:mt-10 md:items-stretch md:gap-0 md:justify-end text-cream/85"
-  }, [{
-    n: "XI",
-    l: t.hero.specHabs || "Habitaciones"
-  }, {
-    n: "I",
-    l: t.hero.specMesa || "Restaurante"
-  }, {
-    n: "I",
-    l: t.hero.specPool || "Piscina"
-  }, {
-    n: "6'",
-    l: t.hero.specSea || "del mar"
-  }].map((s, i, arr) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: ["flex flex-col items-end gap-1.5 px-5", i > 0 ? "border-l border-cream/15" : ""].join(" ")
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-gold text-[28px] leading-none number"
-  }, s.n), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-cream/70 whitespace-nowrap"
-  }, s.l)))), /*#__PURE__*/React.createElement("a", {
-    href: "#reviews",
-    className: "hidden md:inline-flex mt-9 items-center justify-end gap-4 group/g w-auto md:ml-auto"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center gap-2.5 px-4 py-2.5 bg-cream/10 backdrop-blur-sm border border-cream/25 hover:bg-cream/20 transition-colors duration-500"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center gap-1.5",
-    style: {
-      color: "#C89211"
-    }
-  }, [0, 1, 2, 3, 4].map(i => {
-    const v = 4.3;
-    const isFull = i + 1 <= Math.floor(v);
-    const isHalf = !isFull && v - i > 0 && v - i < 1;
-    return /*#__PURE__*/React.createElement("svg", {
-      key: i,
-      viewBox: "0 0 24 24",
-      className: "w-[14px] h-[14px]",
-      fill: "none",
-      stroke: "currentColor",
-      strokeWidth: "1.2"
-    }, /*#__PURE__*/React.createElement("defs", null, isHalf && /*#__PURE__*/React.createElement("linearGradient", {
-      id: `hero-star-${i}`
-    }, /*#__PURE__*/React.createElement("stop", {
-      offset: "50%",
-      stopColor: "currentColor"
-    }), /*#__PURE__*/React.createElement("stop", {
-      offset: "50%",
-      stopColor: "transparent"
-    }))), /*#__PURE__*/React.createElement("path", {
-      d: "M12 2 l3.09 6.26 6.91 1.01 -5 4.87 1.18 6.88 L12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26z",
-      fill: isFull ? "currentColor" : isHalf ? `url(#hero-star-${i})` : "none"
-    }));
-  }))), /*#__PURE__*/React.createElement("span", {
-    className: "flex flex-col gap-0.5 text-cream/85 text-left md:text-right"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-cream text-[16px] md:text-[18px] leading-none"
-  }, t.hero.heroSocialEs || "+600 reseñas"), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[9px] md:text-[10px] font-medium text-cream/70"
-  }, t.hero.heroSocialGuests || "+5000 huéspedes")))))), /*#__PURE__*/React.createElement("a", {
-    href: "#welcome",
-    className: "absolute bottom-7 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-cream/75 hover:text-cream transition-colors"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium"
-  }, t.hero.scroll), /*#__PURE__*/React.createElement("span", {
-    className: "block w-px h-12 bg-cream/55 scroll-line"
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "absolute bottom-7 left-6 md:left-10 hidden md:flex items-center gap-3 text-cream/55 uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "w-6 h-px bg-cream/40"
-  }), /*#__PURE__*/React.createElement("span", null, "Est. 1425")), /*#__PURE__*/React.createElement("div", {
-    className: "absolute bottom-7 right-6 md:right-10 hidden md:flex items-center gap-3 text-cream/55 uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement("span", null, "39\xB0 41\u2032 N \xB7 3\xB0 21\u2032 E"), /*#__PURE__*/React.createElement("span", {
-    className: "w-6 h-px bg-cream/40"
+    className: "block w-px h-full bg-cream/80 scroll-line"
   })));
 }
 
-/* ───────────────────────────  WELCOME  ───────────────────────── */
+/* ───────────────────────────  LA FINCA  ────────────────────────── */
 
-function Welcome({
-  t
-}) {
-  const w = t.welcome;
-  const stats = [{
-    num: "11",
-    label: w.s1Label || "Estancias",
-    body: w.s1Body || "Once habitaciones únicas en piedra original mallorquina."
-  }, {
-    num: "XV",
-    label: w.s2Label || "Siglo",
-    body: w.s2Body || "Desde mil cuatrocientos veinticinco — seis siglos de tierra trabajada."
-  }, {
-    num: "6'",
-    label: w.s3Label || "Al mar",
-    body: w.s3Body || "A seis minutos del Mediterráneo y de las calas vírgenes de Llevant."
-  }];
-  return /*#__PURE__*/React.createElement("section", {
-    id: "welcome",
-    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute right-[-5%] top-[8%] pointer-events-none select-none"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/[0.05] leading-[0.85]",
-    style: {
-      fontSize: "clamp(260px, 38vw, 540px)"
-    }
-  }, "XI")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-10 md:mt-24 z-10"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 items-end mb-10 md:mb-24"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-9"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, w.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px] lg:text-[96px] whitespace-pre-line"
-  }, w.heading))), /*#__PURE__*/React.createElement("div", {
-    className: "relative"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "md:col-span-6 rise delay-2"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[3/4] overflow-hidden ph"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/bell.jpg",
-    alt: "Campana de hierro oxidado en la entrada",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "eager",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/85 bg-ink/30 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
-  }, "I \u2014 La entrada"))), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-5 md:col-start-8 md:pt-12 rise delay-3"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "space-y-5 text-ink/80 text-[17px] md:text-[19px] leading-[1.85] max-w-xl font-light"
-  }, w.body.map((line, i) => /*#__PURE__*/React.createElement("p", {
-    key: i
-  }, line))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 pt-8 border-t border-garnet/25"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet text-[26px] md:text-[30px] leading-[1.2] block"
-  }, "\u201CAqu\xED el tiempo se mide en estaciones, no en horas.\u201D")))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-10 md:mt-8"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "hidden md:flex md:col-span-2 flex-col items-start gap-3 md:pt-32 rise delay-1"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/80 number",
-    style: {
-      fontSize: "clamp(60px, 6.5vw, 96px)",
-      lineHeight: 0.9
-    }
-  }, "MCDXXV"), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-earth"
-  }, "Desde 1425")), /*#__PURE__*/React.createElement("figure", {
-    className: "md:col-span-7 md:col-start-4 rise delay-2 md:-mt-32"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[3/2] overflow-hidden ph"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/welcome-host.jpg",
-    alt: "Toni, anfitri\xF3n de Sa Duaia, en la entrada de piedra de la finca",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "lazy",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/90 bg-ink/40 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
-  }, "II \u2014 La bienvenida")), /*#__PURE__*/React.createElement("figcaption", {
-    className: "mt-4 flex items-center gap-3 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-6 h-px bg-earth/60"
-  }), /*#__PURE__*/React.createElement("span", null, "Toni \xB7 anfitri\xF3n, tercera generaci\xF3n"))), /*#__PURE__*/React.createElement("div", {
-    className: "hidden md:block md:col-span-2 md:col-start-11 md:pt-40 rise delay-3"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "font-display italic text-ink/70 text-[20px] leading-[1.4]"
-  }, "Una casa", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
-    className: "text-ink/45"
-  }, "que recibe.")), /*#__PURE__*/React.createElement("span", {
-    className: "block w-10 h-px bg-earth/40 mt-5"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start mt-10 md:mt-12"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "md:col-span-5 md:col-start-2 rise delay-2 md:-mt-12"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[3/4] overflow-hidden ph"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/welcome-towels.jpg",
-    alt: "Toallas de bienvenida con romero",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "lazy",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/85 bg-ink/30 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
-  }, "III \u2014 El cuarto"))), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-5 md:col-start-8 md:pt-20 flex flex-col gap-8 md:gap-12 rise delay-3"
-  }, stats.map((s, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "pl-6 border-l border-garnet/40 relative"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "absolute left-0 top-0 w-px h-8 bg-garnet"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "font-display italic text-garnet number leading-none",
-    style: {
-      fontSize: "clamp(48px, 5vw, 72px)"
-    }
-  }, s.num), /*#__PURE__*/React.createElement("div", {
-    className: "mt-3 uppercase tracking-wider2 text-[10px] font-medium text-earth"
-  }, s.label), /*#__PURE__*/React.createElement("p", {
-    className: "mt-2 text-ink/70 text-[14px] md:text-[15px] leading-[1.7] font-light max-w-xs"
-  }, s.body))))))));
-}
-
-/* ───────────────────────────  INTERMEZZO  ───────────────────────── */
-
-function Intermezzo({
-  t
-}) {
-  const im = t.intermezzo || {};
-  const wrapRef = useRef(null);
-  const [progress, setProgress] = useState(0);
-  useEffect(() => {
-    const onScroll = () => {
-      const el = wrapRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const total = el.offsetHeight - window.innerHeight;
-      const scrolled = Math.max(0, -rect.top);
-      const p = total > 0 ? Math.min(1, scrolled / total) : 0;
-      setProgress(p);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, {
-      passive: true
-    });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-
-  // Fade in 0–0.25, hold 0.25–0.75, fade out 0.75–1.
-  const fade = (() => {
-    if (progress < 0.25) return progress / 0.25;
-    if (progress > 0.75) return Math.max(0, 1 - (progress - 0.75) / 0.25);
-    return 1;
-  })();
-
-  // Subtle vertical line draw — grows top→bottom during fade-in, retracts during fade-out.
-  const lineH = Math.min(1, fade);
-  return /*#__PURE__*/React.createElement("section", {
-    "aria-label": "Interludio",
-    className: "relative bg-linen"
-  }, /*#__PURE__*/React.createElement("div", {
-    ref: wrapRef,
-    className: "relative h-[110vh] md:h-[180vh]"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "sticky top-0 h-screen flex items-center justify-center overflow-hidden"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "absolute top-0 inset-x-0 h-px bg-ink/10"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute bottom-0 inset-x-0 h-px bg-ink/10"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute left-1/2 -translate-x-1/2 top-[14vh] w-px bg-garnet/40 origin-top transition-transform duration-700 ease-out",
-    style: {
-      height: "8vh",
-      transform: `scaleY(${lineH})`
-    }
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "relative px-6 md:px-10 text-center transition-opacity duration-700 ease-out",
-    style: {
-      opacity: fade
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "font-sans uppercase tracking-wider2 text-[10px] md:text-[11px] text-earth",
-    style: {
-      letterSpacing: "0.32em"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center gap-4"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-8 h-px bg-earth/50"
-  }), im.eyebrow, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-8 h-px bg-earth/50"
-  }))), /*#__PURE__*/React.createElement("blockquote", {
-    className: "mt-10 md:mt-14 font-display italic font-light text-ink whitespace-pre-line",
-    style: {
-      fontSize: "clamp(40px, 7.5vw, 116px)",
-      lineHeight: 1.02,
-      letterSpacing: "-0.01em"
-    }
-  }, im.quote), /*#__PURE__*/React.createElement("div", {
-    className: "mt-12 md:mt-16 flex items-center justify-center gap-4 text-earth uppercase tracking-wider2 text-[10px] md:text-[11px]",
-    style: {
-      letterSpacing: "0.32em"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-10 h-px bg-earth/45"
-  }), /*#__PURE__*/React.createElement("span", null, im.mark), /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-10 h-px bg-earth/45"
-  }))))));
-}
-
-/* ───────────────────────────  LA FINCA (aerial full-bleed)  ───────────────────────── */
-
+const GALLERY = [{
+  src: "assets/finca-torre-terraza.jpg",
+  cls: "col-span-2 md:col-span-8 aspect-[3/2]"
+}, {
+  src: "assets/finca-buganvilla.jpg",
+  cls: "col-span-1 md:col-span-4 aspect-[3/4] md:aspect-auto"
+}, {
+  src: "assets/finca-casa-piedra.jpg",
+  cls: "col-span-1 md:col-span-4 aspect-[3/4] md:aspect-[4/3]"
+}, {
+  src: "assets/finca-piscina.jpg",
+  cls: "col-span-2 md:col-span-4 aspect-[3/2] md:aspect-[4/3]"
+}, {
+  src: "assets/finca-terraza.jpg",
+  cls: "col-span-1 md:col-span-4 aspect-[3/4] md:aspect-[4/3]"
+}, {
+  src: "assets/finca-entrada.jpg",
+  cls: "col-span-1 md:col-span-5 aspect-[3/4] md:aspect-auto"
+}, {
+  src: "assets/finca-naranjo.jpg",
+  cls: "col-span-2 md:col-span-7 aspect-[3/2] md:aspect-[16/10]"
+}];
 function Finca({
   t
 }) {
-  const f = t.finca;
-  const stats = f.stats || [];
+  const i = t.intro;
   return /*#__PURE__*/React.createElement("section", {
     id: "finca",
-    className: "relative bg-linen py-16 md:py-36 overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute inset-x-0 top-[18%] md:top-[14%] pointer-events-none select-none flex justify-center"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/[0.06] leading-[0.85] whitespace-nowrap",
-    style: {
-      fontSize: "clamp(220px, 36vw, 520px)"
-    }
-  }, "MCDXXV")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-10 md:mt-24 z-10"
+    className: "bg-linen"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 mb-14 md:mb-20 items-end"
+    className: "mx-auto max-w-[860px] px-4 md:px-8 pt-24 md:pt-36 pb-16 md:pb-24 text-center"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    className: "reveal"
+  }, i.eyebrow), /*#__PURE__*/React.createElement("h2", {
+    className: "reveal mt-6 font-display text-ink text-[36px] md:text-[56px] leading-[1.08] tracking-tight"
+  }, /*#__PURE__*/React.createElement(Lines, {
+    text: i.title
+  })), i.body.map((p, k) => /*#__PURE__*/React.createElement("p", {
+    key: k,
+    className: "reveal mt-7 text-ink/75 text-[16px] md:text-[18px] leading-[1.85] font-light"
+  }, p))), /*#__PURE__*/React.createElement("ul", {
+    className: "reveal mx-auto max-w-[1100px] px-4 -mt-4 md:-mt-8 pb-16 md:pb-24 flex flex-wrap justify-center gap-x-8 md:gap-x-10 gap-y-3 text-[11px] font-medium uppercase tracking-[0.2em] text-ink/60"
+  }, i.amenities.map(a => /*#__PURE__*/React.createElement("li", {
+    key: a
+  }, a))), /*#__PURE__*/React.createElement("div", {
+    className: "mx-auto max-w-[1480px] px-2 md:px-8 pb-24 md:pb-36"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-7"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, f.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[1] tracking-tight text-[44px] md:text-[80px] lg:text-[92px] whitespace-pre-line"
-  }, f.heading)), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-4 md:col-start-9 rise delay-2"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "font-light text-ink/80 text-[16px] md:text-[17px] leading-[1.85]"
-  }, f.body), /*#__PURE__*/React.createElement("div", {
-    className: "mt-7 flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet text-[34px] number leading-none"
-  }, "1425"), /*#__PURE__*/React.createElement("span", {
-    className: "w-10 h-px bg-garnet/40"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-earth"
-  }, f.since))))), /*#__PURE__*/React.createElement("div", {
-    className: "relative"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "rise delay-2 relative"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative w-full overflow-hidden ph mx-auto max-w-[1480px]"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[16/9]"
+    className: "grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-3"
+  }, GALLERY.map((g, k) => /*#__PURE__*/React.createElement("figure", {
+    key: g.src,
+    className: ["reveal relative overflow-hidden bg-cream", g.cls].join(" ")
   }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/aerial.jpg",
-    alt: "Vista a\xE9rea de la finca y la torre",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "eager",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-tr from-ink/85 via-ink/40 to-ink/0"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute bottom-6 md:bottom-10 left-6 md:left-12 right-6 md:right-auto md:max-w-md"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "text-cream relative"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "absolute -left-3 top-0 bottom-0 w-px bg-gold/70"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-cream text-[22px] md:text-[30px] leading-[1.15] block drop-shadow-[0_2px_8px_rgba(0,0,0,0.55)]"
-  }, "\u201CUna finca que ha visto pasar imperios.\u201D"), /*#__PURE__*/React.createElement("span", {
-    className: "mt-4 inline-flex items-center gap-3 uppercase tracking-wider2 text-[10px] font-medium text-cream/90"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-6 h-px bg-gold/80"
-  }), "Serra de Llevant \xB7 Art\xE0"))))), /*#__PURE__*/React.createElement("figcaption", {
-    className: "mx-auto max-w-[1320px] px-6 md:px-10 mt-5 flex items-center justify-between text-earth uppercase tracking-wider2 text-[10px] font-medium gap-4"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-6 h-px bg-earth/60"
-  }), f.caption || "Vista aérea — Serra de Llevant"), /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic not-uppercase tracking-normal text-garnet text-[13px] md:text-[14px]"
-  }, "39\xB0 41\u2032 N \xB7 3\xB0 21\u2032 E")))), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-20 md:mt-28 z-10"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-3 gap-10 md:gap-16"
-  }, stats.map((s, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: ["rise pl-6 md:pl-8 border-l border-garnet/30 relative", "delay-" + (i + 1)].join(" ")
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "absolute left-0 top-0 w-px h-10 bg-garnet/80"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "font-display italic text-garnet text-[60px] md:text-[80px] leading-none number"
-  }, s.num), /*#__PURE__*/React.createElement("div", {
-    className: "mt-5 uppercase tracking-wider2 text-[10px] font-medium text-earth"
-  }, s.label), /*#__PURE__*/React.createElement("p", {
-    className: "mt-3 text-ink/70 text-[14px] md:text-[15px] leading-[1.75] font-light max-w-xs"
-  }, s.body))))));
+    src: g.src,
+    alt: t.gallery[k],
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover"
+  }))))));
 }
 
-/* ───────────────────────────  THREE PROMISES  ───────────────────────── */
-
-function Promises({
-  t
-}) {
-  const p = t.promises;
-  const sectionRef = useRef(null);
-  const rowRefs = useRef([]);
-  const [active, setActive] = useState(-1); // -1 = none yet
-  const [hoverIdx, setHoverIdx] = useState(-1);
-
-  // Track which row is centered on screen
-  useEffect(() => {
-    const onScroll = () => {
-      const vh = window.innerHeight;
-      let best = -1;
-      let bestDist = Infinity;
-      rowRefs.current.forEach((el, i) => {
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        const center = rect.top + rect.height / 2;
-        const dist = Math.abs(center - vh / 2);
-        // Only count rows that are at least partly in the viewport
-        if (rect.bottom > 40 && rect.top < vh - 40 && dist < bestDist) {
-          bestDist = dist;
-          best = i;
-        }
-      });
-      setActive(best);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, {
-      passive: true
-    });
-    window.addEventListener("resize", onScroll, {
-      passive: true
-    });
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
-
-  // Mouse parallax on numerals — only inside the section
-  const onMouseMove = e => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const nums = el.querySelectorAll(".promise-num-parallax");
-    const cx = window.innerWidth / 2;
-    const cy = window.innerHeight / 2;
-    const dx = (e.clientX - cx) / cx; // -1..1
-    const dy = (e.clientY - cy) / cy;
-    nums.forEach(n => {
-      n.style.transform = `translate(${dx * 6}px, ${dy * 4}px)`;
-    });
-  };
-  const focusIdx = hoverIdx >= 0 ? hoverIdx : active;
-  const hasActive = focusIdx >= 0;
-  return /*#__PURE__*/React.createElement("section", {
-    ref: sectionRef,
-    onMouseMove: onMouseMove,
-    onMouseLeave: () => setHoverIdx(-1),
-    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute left-3 md:left-6 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none",
-    style: {
-      writingMode: "vertical-rl",
-      transform: "translateY(-50%) rotate(180deg)"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/30 text-[15px] tracking-wider2"
-  }, "tres \xB7 cosas \xB7 sa \xB7 duaia")), /*#__PURE__*/React.createElement("div", {
-    className: "hidden lg:block absolute top-0 bottom-0 right-6 xl:right-10 w-[1px] pointer-events-none"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "sticky top-[42vh] flex flex-col items-end gap-7"
-  }, p.items.map((it, i) => {
-    const isOn = i === focusIdx;
-    return /*#__PURE__*/React.createElement("div", {
-      key: i,
-      className: "flex items-center gap-3"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: ["promise-tick font-display italic leading-none number", isOn ? "text-garnet text-[22px]" : "text-earth/55 text-[16px]"].join(" ")
-    }, it.n), /*#__PURE__*/React.createElement("span", {
-      className: ["promise-tick-line block h-px", isOn ? "bg-garnet w-12" : "bg-earth/40 w-5"].join(" ")
-    }));
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1280px] px-6 md:px-10 mt-14 md:mt-20"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mb-10 md:mb-24 max-w-2xl"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, p.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px]"
-  }, p.title)), /*#__PURE__*/React.createElement("div", {
-    className: "promises-stack space-y-12 md:space-y-24",
-    "data-has-active": hasActive ? "true" : "false"
-  }, p.items.map((it, i) => {
-    const reverse = i === 1;
-    const isActive = i === focusIdx;
-    return /*#__PURE__*/React.createElement("article", {
-      key: i,
-      ref: el => rowRefs.current[i] = el,
-      onMouseEnter: () => setHoverIdx(i),
-      className: ["promise-row grid md:grid-cols-12 gap-8 md:gap-12 items-start relative", "pt-8 md:pt-14", i === 0 ? "pt-0" : "", isActive ? "is-active" : ""].join(" ")
-    }, i > 0 && /*#__PURE__*/React.createElement("span", {
-      className: ["promise-rule absolute top-0 left-0 h-px", isActive ? "bg-garnet" : "bg-garnet/15"].join(" "),
-      style: {
-        width: isActive ? "120px" : "100%"
-      }
-    }), /*#__PURE__*/React.createElement("div", {
-      className: ["md:col-span-3 rise", reverse ? "md:order-3" : ""].join(" ")
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "flex items-baseline gap-3"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: ["promise-num promise-num-parallax font-display italic leading-none number", isActive ? "text-garnet" : "text-garnet/85"].join(" "),
-      style: {
-        fontSize: "clamp(64px, 13vw, 200px)",
-        textShadow: isActive ? "0 6px 24px rgba(124,22,33,0.18)" : "none"
-      }
-    }, it.n), /*#__PURE__*/React.createElement("span", {
-      className: "text-earth uppercase tracking-wider2 text-[10px] font-medium"
-    }, "/ III"))), /*#__PURE__*/React.createElement("div", {
-      className: ["md:col-span-5 rise delay-1", reverse ? "md:order-2" : ""].join(" ")
-    }, /*#__PURE__*/React.createElement("h3", {
-      className: ["promise-title font-display leading-[1.05] tracking-tight text-[32px] md:text-[44px]", isActive ? "text-ink" : "text-ink/95"].join(" ")
-    }, it.title), /*#__PURE__*/React.createElement("p", {
-      className: "promise-body mt-6 text-ink/75 text-[16px] md:text-[17px] leading-[1.85] font-light max-w-md"
-    }, it.body)), /*#__PURE__*/React.createElement("div", {
-      className: ["md:col-span-4 rise delay-2 md:pt-6", reverse ? "md:order-1" : ""].join(" ")
-    }, /*#__PURE__*/React.createElement("div", {
-      className: "promise-aside pl-6 border-l border-garnet/40 relative"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "absolute left-0 top-0 w-px bg-garnet",
-      style: {
-        height: isActive ? "64px" : "32px",
-        transition: "height 700ms cubic-bezier(.22,1,.36,1)"
-      }
-    }), /*#__PURE__*/React.createElement("span", {
-      className: "font-display italic text-ink/70 text-[18px] md:text-[20px] leading-[1.4] block"
-    }, it.aside || ""))));
-  }))));
-}
-
-/* ───────────────────────────  STAYS  ───────────────────────── */
+/* ───────────────────────────  ALOJAMIENTOS  ────────────────────────── */
 
 function Stays({
   t
 }) {
   const s = t.stays;
-  const imgs = ["assets/room-tradicional.jpg", "assets/room-estudio.jpg", "assets/room-familiar.jpg", "assets/room-deluxe.jpg"];
+  const rows = r => [[s.labels.bed, r.bed], [s.labels.bath, r.bath], [s.labels.guests, r.guests], [s.labels.views, r.views], ...(r.plus ? [[s.labels.plus, r.plus]] : [])];
   return /*#__PURE__*/React.createElement("section", {
-    id: "stays",
-    className: "bg-linen py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute left-[-3%] bottom-[6%] pointer-events-none select-none"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/[0.05] leading-[0.85]",
-    style: {
-      fontSize: "clamp(220px, 30vw, 460px)"
-    }
-  }, "XI")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
+    id: "alojamientos",
+    className: "bg-linen"
+  }, /*#__PURE__*/React.createElement(Panel, {
+    img: "assets/room-familiar.jpg",
+    alt: "",
+    label: s.panel
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-32"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 items-end mb-10 md:mb-24"
+    className: "max-w-[640px]"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    className: "reveal"
+  }, s.eyebrow), /*#__PURE__*/React.createElement("h3", {
+    className: "reveal mt-5 font-display text-ink text-[34px] md:text-[48px] leading-[1.08] tracking-tight"
+  }, s.title), /*#__PURE__*/React.createElement("p", {
+    className: "reveal mt-5 text-ink/70 text-[16px] leading-[1.8] font-light"
+  }, s.lede)), /*#__PURE__*/React.createElement("div", {
+    className: "mt-14 md:mt-20 grid md:grid-cols-2 lg:grid-cols-3 gap-x-10 gap-y-14"
+  }, s.items.map(r => /*#__PURE__*/React.createElement("article", {
+    key: r.name,
+    className: "reveal border-t border-ink/15 pt-6"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-7"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, s.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px] lg:text-[92px] whitespace-pre-line"
-  }, s.title)), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-4 md:col-start-9 rise delay-2"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "text-ink/75 text-[16px] md:text-[17px] leading-[1.85] font-light"
-  }, s.lede), /*#__PURE__*/React.createElement("div", {
-    className: "mt-7 flex items-center gap-3"
+    className: "flex items-baseline justify-between gap-4"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet text-[40px] number leading-none"
-  }, "11"), /*#__PURE__*/React.createElement("span", {
-    className: "w-10 h-px bg-garnet/40"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-earth"
-  }, "habitaciones \xB7 30\u201375 m\xB2")))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-x-8 md:gap-x-12 gap-y-20 md:gap-y-28"
-  }, s.cards.map((c, i) => {
-    // Layout pattern: 0 → wide-left, 1 → narrow-right offset, 2 → narrow-left offset, 3 → wide-right
-    const layouts = ["md:col-span-7", "md:col-span-5 md:col-start-9 md:-mt-32", "md:col-span-5 md:col-start-1 md:-mt-12", "md:col-span-7 md:col-start-6 md:-mt-40"];
-    const aspect = i % 2 === 0 ? "aspect-[4/5]" : "aspect-[3/4]";
-    return /*#__PURE__*/React.createElement("a", {
-      key: i,
-      href: "#book",
-      className: ["stay-card rise group cursor-pointer block", "delay-" + (i % 3 + 1), layouts[i] || ""].join(" ")
-    }, /*#__PURE__*/React.createElement("div", {
-      className: ["relative overflow-hidden ph", aspect].join(" ")
-    }, /*#__PURE__*/React.createElement("img", {
-      src: imgs[i],
-      alt: c.name,
-      className: "stay-img absolute inset-0 w-full h-full object-cover",
-      loading: "lazy",
-      decoding: "async"
-    }), /*#__PURE__*/React.createElement("div", {
-      className: "stay-overlay absolute inset-0 opacity-0 bg-ink/45"
-    }), /*#__PURE__*/React.createElement("div", {
-      className: "absolute top-5 left-5 right-5 flex items-start justify-between"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "text-cream uppercase tracking-wider2 text-[10px] font-medium bg-ink/40 backdrop-blur-sm px-3 py-1.5 border border-cream/15"
-    }, String(i + 1).padStart(2, "0"), " \xB7 ", c.tag), /*#__PURE__*/React.createElement("span", {
-      className: "font-display italic text-cream text-[18px] md:text-[22px] leading-none"
-    }, c.size)), /*#__PURE__*/React.createElement("div", {
-      className: "stay-overlay absolute inset-0 opacity-0 flex items-end justify-center pb-8"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "inline-flex items-center gap-2 text-cream uppercase tracking-wider2 text-[11px] font-medium border border-cream/70 px-5 py-2.5"
-    }, s.more, /*#__PURE__*/React.createElement(Arrow, {
-      className: "w-5 h-3"
-    })))), /*#__PURE__*/React.createElement("div", {
-      className: "mt-7 flex items-baseline justify-between gap-6 border-t border-earth/20 pt-5"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h3", {
-      className: "font-display text-ink text-[26px] md:text-[32px] leading-tight tracking-tight group-hover:text-garnet transition-colors duration-500"
-    }, c.name), /*#__PURE__*/React.createElement("p", {
-      className: "mt-3 text-ink/70 text-[15px] md:text-[16px] leading-[1.7] font-light max-w-md"
-    }, c.line)), /*#__PURE__*/React.createElement("span", {
-      className: "font-display italic text-garnet/70 text-[18px] hidden md:inline"
-    }, "\u2116", String(i + 1).padStart(2, "0"))));
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "rise delay-3 mt-24 md:mt-32 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-ink/65 text-[18px] md:text-[22px]"
-  }, "\xBFCu\xE1l te llama?"), /*#__PURE__*/React.createElement("a", {
-    href: "#book",
-    className: "inline-flex items-center gap-3 bg-ink text-cream px-7 py-4 uppercase tracking-wider2 text-[11px] font-medium hover:bg-garnet transition-colors duration-500"
+    className: "text-[11px] font-medium uppercase tracking-[0.24em] text-garnet"
+  }, r.kind), /*#__PURE__*/React.createElement("span", {
+    className: "font-display text-ink text-[34px] leading-none whitespace-nowrap"
+  }, r.size, /*#__PURE__*/React.createElement("span", {
+    className: "ml-1 text-[15px] text-ink/55"
+  }, "m\xB2"))), /*#__PURE__*/React.createElement("h4", {
+    className: "mt-4 font-display text-ink text-[23px] leading-snug"
+  }, r.name), /*#__PURE__*/React.createElement("dl", {
+    className: "mt-5 grid grid-cols-[92px_1fr] gap-x-4 gap-y-2 text-[14px] leading-[1.6]"
+  }, rows(r).map(([k, v]) => /*#__PURE__*/React.createElement(React.Fragment, {
+    key: k
+  }, /*#__PURE__*/React.createElement("dt", {
+    className: "text-ink/60"
+  }, k), /*#__PURE__*/React.createElement("dd", {
+    className: "text-ink/85"
+  }, v))))))), /*#__PURE__*/React.createElement("div", {
+    className: "reveal mt-16 md:mt-20 text-center"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#reservar",
+    className: "inline-flex items-center gap-3 border border-ink text-ink px-8 h-12 text-[11px] font-medium uppercase tracking-[0.24em] hover:bg-ink hover:text-cream transition-colors duration-500"
   }, s.cta, /*#__PURE__*/React.createElement(Arrow, {
     className: "w-5 h-3"
   })))));
 }
 
-/* ───────────────────────────  RESTAURANT  ───────────────────────── */
+/* ───────────────────────────  VILLAS  ────────────────────────── */
+
+function Villas({
+  t
+}) {
+  const v = t.villas;
+  return /*#__PURE__*/React.createElement("section", {
+    id: "villas",
+    className: "bg-cream"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-32"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "max-w-[680px]"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    className: "reveal"
+  }, v.eyebrow), /*#__PURE__*/React.createElement("h2", {
+    className: "reveal mt-5 font-display text-ink text-[34px] md:text-[48px] leading-[1.08] tracking-tight"
+  }, v.title), /*#__PURE__*/React.createElement("p", {
+    className: "reveal mt-5 text-ink/70 text-[16px] leading-[1.8] font-light"
+  }, v.lede)), /*#__PURE__*/React.createElement("div", {
+    className: "mt-14 md:mt-16 grid md:grid-cols-2 gap-14 md:gap-12"
+  }, v.items.map(x => /*#__PURE__*/React.createElement("article", {
+    key: x.name,
+    className: "reveal"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "relative aspect-[3/2] overflow-hidden bg-linen"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: x.img,
+    alt: x.alt,
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover"
+  })), /*#__PURE__*/React.createElement("h3", {
+    className: "mt-7 font-display text-ink text-[32px] md:text-[38px] leading-none tracking-tight"
+  }, x.name), /*#__PURE__*/React.createElement("ul", {
+    className: "mt-5 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-medium uppercase tracking-[0.2em] text-ink/70"
+  }, /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("span", {
+    className: "text-garnet"
+  }, x.guests), " ", v.labels.guests), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("span", {
+    className: "text-garnet"
+  }, x.rooms), " ", v.labels.rooms), /*#__PURE__*/React.createElement("li", null, /*#__PURE__*/React.createElement("span", {
+    className: "text-garnet"
+  }, x.baths), " ", v.labels.baths)), /*#__PURE__*/React.createElement("p", {
+    className: "mt-5 text-ink/75 text-[15px] leading-[1.8] font-light max-w-[520px]"
+  }, x.text)))), /*#__PURE__*/React.createElement("div", {
+    className: "reveal mt-16 text-center"
+  }, /*#__PURE__*/React.createElement("a", {
+    href: "#reservar",
+    className: "inline-flex items-center gap-3 border border-ink text-ink px-8 h-12 text-[11px] font-medium uppercase tracking-[0.24em] hover:bg-ink hover:text-cream transition-colors duration-500"
+  }, v.cta, /*#__PURE__*/React.createElement(Arrow, {
+    className: "w-5 h-3"
+  })))));
+}
+
+/* ───────────────────────────  RESTAURANTE  ────────────────────────── */
 
 function Restaurant({
   t
 }) {
   const r = t.restaurant;
-  const dishes = r.dishes || [{
-    n: "I",
-    name: "Pa amb oli",
-    note: "pan, tomate, aceite de la finca"
-  }, {
-    n: "II",
-    name: "Tumbet",
-    note: "berenjena, calabacín, patata"
-  }, {
-    n: "III",
-    name: "Arroz brut",
-    note: "caldo de monte, sobrasada"
-  }, {
-    n: "IV",
-    name: "Greixonera",
-    note: "ensaimada, leche, canela"
-  }];
   return /*#__PURE__*/React.createElement("section", {
-    id: "restaurant",
-    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute right-3 lg:right-8 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none",
-    style: {
-      writingMode: "vertical-rl"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/30 text-[14px] tracking-wider2"
-  }, "mesa \xB7 abierta \xB7 sa duaia \xB7 1425")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
+    id: "restaurante",
+    className: "bg-linen"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 mb-14 md:mb-20 items-end"
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-32 grid md:grid-cols-12 gap-10 md:gap-16 items-center"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-8"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, r.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px] lg:text-[92px] whitespace-pre-line"
-  }, r.title)), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-4 rise delay-2"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center gap-2 px-3 py-1.5 border border-garnet/40 text-garnet uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "w-1.5 h-1.5 rounded-full bg-garnet animate-pulse"
-  }), r.meta1), /*#__PURE__*/React.createElement("p", {
-    className: "mt-4 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, r.meta2))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-8 md:gap-12 items-start"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "md:col-span-6 rise delay-2"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[4/5] overflow-hidden ph"
+    className: "reveal md:col-span-7 relative aspect-[3/2] overflow-hidden bg-cream"
   }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/restaurant-dining.jpg",
-    alt: "Comensales bajo el carrobo en la terraza del restaurante",
-    className: "absolute inset-0 w-full h-full object-cover",
+    src: "assets/restaurante-sa-duaia.jpg",
+    alt: r.alt,
     loading: "lazy",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/30 via-ink/0 to-ink/0"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/90 bg-ink/40 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
-  }, "Cena bajo el carrobo"))), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-6 md:pl-4 rise delay-3"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "space-y-5 text-ink/80 text-[17px] md:text-[19px] leading-[1.85] font-light"
-  }, r.body.map((line, i) => /*#__PURE__*/React.createElement("p", {
-    key: i
-  }, line))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 pt-8 border-t border-garnet/25"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet text-[24px] md:text-[28px] leading-[1.25] block"
-  }, "\u201CSobremesa que se alarga,", /*#__PURE__*/React.createElement("br", null), "vino de la isla.\u201D")), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 pt-8 border-t border-earth/20"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-earth mb-5"
-  }, "De la cocina"), /*#__PURE__*/React.createElement("ul", {
-    className: "space-y-3.5"
-  }, dishes.map((d, i) => /*#__PURE__*/React.createElement("li", {
-    key: i,
-    className: "slide-r",
-    style: {
-      transitionDelay: 120 + i * 80 + "ms"
-    }
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-baseline gap-3 md:gap-5"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/70 text-[14px] number w-8 shrink-0"
-  }, d.n), /*#__PURE__*/React.createElement("span", {
-    className: "font-display text-ink text-[19px] md:text-[21px] leading-tight"
-  }, d.name), /*#__PURE__*/React.createElement("span", {
-    className: "hidden md:block flex-1 border-b border-dotted border-earth/40 translate-y-[-3px]"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "hidden md:block text-ink/65 text-[14px] font-light italic"
-  }, d.note)), /*#__PURE__*/React.createElement("span", {
-    className: "md:hidden block pl-11 mt-0.5 text-ink/65 text-[13px] font-light italic"
-  }, d.note))))))), /*#__PURE__*/React.createElement("figure", {
-    className: "mt-10 md:mt-24 rise delay-1"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[21/9] overflow-hidden ph"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/detail-towels.jpg",
-    alt: "Toallas con romero \u2014 el cuidado de la mesa",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "lazy",
-    decoding: "async"
-  })), /*#__PURE__*/React.createElement("figcaption", {
-    className: "mt-4 flex items-center justify-between gap-3 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-6 h-px bg-earth/60"
-  }), r.caption), /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic not-uppercase tracking-normal text-garnet text-[13px]"
-  }, "recetas de la casa")))));
+    className: "absolute inset-0 w-full h-full object-cover"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "md:col-span-5"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    className: "reveal"
+  }, r.eyebrow), /*#__PURE__*/React.createElement("h2", {
+    className: "reveal mt-5 font-display text-ink text-[34px] md:text-[48px] leading-[1.08] tracking-tight"
+  }, r.title), /*#__PURE__*/React.createElement("p", {
+    className: "reveal mt-6 text-ink/75 text-[16px] leading-[1.85] font-light"
+  }, r.body))));
 }
 
-/* ───────────────────────────  SURROUNDINGS  ───────────────────────── */
+/* ───────────────────────────  ENTORNO  ────────────────────────── */
 
-function Surroundings({
+function Area({
   t
 }) {
-  const s = t.surroundings;
+  const a = t.area;
   return /*#__PURE__*/React.createElement("section", {
-    id: "surroundings",
-    className: "bg-linen py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute left-3 md:left-6 top-1/2 -translate-y-1/2 hidden lg:block pointer-events-none select-none",
-    style: {
-      writingMode: "vertical-rl",
-      transform: "translateY(-50%) rotate(180deg)"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/30 text-[15px] tracking-wider2"
-  }, "39\xB0 41\u2032 N \xB7 3\xB0 21\u2032 E \xB7 Mallorca")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
+    id: "entorno",
+    className: "bg-linen"
+  }, /*#__PURE__*/React.createElement(Panel, {
+    img: "assets/entorno-montana.jpg",
+    alt: "",
+    label: a.panel,
+    position: "center 22%"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-32"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 mb-10 md:mb-24 items-end"
+    className: "grid md:grid-cols-12 gap-12 md:gap-16"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-9"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, s.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.95] tracking-tight text-[48px] md:text-[96px] lg:text-[120px]"
-  }, s.title))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-12 md:gap-16 mb-10 md:mb-24"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "md:col-span-6 rise delay-2 text-ink/80 text-[17px] md:text-[19px] leading-[1.85] font-light max-w-xl"
-  }, s.body), /*#__PURE__*/React.createElement("ol", {
-    className: "md:col-span-5 md:col-start-8 space-y-7 md:space-y-9"
-  }, s.stops.map((st, i) => /*#__PURE__*/React.createElement("li", {
-    key: i,
-    className: "slide-r relative pl-7",
-    style: {
-      transitionDelay: 200 + i * 140 + "ms"
-    }
+    className: "md:col-span-5"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    className: "reveal"
+  }, a.eyebrow), /*#__PURE__*/React.createElement("h3", {
+    className: "reveal mt-5 font-display text-ink text-[34px] md:text-[44px] leading-[1.1] tracking-tight"
+  }, /*#__PURE__*/React.createElement(Lines, {
+    text: a.title
+  }))), /*#__PURE__*/React.createElement("dl", {
+    className: "md:col-span-7 grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-10"
+  }, a.distances.map(d => /*#__PURE__*/React.createElement("div", {
+    key: d.l,
+    className: "reveal border-t border-ink/15 pt-4"
+  }, /*#__PURE__*/React.createElement("dt", {
+    className: "sr-only"
+  }, d.l), /*#__PURE__*/React.createElement("dd", {
+    className: "font-display text-ink text-[30px] md:text-[36px] leading-none"
+  }, d.v), /*#__PURE__*/React.createElement("dd", {
+    className: "mt-3 text-[11px] font-medium uppercase tracking-[0.2em] text-ink/60"
+  }, d.l))))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-20 md:mt-28"
+  }, /*#__PURE__*/React.createElement("h3", {
+    className: "reveal text-[11px] font-medium uppercase tracking-[0.28em] text-garnet"
+  }, a.routeTitle), /*#__PURE__*/React.createElement("div", {
+    className: "mt-8 grid md:grid-cols-2 gap-x-16 gap-y-10"
+  }, a.route.map((p, k) => /*#__PURE__*/React.createElement("article", {
+    key: p.name,
+    className: "reveal flex gap-6"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "absolute left-0 top-3 w-3 h-3 rounded-full border border-garnet bg-cream"
-  }), i < s.stops.length - 1 && /*#__PURE__*/React.createElement("span", {
-    className: "absolute left-[5.5px] top-7 w-px h-[calc(100%+12px)] bg-garnet/30"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flex items-baseline gap-5"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet number leading-none",
-    style: {
-      fontSize: "clamp(40px, 5vw, 64px)"
-    }
-  }, st.d), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-earth"
-  }, st.p)))))), /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-6 md:gap-8 items-start"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "md:col-span-7 rise delay-2"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[4/3] overflow-hidden ph"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/window-olives.jpg",
-    alt: "Vista hacia olivos desde una ventana",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "lazy",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/85 bg-ink/30 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
-  }, "Ventana al olivar"))), /*#__PURE__*/React.createElement("figure", {
-    className: "md:col-span-5 md:mt-32 rise delay-3"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "relative aspect-[3/4] overflow-hidden ph"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/exterior-tower.jpg",
-    alt: "Fachada principal con la torre del siglo XV",
-    className: "absolute inset-0 w-full h-full object-cover",
-    loading: "lazy",
-    decoding: "async"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute top-4 left-4 font-sans uppercase tracking-wider2 text-[10px] text-cream/90 bg-ink/40 backdrop-blur-sm px-2.5 py-1 border border-cream/15"
-  }, "Torre \xB7 siglo XV")))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-24 md:mt-36"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "mb-10 md:mb-14 flex flex-col md:flex-row md:items-end md:justify-between gap-6"
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-earth flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-7 h-px bg-earth/60"
-  }), "Exteriores"), /*#__PURE__*/React.createElement("h3", {
-    className: "rise delay-1 mt-4 font-display italic text-ink leading-[1.05] tracking-tight text-[32px] md:text-[44px]"
-  }, "La finca por fuera.")), /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet/70 text-[14px] hidden md:inline"
-  }, "VI fotograf\xEDas")), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-12 gap-4 md:gap-6 auto-rows-[90px] md:auto-rows-[130px]"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-7 md:col-span-5 row-span-4 md:row-span-5 relative overflow-hidden ph rise group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/exterior-pool-palms.jpg",
-    alt: "Piscina enmarcada por palmeras",
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-4 left-4 right-4 text-cream font-display italic text-[16px] md:text-[18px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[10px] mb-1.5 text-cream/70"
-  }, "I \u2014 Piscina"), "Bajo las palmeras")), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-5 md:col-span-4 row-span-2 md:row-span-3 relative overflow-hidden ph rise delay-1 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/exterior-terrace.jpg",
-    alt: "Terraza con sillones de mimbre",
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-3 left-4 right-4 text-cream font-display italic text-[15px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[9px] mb-1 text-cream/70"
-  }, "II \u2014 Terraza"), "La sombra del mediod\xEDa")), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-5 md:col-span-3 row-span-2 md:row-span-3 relative overflow-hidden ph rise delay-2 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/exterior-water.jpg",
-    alt: "Superficie del agua",
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-3 left-3 right-3 text-cream font-display italic text-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[9px] mb-1 text-cream/70"
-  }, "III"), "Agua")), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-12 md:col-span-7 row-span-2 md:row-span-2 relative overflow-hidden ph rise delay-1 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/exterior-fountain.jpg",
-    alt: "Fuente con vista a la torre",
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-3 left-4 right-4 text-cream font-display italic text-[15px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[9px] mb-1 text-cream/70"
-  }, "IV \u2014 Fuente"), "El agua que cae sobre la piedra")), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-6 md:col-span-3 row-span-2 md:row-span-3 relative overflow-hidden ph rise delay-2 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/exterior-mushroom.jpg",
-    alt: "Detalle del jard\xEDn",
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-3 left-3 right-3 text-cream font-display italic text-[14px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[9px] mb-1 text-cream/70"
-  }, "V"), "Detalle")), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-6 md:col-span-6 row-span-2 md:row-span-3 relative overflow-hidden ph rise delay-3 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/window-garden.jpg",
-    alt: "Jard\xEDn desde una ventana",
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-3 left-4 right-4 text-cream font-display italic text-[15px] opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[9px] mb-1 text-cream/70"
-  }, "VI \u2014 Jard\xEDn"), "Hacia el sur"))))));
+    className: "font-display text-garnet/70 text-[20px] leading-[1.4] w-7 shrink-0"
+  }, String(k + 1).padStart(2, "0")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("h4", {
+    className: "font-display text-ink text-[22px] leading-snug"
+  }, p.name), /*#__PURE__*/React.createElement("p", {
+    className: "mt-2 text-ink/70 text-[15px] leading-[1.8] font-light"
+  }, p.text), p.link && /*#__PURE__*/React.createElement("a", {
+    href: p.link.href,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "mt-2 inline-block text-[13px] text-garnet underline underline-offset-4 decoration-garnet/40 hover:decoration-garnet"
+  }, p.link.label, " \u2197"))))))));
 }
 
-/* ───────────────────────────  DETAILS  ───────────────────────── */
+/* ───────────────────────────  RESEÑAS  ────────────────────────── */
 
-function Details({
-  t
-}) {
-  const d = t.details;
-  const captions = [{
-    tag: "I",
-    label: "La llave del 17"
-  }, {
-    tag: "II",
-    label: "Toallas con romero"
-  }, {
-    tag: "III",
-    label: "Romero del jardín"
-  }, {
-    tag: "IV",
-    label: "Rincón en piedra"
-  }];
-  return /*#__PURE__*/React.createElement("section", {
-    className: "bg-cream py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 mb-14 md:mb-20 items-end"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-7"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, d.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px]"
-  }, d.title)), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-4 md:col-start-9 rise delay-2"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "font-display italic text-ink/70 text-[18px] md:text-[22px] leading-[1.4]"
-  }, "\u201CLo que se mira de cerca, se queda.\u201D"))), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-12 gap-4 md:gap-6 auto-rows-[90px] md:auto-rows-[120px]"
-  }, /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-6 md:col-span-4 row-span-5 md:row-span-6 relative overflow-hidden ph rise group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/detail-key.jpg",
-    alt: captions[0].label,
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-5 left-5 right-5 text-cream font-display italic text-[18px] md:text-[22px] leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[10px] mb-2 text-cream/70"
-  }, captions[0].tag), captions[0].label)), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-6 md:col-span-5 row-span-3 md:row-span-3 relative overflow-hidden ph rise delay-1 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/detail-towels.jpg",
-    alt: captions[1].label,
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-4 left-4 right-4 text-cream font-display italic text-[16px] md:text-[18px] leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[10px] mb-1 text-cream/70"
-  }, captions[1].tag), captions[1].label)), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-6 md:col-span-3 row-span-3 md:row-span-3 relative overflow-hidden ph rise delay-2 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/detail-rosemary.jpg",
-    alt: captions[2].label,
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-4 left-4 right-4 text-cream font-display italic text-[16px] leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[10px] mb-1 text-cream/70"
-  }, captions[2].tag), captions[2].label)), /*#__PURE__*/React.createElement("figure", {
-    className: "col-span-12 md:col-span-8 row-span-3 md:row-span-3 relative overflow-hidden ph rise delay-1 group"
-  }, /*#__PURE__*/React.createElement("img", {
-    src: "assets/detail-bedroom.jpg",
-    alt: captions[3].label,
-    className: "absolute inset-0 w-full h-full object-cover transition-transform duration-[1400ms] ease-out group-hover:scale-[1.06]",
-    loading: "lazy"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "absolute inset-0 bg-gradient-to-t from-ink/55 via-ink/0 to-ink/0 opacity-0 group-hover:opacity-100 transition-opacity duration-700"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "absolute bottom-5 left-5 right-5 text-cream font-display italic text-[18px] md:text-[22px] leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-500 delay-100"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "block font-sans not-italic uppercase tracking-wider2 text-[10px] mb-2 text-cream/70"
-  }, captions[3].tag), captions[3].label))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 grid grid-cols-2 md:grid-cols-4 gap-6 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, captions.map((c, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "slide-r flex items-center gap-3",
-    style: {
-      transitionDelay: 80 + i * 80 + "ms"
-    }
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet not-uppercase tracking-normal text-[13px]"
-  }, c.tag), /*#__PURE__*/React.createElement("span", {
-    className: "inline-block flex-1 h-px bg-earth/40"
-  }), /*#__PURE__*/React.createElement("span", null, c.label))))));
-}
-
-/* ───────────────────────────  REVIEWS  ───────────────────────── */
-
-function Stars({
-  value = 5,
-  starClass = "w-[14px] h-[14px]",
-  gapClass = "gap-1"
-}) {
-  const full = Math.floor(value);
-  const frac = value - full;
-  const v = full + (frac >= 0.25 && frac <= 0.75 ? 0.5 : frac > 0.75 ? 1 : 0);
-  return /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center " + gapClass,
-    style: {
-      color: "#C89211"
-    },
-    "aria-label": `${value} de 5 estrellas`
-  }, Array.from({
-    length: 5
-  }).map((_, i) => {
-    const isFull = i + 1 <= v;
-    const isHalf = !isFull && v - i > 0 && v - i < 1;
-    return /*#__PURE__*/React.createElement("svg", {
-      key: i,
-      className: "star " + starClass,
-      viewBox: "0 0 24 24",
-      fill: "none",
-      stroke: "currentColor",
-      strokeWidth: "1.2"
-    }, /*#__PURE__*/React.createElement("defs", null, isHalf && /*#__PURE__*/React.createElement("linearGradient", {
-      id: `half-${i}`
-    }, /*#__PURE__*/React.createElement("stop", {
-      offset: "50%",
-      stopColor: "currentColor"
-    }), /*#__PURE__*/React.createElement("stop", {
-      offset: "50%",
-      stopColor: "transparent"
-    }))), /*#__PURE__*/React.createElement("path", {
-      d: "M12 2 l3.09 6.26 6.91 1.01 -5 4.87 1.18 6.88 L12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26z",
-      fill: isFull ? "currentColor" : isHalf ? `url(#half-${i})` : "none"
-    }));
-  }));
-}
-function GoogleMark({
-  label = "Google Reviews"
-}) {
-  return /*#__PURE__*/React.createElement("span", {
-    className: "inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider2 font-medium text-earth text-right"
-  }, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 24 24",
-    className: "w-3.5 h-3.5 shrink-0",
-    "aria-hidden": "true"
-  }, /*#__PURE__*/React.createElement("path", {
-    fill: "#4285F4",
-    d: "M22 12.2c0-.7-.06-1.4-.18-2.1H12v4h5.6c-.24 1.3-.97 2.4-2.06 3.13v2.6h3.33c1.95-1.8 3.07-4.45 3.07-7.63z"
-  }), /*#__PURE__*/React.createElement("path", {
-    fill: "#34A853",
-    d: "M12 22c2.78 0 5.11-.92 6.81-2.5l-3.33-2.58c-.92.62-2.1.99-3.48.99-2.67 0-4.94-1.8-5.75-4.23H2.8v2.66C4.49 19.7 7.99 22 12 22z"
-  }), /*#__PURE__*/React.createElement("path", {
-    fill: "#FBBC04",
-    d: "M6.25 13.68a6.04 6.04 0 0 1 0-3.36V7.66H2.8a10 10 0 0 0 0 8.68l3.45-2.66z"
-  }), /*#__PURE__*/React.createElement("path", {
-    fill: "#EA4335",
-    d: "M12 5.78c1.51 0 2.87.52 3.94 1.54l2.95-2.95C17.1 2.83 14.78 2 12 2 7.99 2 4.49 4.3 2.8 7.66l3.45 2.66C7.06 7.58 9.33 5.78 12 5.78z"
-  })), /*#__PURE__*/React.createElement("span", null, label));
-}
 function Reviews({
   t
 }) {
   const r = t.reviews;
-  if (!r) return null;
-  const items = r.items;
-  // 4 visible slots — 2×2 on mobile, first 3 in a row on desktop. We cycle them
-  // ONE AT A TIME (round-robin) so adjacent cards never swap together.
-  const SLOTS = 4;
-  const [idxs, setIdxs] = useState([0, 1, 2, 3]);
-  useEffect(() => {
-    if (!items || items.length <= SLOTS) return;
-    let tick = 0;
-    const id = setInterval(() => {
-      setIdxs(prev => {
-        const next = [...prev];
-        const col = tick % SLOTS;
-        // Find a review not currently shown in any slot
-        const visible = new Set(next);
-        let candidate = (next[col] + SLOTS) % items.length;
-        // Walk forward until we land on one not currently visible
-        let safety = 0;
-        while (visible.has(candidate) && safety < items.length) {
-          candidate = (candidate + 1) % items.length;
-          safety++;
-        }
-        next[col] = candidate;
-        return next;
-      });
-      tick++;
-    }, 3200); // one slot swaps every 3.2s — gentle, attention-grabbing without being noisy
-    return () => clearInterval(id);
-  }, [items]);
-
-  // Subtle deterministic rotations
-  const rotMap = [-1.0, 0.6, -0.8, 0.9];
   return /*#__PURE__*/React.createElement("section", {
-    id: "reviews",
-    className: "bg-linen py-16 md:py-36 relative overflow-hidden"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "absolute left-[-2%] top-[10%] pointer-events-none select-none review-quote-mark",
-    style: {
-      color: "rgba(124, 22, 33, 0.10)"
-    }
+    id: "resenas",
+    className: "bg-cream"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-28"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "reveal flex flex-col md:flex-row md:items-end md:justify-between gap-6"
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Eyebrow, null, r.eyebrow), /*#__PURE__*/React.createElement("p", {
+    className: "mt-5 flex items-baseline gap-4"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic leading-[0.7]",
-    style: {
-      fontSize: "clamp(280px, 36vw, 540px)"
-    }
-  }, "\u201C")), /*#__PURE__*/React.createElement("div", {
-    className: "relative mx-auto max-w-[1320px] px-6 md:px-10 mt-14 md:mt-20 z-10"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 mb-14 md:mb-20 items-end"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-7"
-  }, /*#__PURE__*/React.createElement(Eyebrow, null, r.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "rise delay-1 mt-7 font-display italic text-ink leading-[0.98] tracking-tight text-[44px] md:text-[80px] whitespace-pre-line"
-  }, r.title)), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-4 md:col-start-9 rise delay-2 space-y-5"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "text-ink/75 text-[15.5px] md:text-[17px] leading-[1.8] font-light"
-  }, r.lede), /*#__PURE__*/React.createElement("div", {
-    className: "pt-5 border-t border-earth/30"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-baseline gap-3"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-garnet text-[36px] md:text-[44px] leading-none number"
-  }, r.countLabel || "+600")), /*#__PURE__*/React.createElement("div", {
-    className: "mt-3 flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement(Stars, {
-    value: r.ratingValue || 4.7
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-earth text-[13px]"
-  }, "casi 5 estrellas")), /*#__PURE__*/React.createElement("div", {
-    className: "mt-4"
-  }, /*#__PURE__*/React.createElement(GoogleMark, {
-    label: r.sourceLabel
-  }))))), /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-7 perspective-1000"
-  }, idxs.map((idx, col) => {
-    const it = items[idx];
-    return /*#__PURE__*/React.createElement("div", {
-      key: col,
-      className: ["relative md:min-h-[320px]", col === 3 ? "md:hidden" : ""].join(" ")
-    }, /*#__PURE__*/React.createElement("article", {
-      key: `${col}-${idx}`,
-      className: "review-card review-card-cycle relative md:absolute inset-0 h-full bg-cream border border-earth/20 p-4 md:p-8 flex flex-col",
-      style: {
-        "--rot": rotMap[col] + "deg",
-        "--d": "0ms"
-      }
-    }, /*#__PURE__*/React.createElement("span", {
-      "aria-hidden": "true",
-      className: "absolute top-1.5 right-2.5 md:top-3 md:right-4 font-display italic text-garnet/15 text-[34px] md:text-[64px] leading-none select-none"
-    }, "\u201D"), /*#__PURE__*/React.createElement("div", {
-      className: "flex items-center justify-between mb-3 md:mb-5"
-    }, /*#__PURE__*/React.createElement(Stars, {
-      value: 5,
-      starClass: "w-[11px] h-[11px] md:w-[14px] md:h-[14px]"
-    }), /*#__PURE__*/React.createElement("span", {
-      className: "text-earth uppercase tracking-wider2 text-[8px] md:text-[9px] font-medium"
-    }, String(idx + 1).padStart(2, "0"), " / ", String(items.length).padStart(2, "0"))), /*#__PURE__*/React.createElement("p", {
-      className: "font-display text-ink text-[12.5px] md:text-[18px] leading-[1.5] md:leading-[1.55] tracking-tight flex-1"
-    }, /*#__PURE__*/React.createElement("span", {
-      className: "text-garnet font-display italic text-[16px] md:text-[22px] leading-none align-text-top mr-0.5"
-    }, "\u201C"), it.text, /*#__PURE__*/React.createElement("span", {
-      className: "text-garnet font-display italic text-[16px] md:text-[22px] leading-none align-text-bottom ml-0.5"
-    }, "\u201D")), /*#__PURE__*/React.createElement("div", {
-      className: "mt-4 pt-3 md:mt-6 md:pt-5 border-t border-earth/20 flex flex-col items-start gap-0.5 md:flex-row md:items-end md:justify-between md:gap-3"
-    }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("div", {
-      className: "font-display italic text-ink text-[13px] md:text-[16px] leading-tight"
-    }, it.name), /*#__PURE__*/React.createElement("div", {
-      className: "text-earth uppercase tracking-wider2 text-[8.5px] md:text-[9px] font-medium mt-1 md:mt-1.5"
-    }, it.city)), /*#__PURE__*/React.createElement("div", {
-      className: "text-earth text-[9.5px] md:text-[11px] font-light italic shrink-0 text-left md:text-right"
-    }, it.when))));
-  })), /*#__PURE__*/React.createElement("div", {
-    className: "rise mt-14 md:mt-20 flex flex-col md:flex-row items-center justify-center gap-6 md:gap-8"
-  }, /*#__PURE__*/React.createElement("a", {
-    href: r.mapsUrl || "#",
+    className: "font-display text-ink text-[56px] md:text-[64px] leading-none"
+  }, r.rating), /*#__PURE__*/React.createElement("span", {
+    className: "text-[13px] text-ink/65 font-light"
+  }, r.source))), /*#__PURE__*/React.createElement("a", {
+    href: r.mapsUrl,
     target: "_blank",
     rel: "noopener noreferrer",
-    onClick: e => {
-      // In sandboxed previews target="_blank" may be blocked.
-      // Try programmatic window.open as a fallback.
-      if (window.top !== window.self) {
-        e.preventDefault();
-        try {
-          const w = window.open(r.mapsUrl, "_blank", "noopener,noreferrer");
-          if (!w) window.top.location.href = r.mapsUrl;
-        } catch {
-          window.location.href = r.mapsUrl;
-        }
-      }
-    },
-    className: "inline-flex items-center gap-3 bg-ink text-cream px-6 py-3 uppercase tracking-wider2 text-[10px] md:text-[11px] font-medium hover:bg-garnet transition-colors duration-500 group/cta"
-  }, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 24 24",
-    className: "w-4 h-4",
-    "aria-hidden": "true"
-  }, /*#__PURE__*/React.createElement("path", {
-    fill: "#4285F4",
-    d: "M22 12.2c0-.7-.06-1.4-.18-2.1H12v4h5.6c-.24 1.3-.97 2.4-2.06 3.13v2.6h3.33c1.95-1.8 3.07-4.45 3.07-7.63z"
-  }), /*#__PURE__*/React.createElement("path", {
-    fill: "#34A853",
-    d: "M12 22c2.78 0 5.11-.92 6.81-2.5l-3.33-2.58c-.92.62-2.1.99-3.48.99-2.67 0-4.94-1.8-5.75-4.23H2.8v2.66C4.49 19.7 7.99 22 12 22z"
-  }), /*#__PURE__*/React.createElement("path", {
-    fill: "#FBBC04",
-    d: "M6.25 13.68a6.04 6.04 0 0 1 0-3.36V7.66H2.8a10 10 0 0 0 0 8.68l3.45-2.66z"
-  }), /*#__PURE__*/React.createElement("path", {
-    fill: "#EA4335",
-    d: "M12 5.78c1.51 0 2.87.52 3.94 1.54l2.95-2.95C17.1 2.83 14.78 2 12 2 7.99 2 4.49 4.3 2.8 7.66l3.45 2.66C7.06 7.58 9.33 5.78 12 5.78z"
-  })), r.mapsLabel || "Ver perfil en Google Maps", /*#__PURE__*/React.createElement(Arrow, {
-    className: "w-5 h-3 transition-transform duration-500 group-hover/cta:translate-x-1"
-  })), /*#__PURE__*/React.createElement("span", {
-    className: "text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, r.countLabel || "+600 reseñas", " \xB7 ", r.sourceLabel || "Google · Booking"))));
+    className: "text-[11px] font-medium uppercase tracking-[0.24em] text-ink/70 hover:text-garnet underline underline-offset-[8px] decoration-ink/25"
+  }, r.link, " \u2197")), /*#__PURE__*/React.createElement("div", {
+    className: "mt-12 md:mt-16 grid md:grid-cols-3 gap-10 md:gap-12"
+  }, r.items.map(q => /*#__PURE__*/React.createElement("figure", {
+    key: q.from,
+    className: "reveal border-t border-ink/15 pt-6"
+  }, /*#__PURE__*/React.createElement("blockquote", {
+    className: "font-display italic text-ink/85 text-[19px] md:text-[20px] leading-[1.55]"
+  }, "\u201C", q.text, "\u201D"), /*#__PURE__*/React.createElement("figcaption", {
+    className: "mt-5 text-[11px] font-medium uppercase tracking-[0.2em] text-ink/50"
+  }, q.from))))));
 }
 
-/* ───────────────────────────  BOOKING + FOOTER  ───────────────────────── */
+/* ───────────────────────────  RESERVAR  ────────────────────────── */
 
-function Booking({
-  t
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+const addDays = (s, n) => {
+  const [y, m, d] = s.split("-").map(Number);
+  return ymd(new Date(y, m - 1, d + n));
+};
+const toEngineDate = s => s.split("-").reverse().join("/");
+function Book({
+  t,
+  lang
 }) {
-  const b = t.booking;
+  const b = t.book;
+  const today = ymd(new Date());
+  const [checkin, setCheckin] = useState(addDays(today, 1));
+  const [checkout, setCheckout] = useState(addDays(today, 2));
+  const [adults, setAdults] = useState(2);
+  const [code, setCode] = useState(promoIsLive() ? PROMO.code : "");
+  const [error, setError] = useState("");
+  const onCheckin = v => {
+    setCheckin(v);
+    setError("");
+    if (v && checkout <= v) setCheckout(addDays(v, 1));
+  };
+  const onSubmit = e => {
+    if (!checkin || !checkout || checkout <= checkin) {
+      e.preventDefault();
+      setError(b.errDates);
+    }
+  };
+  const field = "w-full h-12 bg-transparent border-b border-ink/25 focus:border-ink outline-none text-[15px] text-ink";
+  const label = "block text-[10px] font-medium uppercase tracking-[0.24em] text-ink/55 mb-1 whitespace-nowrap";
   return /*#__PURE__*/React.createElement("section", {
-    id: "book",
-    className: "bg-cream pt-20 md:pt-32 pb-20 md:pb-28"
-  }, /*#__PURE__*/React.createElement(SectionOpener, null), /*#__PURE__*/React.createElement("div", {
-    className: "mx-auto max-w-[1280px] px-6 md:px-10 mt-10 md:mt-24"
+    id: "reservar",
+    className: "relative overflow-hidden bg-ink"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "assets/finca-piscina.jpg",
+    alt: "",
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "absolute inset-0 book-veil"
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "relative mx-auto max-w-[1280px] px-4 md:px-8 py-24 md:py-40"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-10 md:gap-16 items-end mb-12 md:mb-16"
+    className: "reveal mx-auto max-w-[760px] bg-linen px-6 py-10 md:px-14 md:py-14 shadow-[0_30px_80px_-30px_rgba(26,20,16,0.6)]"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-7"
+    className: "text-center"
   }, /*#__PURE__*/React.createElement(Eyebrow, null, b.eyebrow), /*#__PURE__*/React.createElement("h2", {
-    className: "reveal-iris delay-1 mt-6 font-display text-ink text-[42px] md:text-[64px] leading-[1.02] tracking-tight"
-  }, b.title)), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-5 reveal delay-2"
-  }, /*#__PURE__*/React.createElement("p", {
-    className: "font-display italic text-ink/80 text-[18px] md:text-[20px]"
-  }, b.lede), /*#__PURE__*/React.createElement("p", {
-    className: "mt-3 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, b.note))), /*#__PURE__*/React.createElement("div", {
-    className: "reveal booking-shell rounded-[6px] overflow-hidden bg-linen border border-earth/15"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "px-5 md:px-7 py-4 border-b border-earth/15 flex items-center justify-between"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-3 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement(Crest, {
-    className: "w-4 h-4 text-garnet"
-  }), "saduaia.com \xB7 reservas oficiales"), /*#__PURE__*/React.createElement("div", {
-    className: "hidden sm:flex items-center gap-1.5"
+    className: "mt-4 font-display text-ink text-[34px] md:text-[48px] leading-[1.08] tracking-tight"
+  }, b.title), /*#__PURE__*/React.createElement("p", {
+    className: "mt-4 text-ink/70 text-[15px] leading-[1.75] font-light"
+  }, b.lede)), /*#__PURE__*/React.createElement("form", {
+    method: "post",
+    action: BOOKING.action[lang],
+    target: "_blank",
+    onSubmit: onSubmit,
+    className: "mt-10",
+    noValidate: true
+  }, /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "entrada",
+    value: toEngineDate(checkin)
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "salida",
+    value: toEngineDate(checkout)
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "occupancies",
+    value: JSON.stringify([{
+      adults: String(adults),
+      children: "0",
+      ages: ""
+    }])
+  }), /*#__PURE__*/React.createElement("input", {
+    type: "hidden",
+    name: "codpromo",
+    value: code.trim()
+  }), /*#__PURE__*/React.createElement("div", {
+    className: "grid grid-cols-2 md:grid-cols-[1fr_1fr_0.7fr_1.3fr] gap-x-6 gap-y-7"
+  }, /*#__PURE__*/React.createElement("label", {
+    className: "block"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "w-1.5 h-1.5 rounded-full bg-garnet/70"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "w-1.5 h-1.5 rounded-full bg-gold/70"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "w-1.5 h-1.5 rounded-full bg-earth/40"
-  }))), /*#__PURE__*/React.createElement("div", {
-    className: "px-6 md:px-10 py-16 md:py-24 text-center"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "font-display italic text-garnet text-[18px] md:text-[20px] mb-6"
-  }, "Disponibilidad en tiempo real"), /*#__PURE__*/React.createElement("h3", {
-    className: "font-display text-ink text-[32px] md:text-[44px] leading-[1.05] tracking-tight max-w-xl mx-auto"
-  }, "Reserva directa, sin intermediarios."), /*#__PURE__*/React.createElement("p", {
-    className: "mt-5 text-ink/70 text-[15px] md:text-[16px] leading-[1.8] font-light max-w-md mx-auto"
-  }, "Mejor precio garantizado en la web oficial. Calendario, tarifas y confirmaci\xF3n instant\xE1nea."), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 flex flex-col sm:flex-row items-center justify-center gap-4 md:gap-5"
-  }, /*#__PURE__*/React.createElement("a", {
-    href: "https://www.saduaia.com/es/bookcore/",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    onClick: e => {
-      if (window.top !== window.self) {
-        e.preventDefault();
-        try {
-          const w = window.open("https://www.saduaia.com/es/bookcore/", "_blank", "noopener,noreferrer");
-          if (!w) window.top.location.href = "https://www.saduaia.com/es/bookcore/";
-        } catch {
-          window.location.href = "https://www.saduaia.com/es/bookcore/";
-        }
-      }
+    className: label
+  }, b.checkin), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    className: field,
+    value: checkin,
+    min: today,
+    onChange: e => onCheckin(e.target.value),
+    required: true
+  })), /*#__PURE__*/React.createElement("label", {
+    className: "block"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: label
+  }, b.checkout), /*#__PURE__*/React.createElement("input", {
+    type: "date",
+    className: field,
+    value: checkout,
+    min: addDays(checkin || today, 1),
+    onChange: e => {
+      setCheckout(e.target.value);
+      setError("");
     },
-    className: "inline-flex items-center gap-3 bg-ink text-cream px-7 py-4 uppercase tracking-wider2 text-[11px] font-medium hover:bg-garnet transition-colors duration-500 group/r"
-  }, "Reservar ahora", /*#__PURE__*/React.createElement(Arrow, {
-    className: "w-5 h-3 transition-transform duration-500 group-hover/r:translate-x-1"
-  })), /*#__PURE__*/React.createElement("a", {
-    href: "https://wa.me/34971589164",
+    required: true
+  })), /*#__PURE__*/React.createElement("label", {
+    className: "block"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: label
+  }, b.adults), /*#__PURE__*/React.createElement("select", {
+    className: field + " select-chevron pr-6",
+    value: adults,
+    onChange: e => setAdults(Number(e.target.value))
+  }, Array.from({
+    length: 12
+  }, (_, i) => i + 1).map(n => /*#__PURE__*/React.createElement("option", {
+    key: n,
+    value: n
+  }, n)))), /*#__PURE__*/React.createElement("label", {
+    className: "block"
+  }, /*#__PURE__*/React.createElement("span", {
+    className: label
+  }, b.promo), /*#__PURE__*/React.createElement("input", {
+    type: "text",
+    className: field + " uppercase placeholder:normal-case placeholder:text-ink/35",
+    value: code,
+    placeholder: b.promoPh,
+    onChange: e => setCode(e.target.value),
+    autoComplete: "off"
+  }))), error && /*#__PURE__*/React.createElement("p", {
+    className: "mt-5 text-[13px] text-garnet",
+    role: "alert"
+  }, error), /*#__PURE__*/React.createElement("button", {
+    type: "submit",
+    className: "mt-9 w-full inline-flex items-center justify-center gap-3 bg-ink text-cream h-14 text-[12px] font-medium uppercase tracking-[0.24em] hover:bg-garnet transition-colors duration-500"
+  }, b.submit, /*#__PURE__*/React.createElement(Arrow, {
+    className: "w-5 h-3"
+  }))), /*#__PURE__*/React.createElement("p", {
+    className: "mt-7 text-center text-[13px] text-ink/60 font-light"
+  }, b.write, " ", /*#__PURE__*/React.createElement("a", {
+    href: WHATSAPP.href,
     target: "_blank",
     rel: "noopener noreferrer",
-    className: "inline-flex items-center gap-3 border border-ink/30 text-ink px-6 py-4 uppercase tracking-wider2 text-[11px] font-medium hover:border-ink hover:bg-ink hover:text-cream transition-all duration-500"
-  }, "WhatsApp \xB7 +34 971 589 164")), /*#__PURE__*/React.createElement("div", {
-    className: "mt-12 pt-8 border-t border-earth/20 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-earth uppercase tracking-wider2 text-[10px] font-medium"
-  }, /*#__PURE__*/React.createElement("span", null, "Mejor precio garantizado"), /*#__PURE__*/React.createElement("span", {
-    className: "hidden sm:inline"
-  }, "\xB7"), /*#__PURE__*/React.createElement("span", null, "Sin comisiones"), /*#__PURE__*/React.createElement("span", {
-    className: "hidden sm:inline"
-  }, "\xB7"), /*#__PURE__*/React.createElement("span", null, "Cancelaci\xF3n flexible"))))));
+    className: "whitespace-nowrap text-ink underline underline-offset-4 decoration-ink/30 hover:decoration-ink"
+  }, "WhatsApp \xB7 ", WHATSAPP.label)))));
 }
+
+/* ───────────────────────────  FOOTER  ────────────────────────── */
+
 function Footer({
   t,
   lang,
   setLang
 }) {
   const f = t.footer;
+  const link = "hover:text-cream transition-colors";
   return /*#__PURE__*/React.createElement("footer", {
-    className: "bg-ink text-cream/85"
+    className: "bg-ink text-cream/75"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "mx-auto max-w-[1280px] px-6 md:px-10 pt-20 md:pt-28 pb-10"
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 pt-20 pb-10"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "grid md:grid-cols-12 gap-12"
+    className: "grid grid-cols-2 md:grid-cols-12 gap-y-12 gap-x-8"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-5"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center gap-3"
-  }, /*#__PURE__*/React.createElement(Crest, {
-    className: "w-8 h-8 text-gold"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "font-display text-cream text-[22px] leading-none"
-  }, "Finca Sa Duaia", /*#__PURE__*/React.createElement("br", null), /*#__PURE__*/React.createElement("span", {
-    className: "text-cream/60 text-[16px] italic font-normal"
-  }, "de Dalt"))), /*#__PURE__*/React.createElement("p", {
-    className: "mt-8 font-display italic text-cream/70 text-[18px] max-w-sm leading-snug"
-  }, f.sign), /*#__PURE__*/React.createElement("p", {
-    className: "mt-6 uppercase tracking-wider2 text-[10px] font-medium text-cream/50"
-  }, "Est. 1425 \xB7 Restored with respect")), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-3"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-gold mb-5"
-  }, f.contact), /*#__PURE__*/React.createElement("address", {
-    className: "not-italic text-cream/80 text-[14px] leading-[1.85] font-light"
+    className: "col-span-2 md:col-span-4"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "assets/logo-cream.png",
+    alt: "Finca Sa Duaia de Dalt",
+    className: "h-16 w-auto select-none",
+    draggable: "false"
+  }), /*#__PURE__*/React.createElement("address", {
+    className: "mt-8 not-italic text-[14px] leading-[1.85] font-light"
   }, f.address.map((l, i) => /*#__PURE__*/React.createElement("div", {
     key: i
-  }, l))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-6 space-y-1 text-[14px] font-light"
+  }, l)))), /*#__PURE__*/React.createElement("div", {
+    className: "md:col-span-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] font-medium uppercase tracking-[0.28em] text-cream/45 mb-5"
+  }, f.contact), /*#__PURE__*/React.createElement("div", {
+    className: "space-y-2 text-[14px] font-light"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
     href: "tel:+34971000000",
-    className: "hover:text-gold transition"
+    className: link
   }, "+34 971 00 00 00")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
     href: "mailto:hola@saduaia.com",
-    className: "hover:text-gold transition"
+    className: link
   }, "hola@saduaia.com")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
-    href: "https://wa.me/34971000000",
-    className: "hover:text-gold transition"
+    href: WHATSAPP.href,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: link
   }, "WhatsApp")))), /*#__PURE__*/React.createElement("div", {
     className: "md:col-span-2"
   }, /*#__PURE__*/React.createElement("div", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-gold mb-5"
-  }, f.hours), /*#__PURE__*/React.createElement("div", {
-    className: "text-cream/80 text-[14px] font-light"
-  }, f.hoursVal), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 uppercase tracking-wider2 text-[10px] font-medium text-gold mb-3"
-  }, "Idioma"), /*#__PURE__*/React.createElement("div", {
-    className: "flex items-center text-[12px] font-medium tracking-wider2 uppercase"
-  }, /*#__PURE__*/React.createElement("button", {
-    onClick: () => setLang("es"),
-    className: ["pr-2", lang === "es" ? "text-gold" : "text-cream/55 hover:text-cream"].join(" ")
-  }, "ES"), /*#__PURE__*/React.createElement("span", {
-    className: "text-cream/30"
-  }, "|"), /*#__PURE__*/React.createElement("button", {
-    onClick: () => setLang("en"),
-    className: ["pl-2", lang === "en" ? "text-gold" : "text-cream/55 hover:text-cream"].join(" ")
-  }, "EN"))), /*#__PURE__*/React.createElement("div", {
-    className: "md:col-span-2"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-gold mb-5"
-  }, "Social"), /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] font-medium uppercase tracking-[0.28em] text-cream/45 mb-5"
+  }, f.social), /*#__PURE__*/React.createElement("div", {
     className: "space-y-2 text-[14px] font-light"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
     href: "#",
-    className: "hover:text-gold transition"
+    className: link
   }, "Instagram \u2197")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
     href: "#",
-    className: "hover:text-gold transition"
-  }, "Facebook \u2197"))))), /*#__PURE__*/React.createElement("div", {
-    className: "hairline mt-16 mb-7 text-cream"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "flex flex-col md:flex-row md:items-center md:justify-between gap-4 text-[11px] uppercase tracking-wider2 text-cream/55 font-medium"
+    className: link
+  }, "Facebook \u2197")))), /*#__PURE__*/React.createElement("div", {
+    className: "col-span-2 md:col-span-3"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "text-[10px] font-medium uppercase tracking-[0.28em] text-cream/45 mb-5"
+  }, f.lang), /*#__PURE__*/React.createElement(LangSwitch, {
+    lang: lang,
+    setLang: setLang,
+    light: true
+  }))), /*#__PURE__*/React.createElement("div", {
+    className: "mt-16 pt-7 border-t border-cream/10 flex flex-col md:flex-row md:items-center md:justify-between gap-5 text-[11px] uppercase tracking-[0.2em] text-cream/50"
   }, /*#__PURE__*/React.createElement("div", null, f.copy), /*#__PURE__*/React.createElement("div", {
     className: "flex flex-wrap gap-x-6 gap-y-2"
-  }, f.legal.map((l, i) => /*#__PURE__*/React.createElement("a", {
-    key: i,
-    href: l.href || "#",
-    className: "hover:text-gold transition"
-  }, l.label || l)))), /*#__PURE__*/React.createElement("div", {
-    className: "mt-10 pt-8 border-t border-cream/10 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-5"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "text-[11px] uppercase tracking-wider2 text-cream/55 font-medium"
-  }, "Dise\xF1o & desarrollo"), /*#__PURE__*/React.createElement("span", {
-    className: "hidden sm:inline-block w-8 h-px bg-cream/25"
-  }), /*#__PURE__*/React.createElement("a", {
+  }, f.legal.map(l => /*#__PURE__*/React.createElement("a", {
+    key: l.href,
+    href: l.href,
+    className: link
+  }, l.label))), /*#__PURE__*/React.createElement("a", {
     href: "https://vocai.es",
     target: "_blank",
     rel: "noopener noreferrer",
-    className: "group/credit inline-flex items-center gap-3 text-cream hover:text-gold transition-colors duration-500"
-  }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-[20px] md:text-[24px] leading-none tracking-tight"
-  }, "VOCAI"), /*#__PURE__*/React.createElement("span", {
-    className: "inline-block w-1.5 h-1.5 rounded-full bg-gold/80 group-hover/credit:bg-gold transition-colors"
-  }), /*#__PURE__*/React.createElement("span", {
-    className: "text-[11px] uppercase tracking-wider2 text-cream/65 group-hover/credit:text-cream font-medium"
-  }, "Estudio digital")))), /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "overflow-hidden"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "font-display text-cream/[0.045] text-[18vw] leading-[0.85] tracking-tight text-center pb-2 select-none"
-  }, "SA DUAIA")));
+    className: link
+  }, f.credits, " \xB7 ", /*#__PURE__*/React.createElement("span", {
+    className: "font-display italic normal-case tracking-normal text-[15px]"
+  }, "VOCAI")))));
 }
 
-/* ──────────────────────  SCROLL UI  ────────────────────── */
+/* ───────────────────────────  POP-UP DE DESCUENTO  ────────────────────────── */
 
-/* Hairline progress bar at the very top of the page — adapts color over hero. */
-function ScrollProgress() {
-  const [progress, setProgress] = useState(0);
-  const [overDark, setOverDark] = useState(true);
-  useEffect(() => {
-    const onScroll = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      const p = h > 0 ? window.scrollY / h : 0;
-      setProgress(Math.max(0, Math.min(1, p)));
-      setOverDark(window.scrollY < window.innerHeight * 0.85);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, {
-      passive: true
-    });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  return /*#__PURE__*/React.createElement("div", {
-    "aria-hidden": "true",
-    className: "fixed top-0 left-0 right-0 z-[60] pointer-events-none"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: ["h-[2px] origin-left transition-transform duration-200 ease-out", overDark ? "bg-gold" : "bg-garnet/85"].join(" "),
-    style: {
-      transform: `scaleX(${progress})`
-    }
-  }));
-}
-
-/* Right-side section indicator — minimalist dots with hover labels. */
-function ScrollNav({
+function PromoPopup({
   t,
   lang
 }) {
-  const sections = useMemo(() => [{
-    id: "top",
-    n: "—",
-    name: lang === "es" ? "Inicio" : "Top"
-  }, {
-    id: "welcome",
-    n: "I",
-    name: t.nav.welcome
-  }, {
-    id: "finca",
-    n: "II",
-    name: t.nav.finca
-  }, {
-    id: "stays",
-    n: "III",
-    name: t.nav.stays
-  }, {
-    id: "restaurant",
-    n: "IV",
-    name: t.nav.restaurant
-  }, {
-    id: "surroundings",
-    n: "V",
-    name: t.nav.surroundings
-  }, {
-    id: "book",
-    n: "VI",
-    name: t.nav.book
-  }], [t, lang]);
-  const [active, setActive] = useState(0);
-  const [overDark, setOverDark] = useState(true);
+  const [open, setOpen] = useState(false);
+  const key = "sa-duaia-promo-" + PROMO.code;
   useEffect(() => {
-    const onScroll = () => {
-      const vh = window.innerHeight;
-      const trigger = vh * 0.4;
-      let current = 0;
-      for (let i = 0; i < sections.length; i++) {
-        const el = document.getElementById(sections[i].id);
-        if (!el) continue;
-        const top = el.getBoundingClientRect().top;
-        if (top <= trigger) current = i;
-      }
-      setActive(current);
-      setOverDark(window.scrollY < vh * 0.85);
-    };
-    onScroll();
-    window.addEventListener("scroll", onScroll, {
-      passive: true
-    });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [sections]);
-  const goTo = (e, id) => {
-    e.preventDefault();
-    const el = document.getElementById(id);
-    if (!el) return;
-    if (window.__lenis && window.__lenis.scrollTo) {
-      window.__lenis.scrollTo(el, {
-        offset: 0,
-        duration: 1.4
-      });
-    } else {
-      el.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-      });
-    }
+    if (!promoIsLive()) return;
+    try {
+      if (localStorage.getItem(key) === "closed") return;
+    } catch (e) {}
+    const id = setTimeout(() => setOpen(true), 5000);
+    return () => clearTimeout(id);
+  }, []);
+  const close = () => {
+    setOpen(false);
+    try {
+      localStorage.setItem(key, "closed");
+    } catch (e) {}
   };
-  return /*#__PURE__*/React.createElement("nav", {
-    "aria-label": "Secci\xF3n",
-    className: "fixed right-5 lg:right-8 top-1/2 -translate-y-1/2 z-40 hidden md:block"
-  }, /*#__PURE__*/React.createElement("ul", {
-    className: "flex flex-col items-end gap-5"
-  }, sections.map((s, i) => {
-    const isActive = i === active;
-    const activeColor = overDark ? "text-gold" : "text-garnet";
-    const dimColor = overDark ? "text-paper/65" : "text-ink/70";
-    const dimDot = overDark ? "bg-paper/35" : "bg-ink/25";
-    const hoverDot = overDark ? "group-hover:bg-paper/70" : "group-hover:bg-ink/55";
-    const activeDot = overDark ? "bg-gold" : "bg-garnet";
-    return /*#__PURE__*/React.createElement("li", {
-      key: s.id
-    }, /*#__PURE__*/React.createElement("a", {
-      href: "#" + s.id,
-      onClick: e => goTo(e, s.id),
-      className: "group flex items-center gap-3 cursor-pointer",
-      "aria-current": isActive ? "true" : undefined
-    }, /*#__PURE__*/React.createElement("span", {
-      className: ["font-display italic whitespace-nowrap transition-all duration-500 ease-out", "text-[13px] leading-none", isActive ? activeColor + " opacity-100 translate-x-0" : dimColor + " opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0"].join(" ")
-    }, s.name), /*#__PURE__*/React.createElement("span", {
-      className: ["font-sans uppercase text-[9px] tracking-wider2 transition-opacity duration-300 hidden lg:inline", isActive ? activeColor + "/80 opacity-100" : dimColor + "/40 opacity-0 group-hover:opacity-100"].join(" "),
-      "aria-hidden": "true"
-    }, s.n), /*#__PURE__*/React.createElement("span", {
-      className: ["block rounded-full transition-all duration-500 ease-out", isActive ? "w-[7px] h-[7px] " + activeDot : "w-[5px] h-[5px] " + dimDot + " " + hoverDot + " group-hover:scale-125"].join(" ")
-    })));
-  })));
-}
-
-/* Floating mobile CTA — slides up after hero, only on small screens. */
-function FloatingBookButton({
-  t,
-  scrolled
-}) {
-  return /*#__PURE__*/React.createElement("a", {
-    href: "https://www.saduaia.com/es/bookcore/",
-    target: "_blank",
-    rel: "noopener noreferrer",
-    className: ["fixed bottom-5 right-5 md:hidden z-40 inline-flex items-center gap-2", "bg-ink text-cream px-5 py-3 text-[11px] uppercase tracking-wider2 font-medium", "border border-ink shadow-[0_8px_24px_-8px_rgba(26,20,16,0.55)]", "transition-all duration-500 ease-out", scrolled ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 translate-y-4 pointer-events-none"].join(" "),
-    "aria-label": t.nav.book
-  }, t.nav.book, /*#__PURE__*/React.createElement("svg", {
-    viewBox: "0 0 24 12",
-    className: "w-5 h-3",
-    fill: "none",
-    stroke: "currentColor",
-    strokeWidth: "1.1",
-    strokeLinecap: "round"
-  }, /*#__PURE__*/React.createElement("path", {
-    d: "M0 6h22M16 1l5 5-5 5"
-  })));
-}
-
-/* ────────────────  MOBILE TRUST BAR  (specs + reviews, below hero)  ──────────────── */
-
-/* The minimal mobile hero drops the specs + reviews badge — this compact dark
-   band right under it carries that info back. Mobile only; desktop keeps it in the hero. */
-function MobileTrustBar({
-  t
-}) {
-  const rv = t.reviews || {};
-  const specs = [{
-    n: "11",
-    l: t.hero.specHabs || "Habitaciones"
-  }, {
-    n: "I",
-    l: t.hero.specMesa || "Restaurante"
-  }, {
-    n: "I",
-    l: t.hero.specPool || "Piscina"
-  }, {
-    n: "6'",
-    l: t.hero.specSea || "del mar"
-  }];
-  return /*#__PURE__*/React.createElement("section", {
-    className: "md:hidden bg-ink text-cream"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "px-6 py-10"
-  }, /*#__PURE__*/React.createElement("div", {
-    className: "grid grid-cols-2 gap-x-6 gap-y-6"
-  }, specs.map((s, i) => /*#__PURE__*/React.createElement("div", {
-    key: i,
-    className: "flex items-baseline gap-3"
+  if (!open) return null;
+  const p = PROMO[lang];
+  return /*#__PURE__*/React.createElement("div", {
+    role: "dialog",
+    "aria-label": p.title,
+    className: "promo-in fixed z-[70] left-3 right-3 bottom-3 md:left-8 md:right-auto md:bottom-8 md:w-[380px] bg-linen text-ink shadow-[0_24px_60px_-20px_rgba(26,20,16,0.55)]"
+  }, /*#__PURE__*/React.createElement("button", {
+    type: "button",
+    onClick: close,
+    "aria-label": t.promo.close,
+    className: "absolute top-3 right-3 w-9 h-9"
   }, /*#__PURE__*/React.createElement("span", {
-    className: "font-display italic text-gold text-[30px] leading-none number w-11 shrink-0"
-  }, s.n), /*#__PURE__*/React.createElement("span", {
-    className: "uppercase tracking-wider2 text-[10px] font-medium text-cream/70"
-  }, s.l)))), /*#__PURE__*/React.createElement("div", {
-    className: "my-8 h-px bg-cream/15"
-  }), /*#__PURE__*/React.createElement("a", {
-    href: "#reviews",
-    className: "flex flex-col items-center gap-3 text-center"
-  }, /*#__PURE__*/React.createElement(Stars, {
-    value: rv.ratingValue || 4.3,
-    starClass: "w-[15px] h-[15px]"
-  }), /*#__PURE__*/React.createElement("div", {
-    className: "font-display italic text-cream text-[20px] leading-tight"
-  }, (rv.countLabel || "+600 reseñas") + " · " + (rv.guestsLabel || "+5000 huéspedes")), /*#__PURE__*/React.createElement("div", {
-    className: "uppercase tracking-wider2 text-[9px] font-medium text-cream/55"
-  }, rv.sourceLabel || "Google · Booking · directo"))));
+    className: "absolute left-1/2 top-1/2 w-4 h-px bg-ink -translate-x-1/2 -translate-y-1/2 rotate-45"
+  }), /*#__PURE__*/React.createElement("span", {
+    className: "absolute left-1/2 top-1/2 w-4 h-px bg-ink -translate-x-1/2 -translate-y-1/2 -rotate-45"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "px-7 pt-7 pb-7"
+  }, /*#__PURE__*/React.createElement(Eyebrow, null, t.promo.eyebrow), /*#__PURE__*/React.createElement("p", {
+    className: "mt-3 pr-6 font-display text-[26px] leading-tight"
+  }, p.title), p.text && /*#__PURE__*/React.createElement("p", {
+    className: "mt-3 text-[14px] leading-[1.7] text-ink/70 font-light"
+  }, p.text), /*#__PURE__*/React.createElement("div", {
+    className: "mt-5 flex items-center gap-3 text-[11px] font-medium uppercase tracking-[0.2em] text-ink/60"
+  }, t.promo.code, /*#__PURE__*/React.createElement("span", {
+    className: "px-3 py-1.5 border border-dashed border-garnet/60 text-garnet tracking-[0.16em] text-[13px]"
+  }, PROMO.code)), /*#__PURE__*/React.createElement("a", {
+    href: "#reservar",
+    onClick: close,
+    className: "mt-6 w-full inline-flex items-center justify-center gap-3 bg-ink text-cream h-12 text-[11px] font-medium uppercase tracking-[0.24em] hover:bg-garnet transition-colors duration-500"
+  }, t.promo.cta, /*#__PURE__*/React.createElement(Arrow, {
+    className: "w-5 h-3"
+  }))));
 }
 
 /* ───────────────────────────  APP  ────────────────────────── */
@@ -2389,107 +1351,56 @@ function MobileTrustBar({
 function App() {
   const [lang, setLang] = useState("es");
   const [scrolled, setScrolled] = useState(false);
-  const t = useMemo(() => CONTENT[lang], [lang]);
-  useReveal();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const t = CONTENT[lang];
+  useReveal(lang);
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 24);
+    document.documentElement.lang = lang;
+  }, [lang]);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
     onScroll();
     window.addEventListener("scroll", onScroll, {
       passive: true
     });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-  useEffect(() => {
-    document.documentElement.lang = lang;
-  }, [lang]);
-  return /*#__PURE__*/React.createElement("div", {
-    className: "bg-cream text-ink"
-  }, /*#__PURE__*/React.createElement(ScrollProgress, null), /*#__PURE__*/React.createElement(ScrollNav, {
+  return /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement(Header, {
     t: t,
-    lang: lang
-  }), /*#__PURE__*/React.createElement(Nav, {
     lang: lang,
     setLang: setLang,
+    scrolled: scrolled,
+    onMenu: () => setMenuOpen(true)
+  }), /*#__PURE__*/React.createElement(Menu, {
     t: t,
-    scrolled: scrolled
-  }), /*#__PURE__*/React.createElement(Hero, {
-    t: t
-  }), /*#__PURE__*/React.createElement(MobileTrustBar, {
-    t: t
-  }), /*#__PURE__*/React.createElement(Welcome, {
-    t: t
-  }), /*#__PURE__*/React.createElement(Marquee, {
-    items: [{
-      num: "1425",
-      text: "Siglo XV"
-    }, {
-      num: "11",
-      text: "Habitaciones"
-    }, {
-      num: "6'",
-      text: "del mar abierto"
-    }, {
-      num: "VI",
-      text: "siglos de oficio"
-    }, {
-      num: "—",
-      text: "Mallorca · Artà"
-    }]
-  }), /*#__PURE__*/React.createElement(Intermezzo, {
-    t: t
-  }), /*#__PURE__*/React.createElement(Reviews, {
+    lang: lang,
+    setLang: setLang,
+    open: menuOpen,
+    onClose: () => setMenuOpen(false)
+  }), /*#__PURE__*/React.createElement("main", null, /*#__PURE__*/React.createElement(Hero, {
     t: t
   }), /*#__PURE__*/React.createElement(Finca, {
     t: t
-  }), /*#__PURE__*/React.createElement(Promises, {
-    t: t
-  }), /*#__PURE__*/React.createElement(Marquee, {
-    dark: true,
-    accent: "gold",
-    items: [{
-      num: "·",
-      text: "agroturismo · Sa Duaia de Dalt"
-    }, {
-      num: "·",
-      text: "Serra de Llevant · Artà"
-    }, {
-      num: "·",
-      text: "Once habitaciones · piedra original"
-    }, {
-      num: "·",
-      text: "Mesa abierta · cocina mallorquina"
-    }]
   }), /*#__PURE__*/React.createElement(Stays, {
+    t: t
+  }), /*#__PURE__*/React.createElement(Villas, {
     t: t
   }), /*#__PURE__*/React.createElement(Restaurant, {
     t: t
-  }), /*#__PURE__*/React.createElement(Marquee, {
-    items: [{
-      num: "8'",
-      text: "Artà"
-    }, {
-      num: "20'",
-      text: "Cala Torta"
-    }, {
-      num: "6'",
-      text: "Mar abierto"
-    }, {
-      num: "39°",
-      text: "41′ N · 3° 21′ E"
-    }]
-  }), /*#__PURE__*/React.createElement(Surroundings, {
+  }), /*#__PURE__*/React.createElement(Area, {
     t: t
-  }), /*#__PURE__*/React.createElement(Details, {
+  }), /*#__PURE__*/React.createElement(Reviews, {
     t: t
-  }), /*#__PURE__*/React.createElement(Booking, {
-    t: t
-  }), /*#__PURE__*/React.createElement(Footer, {
+  }), /*#__PURE__*/React.createElement(Book, {
+    t: t,
+    lang: lang
+  })), /*#__PURE__*/React.createElement(Footer, {
     t: t,
     lang: lang,
     setLang: setLang
-  }), /*#__PURE__*/React.createElement(FloatingBookButton, {
+  }), /*#__PURE__*/React.createElement(PromoPopup, {
     t: t,
-    scrolled: scrolled
+    lang: lang
   }));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(App, null));
