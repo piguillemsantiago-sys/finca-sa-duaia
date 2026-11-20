@@ -12,6 +12,7 @@
     - Rediseño minimalista (rama rediseno-minimalista, sin publicar) ⚙
       - Portada: video + título + Reservar ✓
       - La finca: texto de la clienta + galería de fotos propias ✓
+      - La finca: capilla + «En recuerdo de Juan, fundador» ✓
       - Alojamientos: 11 unidades en 5 grupos (ficha de Booking de Sa Duaia de Dalt) ✓
       - Galería de interiores con las fotos retocadas (12, de los dos WeTransfer) ✓
       - Villas destacadas: Ca na Moli y Ca na Lluny ✓
@@ -20,6 +21,7 @@
       - Reseñas (3 citas + nota de Google) ✓
       - Reservar: formulario al motor de saduaia.com (es de la finca vecina) ⚠
       - Pop-up de descuento configurable (apagado hasta tener código) ✓
+      - Descuentos de abril a octubre: saduaia.com sin ofertas publicadas (20/11) ⚠
       - ES/EN completo ✓
     - Página Legal.html (aviso legal, privacidad, cookies) ✓
     - Contacto: teléfono, WhatsApp y dirección reales (los de Sa Duaia) ✓
@@ -34,7 +36,9 @@
     - Tercer WeTransfer (19/11 22:51): unidades 12 a 16 + zonas comunes, bajado ✓
       - 6 fotos de las unidades 12, 13, 14 y torre (15 y 16) en la galería de Alojamientos ✓
       - Cuántas unidades son (carpetas: 15; Booking: 11) y qué tipo es cada una ⚠
-      - Capilla, cocina y casa: sin usar hasta que la clienta diga dónde ⚠
+      - Capilla (eventos y bodas) y recuerdo de Juan, el fundador, en «La finca» ✓
+      - Cocina: no es para huéspedes, no se muestra ✓
+      - Entrada y recepción: sin usar hasta que la clienta diga ⚠
     - Tomas de dron sin texto para la portada ⚠
     - Video del hero + imagen de portada ✓
     - Logos (crema, tinta, color) ✓

@@ -80,6 +80,17 @@ const CONTENT = {
       amenities: ["Piscina al aire libre", "WiFi gratis", "Terrazas", "Zona de barbacoa", "Jardín", "Salón compartido"]
     },
     gallery: ["Terraza junto a la torre, con la sierra al fondo", "Buganvilla sobre un muro de piedra", "Casa de piedra de la finca", "Piscina con vistas a la montaña", "Terraza con mesas y vistas a la sierra", "Entrada y escalera de azulejos", "Naranjo en el jardín de la finca"],
+    // Capilla y recuerdo del fundador: respuestas de la clienta por Cristian (20/11/2026).
+    chapel: {
+      eyebrow: "La capilla",
+      title: "Una capilla en la finca.",
+      body: "Se pueden celebrar eventos y bodas.",
+      alt: "Capilla de piedra de la finca, con flores blancas junto al altar"
+    },
+    founder: {
+      text: "En recuerdo de Juan,\nfundador de Sa\u00a0Duaia de\u00a0Dalt.",
+      alt: "Retrato de Juan, fundador de Sa Duaia de Dalt"
+    },
     stays: {
       panel: "Alojamientos",
       eyebrow: "Bungalows, apartamentos, estudios y habitación",
@@ -300,6 +311,16 @@ const CONTENT = {
       amenities: ["Outdoor pool", "Free WiFi", "Terraces", "Barbecue area", "Garden", "Shared lounge"]
     },
     gallery: ["Terrace by the tower, with the mountains behind", "Bougainvillea over a stone wall", "Stone house on the estate", "Pool with mountain views", "Terrace with tables and mountain views", "Entrance and tiled staircase", "Orange tree in the estate garden"],
+    chapel: {
+      eyebrow: "The chapel",
+      title: "A chapel on the estate.",
+      body: "Events and weddings can be held here.",
+      alt: "The estate's stone chapel, with white flowers by the altar"
+    },
+    founder: {
+      text: "In memory of Juan,\nfounder of Sa\u00a0Duaia de\u00a0Dalt.",
+      alt: "Portrait of Juan, founder of Sa Duaia de Dalt"
+    },
     stays: {
       panel: "Accommodation",
       eyebrow: "Bungalows, apartments, studios and a room",
@@ -816,7 +837,37 @@ function Finca({
     alt: t.gallery[k],
     loading: "lazy",
     className: "absolute inset-0 w-full h-full object-cover"
-  }))))));
+  }))))), /*#__PURE__*/React.createElement("div", {
+    className: "mx-auto max-w-[1280px] px-4 md:px-8 pb-24 md:pb-36 grid md:grid-cols-12 gap-10 md:gap-16 items-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "reveal md:col-span-7 relative aspect-[3/2] overflow-hidden bg-cream"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "assets/finca-capilla.jpg",
+    alt: t.chapel.alt,
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover"
+  })), /*#__PURE__*/React.createElement("div", {
+    className: "md:col-span-5"
+  }, /*#__PURE__*/React.createElement(Eyebrow, {
+    className: "reveal"
+  }, t.chapel.eyebrow), /*#__PURE__*/React.createElement("h3", {
+    className: "reveal mt-5 font-display text-ink text-[34px] md:text-[48px] leading-[1.08] tracking-tight"
+  }, t.chapel.title), /*#__PURE__*/React.createElement("p", {
+    className: "reveal mt-6 text-ink/75 text-[16px] leading-[1.85] font-light"
+  }, t.chapel.body))), /*#__PURE__*/React.createElement("figure", {
+    className: "reveal mx-auto max-w-[420px] px-4 pb-24 md:pb-36 text-center"
+  }, /*#__PURE__*/React.createElement("div", {
+    className: "relative mx-auto w-[200px] md:w-[240px] aspect-[4/5] overflow-hidden bg-cream"
+  }, /*#__PURE__*/React.createElement("img", {
+    src: "assets/finca-juan.jpg",
+    alt: t.founder.alt,
+    loading: "lazy",
+    className: "absolute inset-0 w-full h-full object-cover"
+  })), /*#__PURE__*/React.createElement("figcaption", {
+    className: "mt-6 font-display text-ink/80 text-[20px] md:text-[22px] leading-snug"
+  }, /*#__PURE__*/React.createElement(Lines, {
+    text: t.founder.text
+  }))));
 }
 
 /* ───────────────────────────  ALOJAMIENTOS  ────────────────────────── */
