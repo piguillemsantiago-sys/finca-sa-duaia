@@ -93,7 +93,7 @@ const CONTENT = {
         plus: "Además"
       },
       cta: "Consultar disponibilidad",
-      photos: ["Dormitorio con cama de matrimonio y mosquitera", "Salón con chimenea y sofás de mimbre", "Dormitorio con dos camas y pared de piedra", "Dormitorio con cama de matrimonio y pared de piedra", "Puerta abierta al jardín y la piscina", "Comedor de un bungalow con salida al jardín"],
+      photos: ["Dormitorio con cama de matrimonio y mosquitera", "Salón con chimenea y sofás de mimbre", "Dormitorio con dos camas y pared de piedra", "Dormitorio con cama de matrimonio y pared de piedra", "Puerta abierta al jardín y la piscina", "Comedor de un bungalow con salida al jardín", "Estudio con cama de matrimonio y cisnes de toalla", "Ventana de la habitación doble, con palmeras y la sierra", "Dormitorio de la torre con cabecero de troncos", "Vista al monte desde una ventana de la torre", "Habitación doble con chimenea y escritorio", "Estudio con mesa redonda junto a las camas"],
       // Datos de la ficha de Booking de Finca Sa Duaia de Dalt (el-castillo-de-sa-duaia-de-dalt).
       items: [{
         kind: "2 unidades",
@@ -313,7 +313,7 @@ const CONTENT = {
         plus: "Also"
       },
       cta: "Check availability",
-      photos: ["Bedroom with a double bed and mosquito net", "Living room with fireplace and wicker sofas", "Bedroom with two single beds and a stone wall", "Bedroom with a double bed and a stone wall", "Door open to the garden and the pool", "Bungalow dining area opening onto the garden"],
+      photos: ["Bedroom with a double bed and mosquito net", "Living room with fireplace and wicker sofas", "Bedroom with two single beds and a stone wall", "Bedroom with a double bed and a stone wall", "Door open to the garden and the pool", "Bungalow dining area opening onto the garden", "Studio with a double bed and towel swans", "Window in the double room, with palm trees and the hills", "Tower bedroom with a log headboard", "View of the hillside from a tower window", "Double room with a fireplace and desk", "Studio with a round table beside the beds"],
       items: [{
         kind: "2 units",
         name: "Two-bedroom bungalows",
@@ -821,7 +821,9 @@ function Finca({
 
 /* ───────────────────────────  ALOJAMIENTOS  ────────────────────────── */
 
-const STAY_PHOTOS = ["assets/aloj-dormitorio-mosquitera.jpg", "assets/aloj-salon-sofas.jpg", "assets/aloj-dos-camas.jpg", "assets/aloj-dormitorio-piedra.jpg", "assets/aloj-puerta-jardin.jpg", "assets/aloj-comedor-bungalow.jpg"];
+const STAY_PHOTOS = ["assets/aloj-dormitorio-mosquitera.jpg", "assets/aloj-salon-sofas.jpg", "assets/aloj-dos-camas.jpg", "assets/aloj-dormitorio-piedra.jpg", "assets/aloj-puerta-jardin.jpg", "assets/aloj-comedor-bungalow.jpg",
+// 3.er WeTransfer (19/11): habitación doble (12), estudios (13 y 14) y torre (15 y 16)
+"assets/aloj-estudio-cama.jpg", "assets/aloj-ventana-palmeras.jpg", "assets/aloj-torre-dormitorio.jpg", "assets/aloj-torre-ventana.jpg", "assets/aloj-doble-chimenea.jpg", "assets/aloj-estudio-mesa.jpg"];
 function Stays({
   t
 }) {

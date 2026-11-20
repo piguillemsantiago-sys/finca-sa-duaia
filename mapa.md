@@ -13,7 +13,7 @@
       - Portada: video + título + Reservar ✓
       - La finca: texto de la clienta + galería de fotos propias ✓
       - Alojamientos: 11 unidades en 5 grupos (ficha de Booking de Sa Duaia de Dalt) ✓
-      - Galería de interiores con las fotos retocadas ✓
+      - Galería de interiores con las fotos retocadas (12, de los dos WeTransfer) ✓
       - Villas destacadas: Ca na Moli y Ca na Lluny ✓
       - Restaurante Sa Duaia (a 1,5 km) ✓
       - Entorno: distancias + hoja de ruta ✓
@@ -31,7 +31,10 @@
     - Fotos del WeTransfer (40 RAW) retocadas: luz, verticales y notas del cliente ✓
     - Cortina de 04256 sin arreglar: repetir la foto ⚠
     - Qué unidad es Estrella, Nido y Pajar ⚠
-    - Tercer WeTransfer (19/11 22:51, otros tipos de alojamiento) sin bajar ⚠
+    - Tercer WeTransfer (19/11 22:51): unidades 12 a 16 + zonas comunes, bajado ✓
+      - 6 fotos de las unidades 12, 13, 14 y torre (15 y 16) en la galería de Alojamientos ✓
+      - Cuántas unidades son (carpetas: 15; Booking: 11) y qué tipo es cada una ⚠
+      - Capilla, cocina y casa: sin usar hasta que la clienta diga dónde ⚠
     - Tomas de dron sin texto para la portada ⚠
     - Video del hero + imagen de portada ✓
     - Logos (crema, tinta, color) ✓
