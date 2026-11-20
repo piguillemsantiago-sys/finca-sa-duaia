@@ -11,8 +11,9 @@ const BOOKING = {
   },
 };
 
-// Pendiente de confirmar con la clienta (ver handoff.md).
-const WHATSAPP = { href: "https://wa.me/34971589164", label: "+34 971 589 164" };
+// Teléfono y WhatsApp: los mismos que Sa Duaia (confirmado por la clienta, 20/11/2026).
+const PHONE = { href: "tel:+34722749473", label: "+34 722 74 94 73" };
+const WHATSAPP = { href: "https://wa.me/34722749473", label: "+34 722 74 94 73" };
 
 /* ───────────────────────  POP-UP DE DESCUENTO  ─────────────────────
    Para activarlo: active: true, el código (el mismo que esté cargado en el
@@ -174,7 +175,7 @@ const CONTENT = {
     },
     promo: { eyebrow: "Oferta", code: "Código", cta: "Usar el código", close: "Cerrar" },
     footer: {
-      address: ["Camí Sa Duaia", "07570 Artà · Illes Balears", "España"],
+      address: ["Ctra. Artà–Cala Torta, km 6", "07570 Artà · Illes Balears", "España"],
       contact: "Contacto",
       social: "Redes",
       lang: "Idioma",
@@ -325,7 +326,7 @@ const CONTENT = {
     },
     promo: { eyebrow: "Offer", code: "Code", cta: "Use the code", close: "Close" },
     footer: {
-      address: ["Camí Sa Duaia", "07570 Artà · Balearic Islands", "Spain"],
+      address: ["Ctra. Artà–Cala Torta, km 6", "07570 Artà · Balearic Islands", "Spain"],
       contact: "Contact",
       social: "Social",
       lang: "Language",
@@ -967,7 +968,7 @@ function Footer({ t, lang, setLang }) {
           <div className="md:col-span-3">
             <div className="text-[10px] font-medium uppercase tracking-[0.28em] text-cream/45 mb-5">{f.contact}</div>
             <div className="space-y-2 text-[14px] font-light">
-              <div><a href="tel:+34971000000" className={link}>+34 971 00 00 00</a></div>
+              <div><a href={PHONE.href} className={link}>{PHONE.label}</a></div>
               <div><a href="mailto:hola@saduaia.com" className={link}>hola@saduaia.com</a></div>
               <div><a href={WHATSAPP.href} target="_blank" rel="noopener noreferrer" className={link}>WhatsApp</a></div>
             </div>

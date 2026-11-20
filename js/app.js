@@ -15,10 +15,14 @@ const BOOKING = {
   }
 };
 
-// Pendiente de confirmar con la clienta (ver handoff.md).
+// Teléfono y WhatsApp: los mismos que Sa Duaia (confirmado por la clienta, 20/11/2026).
+const PHONE = {
+  href: "tel:+34722749473",
+  label: "+34 722 74 94 73"
+};
 const WHATSAPP = {
-  href: "https://wa.me/34971589164",
-  label: "+34 971 589 164"
+  href: "https://wa.me/34722749473",
+  label: "+34 722 74 94 73"
 };
 
 /* ───────────────────────  POP-UP DE DESCUENTO  ─────────────────────
@@ -251,7 +255,7 @@ const CONTENT = {
       close: "Cerrar"
     },
     footer: {
-      address: ["Camí Sa Duaia", "07570 Artà · Illes Balears", "España"],
+      address: ["Ctra. Artà–Cala Torta, km 6", "07570 Artà · Illes Balears", "España"],
       contact: "Contacto",
       social: "Redes",
       lang: "Idioma",
@@ -470,7 +474,7 @@ const CONTENT = {
       close: "Close"
     },
     footer: {
-      address: ["Camí Sa Duaia", "07570 Artà · Balearic Islands", "Spain"],
+      address: ["Ctra. Artà–Cala Torta, km 6", "07570 Artà · Balearic Islands", "Spain"],
       contact: "Contact",
       social: "Social",
       lang: "Language",
@@ -1242,9 +1246,9 @@ function Footer({
   }, f.contact), /*#__PURE__*/React.createElement("div", {
     className: "space-y-2 text-[14px] font-light"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
-    href: "tel:+34971000000",
+    href: PHONE.href,
     className: link
-  }, "+34 971 00 00 00")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
+  }, PHONE.label)), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
     href: "mailto:hola@saduaia.com",
     className: link
   }, "hola@saduaia.com")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {

@@ -22,13 +22,16 @@
       - Pop-up de descuento configurable (apagado hasta tener código) ✓
       - ES/EN completo ✓
     - Página Legal.html (aviso legal, privacidad, cookies) ✓
-    - Datos reales del footer (teléfono, email y redes son provisionales) ⚠
-    - WhatsApp de reservas sin confirmar ⚠
+    - Contacto: teléfono, WhatsApp y dirección reales (los de Sa Duaia) ✓
+    - Contacto: email y redes provisionales ⚠
+    - Legal: titular Playas de Artá, S.L. (B07122005) ✓
+    - Legal: Registro Mercantil, registro turístico y emails ⚠
   - Contenido y assets ✓
     - Material de la clienta 2026-11-19 (fotos + docx) ✓
     - Fotos del WeTransfer (40 RAW) retocadas: luz, verticales y notas del cliente ✓
     - Cortina de 04256 sin arreglar: repetir la foto ⚠
     - Qué unidad es Estrella, Nido y Pajar ⚠
+    - Tercer WeTransfer (19/11 22:51, otros tipos de alojamiento) sin bajar ⚠
     - Tomas de dron sin texto para la portada ⚠
     - Video del hero + imagen de portada ✓
     - Logos (crema, tinta, color) ✓
@@ -42,6 +45,7 @@
   - Cliente
     - Ronda de feedback de la clienta ✓
     - Aprobación del rediseño antes de publicar ⚙
+    - Respuestas de la clienta 20/11 (pendientes-clienta-2026-11-20.md) ⚙
 
 ## Flujos
 

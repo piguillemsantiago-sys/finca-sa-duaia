@@ -54,4 +54,4 @@ archivos generados antes del push.
   la sección Reservar es un formulario propio que envía `entrada`, `salida`,
   `occupancies` y `codpromo` a `/es|en/bookcore/v4/search-dispo.htm`.
 - Pop-up de descuento: objeto `PROMO` al principio de `src/app.jsx` (apagado por defecto).
-- Teléfono, email y redes del footer son provisionales — reemplazar por los reales.
+- Teléfono, WhatsApp y dirección son los reales (los de Sa Duaia). Email y redes del footer siguen provisionales.
