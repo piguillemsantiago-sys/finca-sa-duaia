@@ -1323,7 +1323,9 @@ function Footer({
   }, f.social), /*#__PURE__*/React.createElement("div", {
     className: "space-y-2 text-[14px] font-light"
   }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
-    href: "#",
+    href: "https://www.instagram.com/fincasaduaiadedalt/",
+    target: "_blank",
+    rel: "noopener",
     className: link
   }, "Instagram \u2197")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
     href: "#",
