@@ -1,6 +1,6 @@
 # Pendientes con la clienta — 20/11/2026
 
-> 20/11 17:10: Instagram confirmado por Santi: @fincasaduaiadedalt (enlazado en el pie). Falta saber si el Facebook es el de Sa Duaia.
+> 20/11 17:10: Instagram confirmado por Santi: @fincasaduaiadedalt (enlazado en el pie). Facebook: el de Finca Sa Duaia de Dalt que pasó Cristian (facebook.com/share/1EJysToBfU/), enlazado.
 
 Lista de lo que se le pidió (mensaje de Santi a Cristian Calvo, 19/11 20:46) y lo que contestó (audio y textos reenviados por Cristian, 20/11 12:51, y audio de Cristian del 20/11 14:35).
 

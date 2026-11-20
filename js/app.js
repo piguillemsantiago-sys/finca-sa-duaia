@@ -1328,7 +1328,9 @@ function Footer({
     rel: "noopener",
     className: link
   }, "Instagram \u2197")), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("a", {
-    href: "#",
+    href: "https://www.facebook.com/share/1EJysToBfU/",
+    target: "_blank",
+    rel: "noopener",
     className: link
   }, "Facebook \u2197")))), /*#__PURE__*/React.createElement("div", {
     className: "col-span-2 md:col-span-3"

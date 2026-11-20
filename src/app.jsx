@@ -1048,7 +1048,7 @@ function Footer({ t, lang, setLang }) {
             <div className="text-[10px] font-medium uppercase tracking-[0.28em] text-cream/45 mb-5">{f.social}</div>
             <div className="space-y-2 text-[14px] font-light">
               <div><a href="https://www.instagram.com/fincasaduaiadedalt/" target="_blank" rel="noopener" className={link}>Instagram ↗</a></div>
-              <div><a href="#" className={link}>Facebook ↗</a></div>
+              <div><a href="https://www.facebook.com/share/1EJysToBfU/" target="_blank" rel="noopener" className={link}>Facebook ↗</a></div>
             </div>
           </div>
 
