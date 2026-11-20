@@ -376,19 +376,29 @@ const CONTENT = {
 
 /* ───────────────────────────  HELPERS  ────────────────────────── */
 
+/* Revela cada .reveal / .reveal-zoom una sola vez, al entrar en pantalla.
+   Lo que entra en el mismo momento (una fila de la grilla, título + texto)
+   se escalona 80 ms en orden de lectura, con un tope de 400 ms. */
 function useReveal(dep) {
   useEffect(() => {
+    const els = document.querySelectorAll(".reveal:not(.is-visible), .reveal-zoom:not(.is-visible)");
+    if (!("IntersectionObserver" in window)) {
+      els.forEach((el) => el.classList.add("is-visible"));
+      return;
+    }
     const io = new IntersectionObserver(
       (entries) =>
-        entries.forEach((e) => {
-          if (e.isIntersecting) {
+        entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top || a.boundingClientRect.left - b.boundingClientRect.left)
+          .forEach((e, k) => {
+            e.target.style.setProperty("--reveal-delay", Math.min(k, 5) * 80 + "ms");
             e.target.classList.add("is-visible");
             io.unobserve(e.target);
-          }
-        }),
+          }),
       { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
     );
-    document.querySelectorAll(".reveal:not(.is-visible)").forEach((el) => io.observe(el));
+    els.forEach((el) => io.observe(el));
     return () => io.disconnect();
   }, [dep]);
 }
@@ -438,11 +448,11 @@ function LangSwitch({ lang, setLang, light = false }) {
 /* Panel a pantalla completa: la foto manda, una sola palabra encima. */
 function Panel({ img, alt, label, position = "center" }) {
   return (
-    <div className="relative h-[64svh] md:h-[78vh] min-h-[380px] overflow-hidden bg-ink">
+    <div className="reveal-zoom relative h-[64svh] md:h-[78vh] min-h-[380px] overflow-hidden bg-ink">
       <img src={img} alt={alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover" style={{ objectPosition: position }} />
       <div className="absolute inset-0 panel-veil" />
       <div className="absolute inset-0 flex items-center justify-center px-4">
-        <h2 className="panel-title text-cream uppercase font-light text-[20px] sm:text-[24px] md:text-[34px]">{label}</h2>
+        <h2 className="reveal panel-title text-cream uppercase font-light text-[20px] sm:text-[24px] md:text-[34px]">{label}</h2>
       </div>
     </div>
   );
@@ -653,7 +663,7 @@ function Finca({ t }) {
       <div className="mx-auto max-w-[1480px] px-2 md:px-8 pb-24 md:pb-36">
         <div className="grid grid-cols-2 md:grid-cols-12 gap-2 md:gap-3">
           {GALLERY.map((g, k) => (
-            <figure key={g.src} className={["reveal relative overflow-hidden bg-cream", g.cls].join(" ")}>
+            <figure key={g.src} className={["reveal reveal-zoom relative overflow-hidden bg-cream", g.cls].join(" ")}>
               <img src={g.src} alt={t.gallery[k]} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
             </figure>
           ))}
@@ -662,7 +672,7 @@ function Finca({ t }) {
 
       {/* Capilla: mismo formato que el bloque del restaurante */}
       <div className="mx-auto max-w-[1280px] px-4 md:px-8 pb-24 md:pb-36 grid md:grid-cols-12 gap-10 md:gap-16 items-center">
-        <div className="reveal md:col-span-7 relative aspect-[3/2] overflow-hidden bg-cream">
+        <div className="reveal reveal-zoom md:col-span-7 relative aspect-[3/2] overflow-hidden bg-cream">
           <img src="assets/finca-capilla.jpg" alt={t.chapel.alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         </div>
         <div className="md:col-span-5">
@@ -673,7 +683,7 @@ function Finca({ t }) {
       </div>
 
       {/* En recuerdo del fundador: discreto, sin datos que no tengamos */}
-      <figure className="reveal mx-auto max-w-[420px] px-4 pb-24 md:pb-36 text-center">
+      <figure className="reveal reveal-zoom mx-auto max-w-[420px] px-4 pb-24 md:pb-36 text-center">
         <div className="relative mx-auto w-[200px] md:w-[240px] aspect-[4/5] overflow-hidden bg-cream">
           <img src="assets/finca-juan.jpg" alt={t.founder.alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         </div>
@@ -746,7 +756,7 @@ function Stays({ t }) {
         {/* Interiores: sin etiqueta de tipo hasta confirmar qué unidad es cada foto */}
         <div className="mt-16 md:mt-24 grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
           {STAY_PHOTOS.map((src, k) => (
-            <figure key={src} className="reveal relative aspect-[4/5] overflow-hidden bg-cream">
+            <figure key={src} className="reveal reveal-zoom relative aspect-[4/5] overflow-hidden bg-cream">
               <img src={src} alt={s.photos[k]} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
             </figure>
           ))}
@@ -781,7 +791,7 @@ function Villas({ t }) {
 
         <div className="mt-14 md:mt-16 grid md:grid-cols-2 gap-14 md:gap-12">
           {v.items.map((x) => (
-            <article key={x.name} className="reveal">
+            <article key={x.name} className="reveal reveal-zoom">
               <div className="relative aspect-[3/2] overflow-hidden bg-linen">
                 <img src={x.img} alt={x.alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
               </div>
@@ -817,7 +827,7 @@ function Restaurant({ t }) {
   return (
     <section id="restaurante" className="bg-linen">
       <div className="mx-auto max-w-[1280px] px-4 md:px-8 py-20 md:py-32 grid md:grid-cols-12 gap-10 md:gap-16 items-center">
-        <div className="reveal md:col-span-7 relative aspect-[3/2] overflow-hidden bg-cream">
+        <div className="reveal reveal-zoom md:col-span-7 relative aspect-[3/2] overflow-hidden bg-cream">
           <img src="assets/restaurante-sa-duaia.jpg" alt={r.alt} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
         </div>
         <div className="md:col-span-5">
@@ -946,7 +956,7 @@ function Book({ t, lang }) {
   const label = "block text-[10px] font-medium uppercase tracking-[0.24em] text-ink/55 mb-1 whitespace-nowrap";
 
   return (
-    <section id="reservar" className="relative overflow-hidden bg-ink">
+    <section id="reservar" className="reveal-zoom relative overflow-hidden bg-ink">
       <img src="assets/finca-piscina.jpg" alt="" loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
       <div className="absolute inset-0 book-veil" />
       <div className="relative mx-auto max-w-[1280px] px-4 md:px-8 py-24 md:py-40">
